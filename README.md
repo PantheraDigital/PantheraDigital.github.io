@@ -1,4 +1,4 @@
-theme: jekyll-theme-midnight
+
 - 👋 Hi, I’m @PantheraDigital
 - 👀 I’m interested in programming, video games, and medieval weapons and armor
 - 🌱 I’m currently learning Computer Science 
