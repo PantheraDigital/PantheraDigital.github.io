@@ -1,4 +1,4 @@
-Veiw the webpage here[website](https://pantheradigital.github.io/)
+Veiw the webpage [here](https://pantheradigital.github.io/)
 
 - 👋 Hi, I’m @PantheraDigital
 - 📫 You can reach me at pantheradigitalonline@gmail.com, or if you have my resume the email listed there
