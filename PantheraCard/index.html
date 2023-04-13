@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Panthera's Card</title>
+        <meta charset="utf-8">
+        <meta name="author" content="Panthera">
+        <meta name="description" content="Veiw Panthera's projects, experience, and contact info."><!--description used in search result of page-->
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"><!--describes how the layout and content adapts to the mobile viewport-->
+        <meta name="application-name" content="Panthera's Card"><!--name used for the "Add to Home Screen" function in their web browser -->
+        <meta name="keywords" content="HTML, CSS, JavaScript"><!--keywords for search engines-->
+        <link rel="stylesheet" href="style.css" />
+        <link rel="stylesheet" href="Logo/style.css" />
+        <link rel="stylesheet" href="WebBackground/style.css" />
+        <script src="https://kit.fontawesome.com/879ec05024.js" crossorigin="anonymous"></script>
+    </head>
+<body>
+    <div id="repeatingShapeBackground">
+        <ul id="shape-list">
+            <li id="shape-row_0" class="shape-row">
+            </li>
+            <li id="shape-row_1" class="shape-row">
+            </li>
+            <li id="shape-row_2" class="shape-row">
+            </li>
+        </ul>
+    </div>
+
+    <div id="main-block">
+        <div id="logo-container">
+            <div class="header-w-buttons cool-border">
+                <h1 id="name">Panthera</h1>
+                <button type="button" id="about-button" class="main-block-button">About</button>
+                <button type="button" id="projects-button" class="main-block-button">Projects</button>
+                <button type="button" id="link-button" class="main-block-button">Links</button>
+            </div>
+    
+            <div id="logo">
+                <img src="Logo/LogoImg.png" alt="" class="logo-img logo-img-shadow">
+                
+                <span class="logo-shape-wrapper">
+                    <div class="logo-shape-animation logo-shape"></div>    
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <div id="links-window" class="hidden-window cool-border">
+        <div class="hidden-window-title-bar">
+            /Links
+        </div>
+        <button type="button" class="close-hidden-window-button">X</button>
+        <div class="inner-hidden-window">
+            <p class="hidden-window-text">
+                <i class="fa-regular fa-envelope"></i> <a href="mailto:pantheradigitalonline@gmail.com">pantheradigitalonline@gmail.com</a><br>
+                <i class="fa-brands fa-github"></i> <a href="https://github.com/PantheraDigital?tab=repositories" target="_blank">Github</a><br>
+                <i class="fa-brands fa-itch-io"></i> <a href="https://pantheraonline.itch.io/"  target="_blank">Itch.io page</a><br>
+                <i class="fa-brands fa-unity"></i> <a href="https://assetstore.unity.com/publishers/57131"  target="_blank">Unity Asset Store Page</a>
+            </p>
+        </div>
+    </div>
+
+    <div id="projects-window" class="hidden-window cool-border">
+        <div class="hidden-window-title-bar">
+            /Projects
+        </div>
+        <button type="button" class="close-hidden-window-button">X</button>
+        <div class="inner-hidden-window">
+            <div class="project-grid">
+
+                <div class="project-profile">
+                    <img src="ProjectPics/04.jpg" alt="" class="project-pic">
+                    <h2><a href="https://pantheraonline.itch.io/battle-ball" target="_blank">
+                        Battle Ball <i class="fa-brands fa-itch-io"></i>
+                    </a></h2>
+                    <p class="hidden-window-text">
+                        A 2D local multiplayer fighting game I am working on alone utilizing Unity and its input system. 
+                        I have found all the visual assets, created all particle effects, and wrote all the code used.
+                    </p>
+                </div>
+                <div class="project-profile">
+                    <img src="ProjectPics/02.jpg" alt="" class="project-pic">
+                    <h2><a href="https://pantheraonline.itch.io/battle-ball" target="_blank">
+                        Demo <i class="fa-brands fa-itch-io"></i>
+                    </a></h2>
+                    <p class="hidden-window-text">
+                        My first game using Unity. All assets were found but all the code is my own. 
+                        This project uses my Entity Controller 2D pack for the player character.
+                    </p>
+                </div>
+                <div class="project-profile">
+                    <img src="ProjectPics/03.jpg" alt="" class="project-pic">
+                    <h2><a href="https://pantheraonline.itch.io/battle-ball" target="_blank">
+                        ASCII Adventure <i class="fa-brands fa-github"></i>
+                    </a></h2>
+                    <p class="hidden-window-text">
+                        Maze game that uses ASCII characters for visuals. 
+                        This project was inspired by a project I had done for a class and used as a way for me to familiarize myself with C#.
+                    </p>
+                </div>
+                <div class="project-profile">
+                    <img src="ProjectPics/01.jpg" alt="" class="project-pic">
+                    <h2><a href="https://pantheraonline.itch.io/battle-ball" target="_blank">
+                        Entity Controller 2D <i class="fa-brands fa-unity"></i>
+                    </a></h2>
+                    <p class="hidden-window-text">
+                        My first project using Unity. 
+                        A package that allows for quick set up of a 2D character allowing for various movements and player control. 
+                        Published on the Unity Asset Store.
+                    </p>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div id="about-window" class="hidden-window cool-border">
+        <div class="hidden-window-title-bar">
+            /About
+        </div>
+        <button type="button" class="close-hidden-window-button">X</button>
+        <div class="inner-hidden-window">
+            <h2>From playing games to making games.</h2>
+            <p class="hidden-window-text">
+                My passion for creation and games has led me to become a programmer. 
+                Programming provides challenges I enjoy overcoming and a way for me to create new things. 
+                I use this to drive myself and learn new programming languages and new ways to make things, building on previous 
+                knowledge I have obtained over the years, looking for my next project.<br><br>
+
+                I first started down this road in high school (2015) I entered a game design class where I used Unreal Engine’s blueprint system to 
+                discover a new hobby and creative outlet, making game prototypes. This led me to become a programmer, despite the fact that actual code intimidated me at the time.<br><br>
+
+                After high school I went to the Academy of Art University to learn video game programming (2017-2019) where I learned C++ and programming principles such as object oriented programming and algorithms. 
+                In my spare time I still used Unreal Engine for fun.<br><br>
+
+                I transferred to Southern New Hampshire University (2020-present), when Covid hit, where I am now earning my Computer Science degree and learning Java, Python, and C++. 
+                During my transfer I also switched to using Unity and C# to create game project ideas I have had as I found the engine created lighter weight game files more suited to my needs.<br><br>
+
+                I have also recently (2023) picked up HTML, CSS, and JavaScript to begin learning web development which has allowed me to create this page myself allong with other web projects found in my github repos.<br><br>
+            </p>
+        </div>
+    </div>
+    
+    <script src="script.js"></script>
+    <script src="WebBackground/script.js"></script>
+</body>
+</html>
