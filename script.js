@@ -28,14 +28,38 @@ for(let i = 0; i < closeWindowButtons.length; i++){
 
 function HideHiddenWindows(event){
     let target = event.target;
-    target.parentElement.style.display = "none";
+    //toggle animation by swapping out classes
+    if(target.parentElement.classList.contains("hidden-window-animation")){
+        target.parentElement.classList.remove("hidden-window-animation");
+
+        void target.parentElement.offsetWidth;
+
+        target.parentElement.classList.add("hidden-window-animation-reverse");
+    }
+
+    target.parentElement.addEventListener("animationend", SetWindowDisplayNone);
 
     qrOverlayButton.style.display = "block";
+}
+function SetWindowDisplayNone(event){
+    event.target.style.display = "none";
 }
 
 function ShowHiddenWindow(windowID){
     let window = document.getElementById(windowID);
     window.style.display = "block";
+
+    window.removeEventListener("animationend", SetWindowDisplayNone);
+    if(!window.classList.contains("hidden-window-animation") && !window.classList.contains("hidden-window-animation-reverse")){
+        window.classList.add("hidden-window-animation");
+    }
+    else if(window.classList.contains("hidden-window-animation-reverse")){
+        window.classList.remove("hidden-window-animation-reverse");
+
+        void window.offsetWidth;
+
+        window.classList.add("hidden-window-animation");
+    }
 
     qrOverlayButton.style.display = "none";
 }
