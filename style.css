@@ -71,6 +71,8 @@ html, body {
     }
 }
 
+
+/*---Hidden Window---*/
 .hidden-window{
     display: none;
     position: fixed;
@@ -99,8 +101,8 @@ html, body {
     box-sizing: border-box;
     height: 28px;
     width: calc(100% - 8px);
-    top:4px;
-    left:4px;
+    top: 4px;
+    left: 4px;
     background-color: dimgrey;
     border: 2px inset black;
     font-family: "Lucida Console", monospace;
@@ -160,6 +162,8 @@ html, body {
     }
 }
 
+
+/*---Headings---*/
 h2{
     font-size: large;
     color: gainsboro;
@@ -178,6 +182,8 @@ h2 > a:hover{
     }
 }
 
+
+/*---Project Profile and grid---*/
 .project-grid{
     display: flex;
     flex-direction: column;
@@ -192,6 +198,7 @@ h2 > a:hover{
 .project-grid .project-profile:first-child{
     margin-top: 0PX;
 }
+
 .project-profile{
     background-color: rgb(55, 55, 55);
     border: 4px inset darkslateblue;
@@ -212,6 +219,8 @@ h2 > a:hover{
     }
 }
 
+
+/*---Scroll Bar---*/
 ::-webkit-scrollbar {
     width: 12px;
 }
@@ -223,4 +232,41 @@ h2 > a:hover{
 }
 ::-webkit-scrollbar-thumb:hover {
     -webkit-box-shadow: inset 0 0 6px rgba(255, 255, 255, 0.5); 
+}
+
+
+/*---QR Code---*/
+#qr-overlay{
+    display: none;
+    position:fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.4);
+}
+#qr-overlay > img{
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: calc(50vh - (min(min(80vw, 80vh), 300px)/2));
+    width: min(min(80vw, 80vh), 300px);
+}
+
+#qr-button{
+    position:fixed;
+    height: min(min(10vw, 10vh), 50px);
+    width: min(min(10vw, 10vh), 50px);
+    top: 5px;
+    left: calc(100% - (min(min(10vw, 10vh), 50px)) - 5px);
+    color:rgba(255, 255, 255, 0);
+    border-radius: 50%;
+    border:solid grey;
+    background-color: lightgrey;
+    background-image: url('././ProjectPics/QR.png');
+    background-size: contain;
+    background-position: center;
+}
+#qr-button:hover{
+    border: none;
 }
