@@ -6,6 +6,10 @@ html, body {
     background-color:rgb(54, 54, 54);
 }
 
+button > i {
+    pointer-events: none;
+} 
+
 .cool-border{
     border-image: linear-gradient(135deg, cyan, magenta) 1 !important;
     border-width: 1px !important;
@@ -15,7 +19,7 @@ html, body {
     border-image: linear-gradient(0deg, cyan, magenta) 1 ;
     border-width: 1px !important;
     border-style: solid !important;
-    animation: rotateBorder 5s linear infinite;
+    animation: rotateBorder 10s linear infinite;
 }
 @keyframes rotateBorder {
     0%{
@@ -184,8 +188,10 @@ html, body {
 .hidden-window-text{
     color: gainsboro;
     font-family: "Lucida Console", monospace;
+    overflow-wrap: break-word;
     line-height: 1.4;
-    margin: 0 0 0 10px;
+    padding: 5px 0 0 10px;
+    margin: 0 0 0 5px;
 }
 .hidden-window-text > a:link, .hidden-window-text > a:visited{
     color:gainsboro;
@@ -205,7 +211,7 @@ html, body {
 h2{
     font-size: large;
     color: gainsboro;
-    margin: 10px 0 5px 10px;
+    margin: 5px 0 5px 10px;
     font-family: "Lucida Console", monospace;
 }
 h2 > a:link, h2 > a:visited{
@@ -240,8 +246,35 @@ h2 > a:hover{
 .project-profile{
     background-color: rgb(55, 55, 55);
     border: 4px inset darkslateblue;
-    overflow-wrap: break-word;
 }
+.project-dropdown{
+    display: none;
+    margin: 10px 5px 5px 5px;
+    background-color: rgb(100, 100, 100);
+}
+
+.project-dropdown-button{
+    float: right;
+    margin: -18px 0 0 0;
+    width: 20px;
+    height: 20px;
+    text-align:center;
+    color: black;
+    background-color: lightgrey;
+}
+.project-dropdown-button:hover{
+    background-color: grey;
+}
+.project-dropdown-button:active{
+    border-color: white;
+    border-style: inset;
+}
+
+.project-dropdown-button > i{
+    margin-left: -3px;
+    vertical-align: baseline;
+}
+
 .project-pic{
     float: left;
     width: 35%;

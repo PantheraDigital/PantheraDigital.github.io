@@ -8,6 +8,16 @@ document.getElementById("link-button").addEventListener("click", function(){Show
 document.getElementById("projects-button").addEventListener("click", function(){ShowHiddenWindow("projects-window")});
 document.getElementById("about-button").addEventListener("click", function(){ShowHiddenWindow("about-window")});
 
+var closeWindowButtons = document.getElementsByClassName("close-hidden-window-button");
+for(let i = 0; i < closeWindowButtons.length; i++){
+    closeWindowButtons[i].addEventListener("click", HideHiddenWindows);
+}
+
+var dropdownButtons= document.getElementsByClassName("project-dropdown-button");
+for(let i = 0; i < dropdownButtons.length; i++){
+    dropdownButtons[i].addEventListener("click", ToggleDropdown);
+}
+
 document.getElementById("qr-button").addEventListener("click", function(){
     if(this.style.backgroundImage == "none"){
         this.style.backgroundImage = "url('././ProjectPics/QR.png')";
@@ -21,10 +31,7 @@ document.getElementById("qr-button").addEventListener("click", function(){
     }
 });
 
-var closeWindowButtons = document.getElementsByClassName("close-hidden-window-button");
-for(let i = 0; i < closeWindowButtons.length; i++){
-    closeWindowButtons[i].addEventListener("click", HideHiddenWindows);
-}
+
 
 function HideHiddenWindows(event){
     let target = event.target;
@@ -64,3 +71,13 @@ function ShowHiddenWindow(windowID){
     qrOverlayButton.style.display = "none";
 }
 
+function ToggleDropdown(event){
+    let target = event.target.nextElementSibling;
+
+    if(target.style.display == "block"){
+        target.style.display = "none";
+    }
+    else{
+        target.style.display = "block";
+    }    
+}
