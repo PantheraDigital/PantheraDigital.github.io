@@ -106,18 +106,18 @@ button > i {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%) scale(0.01);
-    height: 500px;
-    width: 800px;
+    height: min(500px, calc(100% - 20px));
+    width: min(800px, calc(100% - 20px));
     background-color: rgb(60, 60, 61);
     outline: solid black 1px;
     box-shadow: 5px 5px 15px black;
 
 }
 .hidden-window-animation{
-    animation: grow 0.5s ease-out both normal !important; 
+    animation: grow 0.3s ease-out both normal !important; 
 }
 .hidden-window-animation-reverse{
-    animation: grow 0.5s ease-in both reverse !important;
+    animation: grow 0.3s ease-in both reverse !important;
 }
 @keyframes grow {
     from{
@@ -125,16 +125,6 @@ button > i {
     }
     to{
         transform: translate(-50%, -50%) scale(1);
-    }
-}
-@media screen and (max-width: 820px) {
-    .hidden-window{
-        width: calc(100% - 20px);
-    }
-}
-@media screen and (max-height: 520px) {
-    .hidden-window{
-        height: calc(100% - 20px);
     }
 }
 
@@ -244,21 +234,31 @@ h2 > a:hover{
 }
 
 .project-profile{
+    box-sizing: border-box;
     background-color: rgb(55, 55, 55);
     border: 4px inset darkslateblue;
 }
+
+.project-head-text{
+    display: inline-block;
+    vertical-align:top;
+    width: 65%;
+}
+
 .project-dropdown{
     display: none;
-    margin: 10px 5px 5px 5px;
+    margin: 5px 5px 5px 5px;
+    padding-bottom: 5px;
     background-color: rgb(100, 100, 100);
 }
 
 .project-dropdown-button{
-    float: right;
-    margin: -18px 0 0 0;
+    display: block;
+    position: relative;
+    top: calc(100% - 20px);
     width: 20px;
     height: 20px;
-    text-align:center;
+    text-align: center;
     color: black;
     background-color: lightgrey;
 }
@@ -276,9 +276,8 @@ h2 > a:hover{
 }
 
 .project-pic{
-    float: left;
-    width: 35%;
-    margin-right: 10px;
+    width: 34%;
+    display: inline-block;
 }
 @media screen and (max-width: 520px), (max-height: 520px) and (max-width: 520px){
     .project-pic{
@@ -287,6 +286,10 @@ h2 > a:hover{
         width: 60%;
         margin-right: auto;
         margin-left: auto;
+    }
+
+    .project-head-text{
+        width: 100%;
     }
 }
 
