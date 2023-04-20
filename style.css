@@ -8,7 +8,20 @@ html, body {
 
 button > i {
     pointer-events: none;
-} 
+}
+
+.icon-button{
+    text-align: center;
+}
+.icon-button > i{
+    vertical-align: baseline;
+}
+
+.fullscreen{
+    height: 100% !important;
+    width: 100% !important;
+    resize: none !important;
+}
 
 .cool-border{
     border-image: linear-gradient(135deg, cyan, magenta) 1 !important;
@@ -145,12 +158,6 @@ button > i {
     color:white;
     text-shadow: 1px 1px 2px black;
 }
-.hidden-window-title-bar:hover{
-    cursor: grab;
-}
-.hidden-window-title-bar:active{
-    cursor: grabbing;
-}
 
 .close-hidden-window-button{
     position: absolute;
@@ -171,6 +178,31 @@ button > i {
     background-color: rgb(43, 43, 43);
     border-color: rgb(43, 43, 43);
 }
+
+.fullscreen-hidden-window-button{
+    position: absolute;
+    box-sizing: border-box;
+    float:right;
+    width: 22px;
+    height: 22px;
+    top: 7px;
+    left: calc(100% - 51px);
+    color: rgb(233, 233, 233);
+    text-shadow: 0 0 3px white;
+    background-color: rgb(60, 60, 60);
+    transition: 0.4s;
+}
+.fullscreen-hidden-window-button:hover{
+    color: cyan;
+    text-shadow: 0 0 4px cyan;
+    background-color: rgb(43, 43, 43);
+    border-color: rgb(43, 43, 43);
+}
+.fullscreen-hidden-window-button > i{
+    margin-left: -1px;
+    margin-top: -1px;
+}
+
 
 .inner-hidden-window{
     position: absolute;
@@ -266,7 +298,6 @@ h2 > a:hover{
     top: calc(100% - 20px);
     width: 20px;
     height: 20px;
-    text-align: center;
     color: black;
     background-color: lightgrey;
 }
@@ -280,7 +311,6 @@ h2 > a:hover{
 
 .project-dropdown-button > i{
     margin-left: -3px;
-    vertical-align: baseline;
 }
 
 .project-pic{

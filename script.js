@@ -20,7 +20,10 @@ var closeWindowButtons = document.getElementsByClassName("close-hidden-window-bu
 for(let i = 0; i < closeWindowButtons.length; i++){
     closeWindowButtons[i].addEventListener("click", HideHiddenWindows);
 }
-
+var fullscreenButtons = document.getElementsByClassName("fullscreen-hidden-window-button");
+for(let i = 0; i < fullscreenButtons.length; i++){
+    fullscreenButtons[i].addEventListener("click", FullscreenHiddenWindow);
+}
 var dropdownButtons= document.getElementsByClassName("project-dropdown-button");
 for(let i = 0; i < dropdownButtons.length; i++){
     dropdownButtons[i].addEventListener("click", ToggleDropdown);
@@ -80,6 +83,32 @@ function ShowHiddenWindow(windowID){
 
     qrOverlayButton.style.display = "none";
 }
+function FullscreenHiddenWindow(event){
+    let target = event.target;
+    if(!target.parentElement.classList.contains("fullscreen")){
+        target.parentElement.classList.add("fullscreen");
+
+        target.children[0].classList.remove("fa-light", "fa-square");
+        target.children[0].classList.add("fa-regular", "fa-window-restore", "fa-xs");
+
+        target.parentElement.style.top = "50%";
+        target.parentElement.style.left = "50%";
+
+        if(target.parentElement.classList.contains("moveable")){
+            target.parentElement.classList.remove("moveable");
+        }
+    }
+    else{
+        target.parentElement.classList.remove("fullscreen");
+
+        target.children[0].classList.add("fa-light", "fa-square");
+        target.children[0].classList.remove("fa-regular", "fa-window-restore", "fa-xs");
+
+        if(!target.parentElement.classList.contains("moveable")){
+            target.parentElement.classList.add("moveable");
+        }
+    }
+}
 
 function ToggleDropdown(event){
     let target = event.target.nextElementSibling;
@@ -107,27 +136,39 @@ for(let i = 0; i < hiddenWindowArray.length; i++){
 function dragElement(elmnt, moveParent = false) {
     var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
     if (document.getElementById(elmnt.id + "header")) {
-    // if present, the header is where you move the DIV from:
+        // if present, the header is where you move the DIV from:
         document.getElementById(elmnt.id + "header").onmousedown = dragMouseDown;
     } else {
-    // otherwise, move the DIV from anywhere inside the DIV:
+        // otherwise, move the DIV from anywhere inside the DIV:
         elmnt.onmousedown = dragMouseDown;
+        if(moveParent){
+            if(!elmnt.parentElement.classList.contains("moveable")){
+                elmnt.parentElement.classList.add("moveable");
+            }
+        }
+        else{
+            if(!elmnt.classList.contains("moveable")){
+                elmnt.classList.add("moveable");
+            }
+        }
     }  
     
     function dragMouseDown(e) {
       e = e || window.event;
       e.preventDefault();
+      
+      if((moveParent && e.target.parentElement.classList.contains("moveable")) || (!moveParent && e.target.classList.contains("moveable"))){
+        UpdateWindowZOrder(elmnt.parentElement.id);
 
-      UpdateWindowZOrder(elmnt.parentElement.id);
-
-      // get the mouse cursor position at startup:
-      pos3 = e.clientX;
-      pos4 = e.clientY;
-      document.onmouseup = closeDragElement;
-      // call a function whenever the cursor moves:
-      document.onmousemove = elementDrag;
+        // get the mouse cursor position at startup:
+        pos3 = e.clientX;
+        pos4 = e.clientY;
+        document.onmouseup = closeDragElement;
+        // call a function whenever the cursor moves:
+        document.onmousemove = elementDrag;
+      }
     }
-  
+    
     function elementDrag(e) {
       e = e || window.event;
       e.preventDefault();
