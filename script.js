@@ -1,15 +1,20 @@
-var linkWindow = document.getElementById("links-window");
-var projectWindow = document.getElementById("projects-window");
-var aboutWindow = document.getElementById("about-window");
+const hiddenWindowArray = [document.getElementById("links-window"), document.getElementById("projects-window"), document.getElementById("about-window")];
 var qrOverlay = document.getElementById("qr-overlay");
 var qrOverlayButton = document.getElementById("qr-button");
 
-document.getElementById("link-button").addEventListener("click", function(){ShowHiddenWindow("links-window")});
-document.getElementById("projects-button").addEventListener("click", function(){
-    ShowHiddenWindow("projects-window");
-    HideAllDropdownsInElement("projects-window");
+document.getElementById("link-button").addEventListener("click", function(){
+    UpdateWindowZOrder("links-window");
+    ShowHiddenWindow("links-window")
 });
-document.getElementById("about-button").addEventListener("click", function(){ShowHiddenWindow("about-window")});
+document.getElementById("projects-button").addEventListener("click", function(){
+    UpdateWindowZOrder("projects-window");
+    HideAllDropdownsInElement("projects-window");
+    ShowHiddenWindow("projects-window");
+});
+document.getElementById("about-button").addEventListener("click", function(){
+    UpdateWindowZOrder("about-window");
+    ShowHiddenWindow("about-window")
+});
 
 var closeWindowButtons = document.getElementsByClassName("close-hidden-window-button");
 for(let i = 0; i < closeWindowButtons.length; i++){
@@ -51,10 +56,14 @@ function HideHiddenWindows(event){
 
     target.parentElement.addEventListener("animationend", SetWindowDisplayNone);
 
-    qrOverlayButton.style.display = "block";
+    if(OpenWindows() <= 1){
+        qrOverlayButton.style.display = "block";
+    }
 }
 function ShowHiddenWindow(windowID){
     let window = document.getElementById(windowID);
+    window.style.top = "50%";
+    window.style.left = "50%";
     window.style.display = "block";
 
     window.removeEventListener("animationend", SetWindowDisplayNone);
@@ -90,4 +99,82 @@ function HideAllDropdownsInElement(elementID){
             dropdowns[i].style.display = "none";
         }
     }
+}
+
+for(let i = 0; i < hiddenWindowArray.length; i++){
+    dragElement(hiddenWindowArray[i].getElementsByClassName("hidden-window-title-bar")[0], true);
+}
+function dragElement(elmnt, moveParent = false) {
+    var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+    if (document.getElementById(elmnt.id + "header")) {
+    // if present, the header is where you move the DIV from:
+        document.getElementById(elmnt.id + "header").onmousedown = dragMouseDown;
+    } else {
+    // otherwise, move the DIV from anywhere inside the DIV:
+        elmnt.onmousedown = dragMouseDown;
+    }  
+    
+    function dragMouseDown(e) {
+      e = e || window.event;
+      e.preventDefault();
+
+      UpdateWindowZOrder(elmnt.parentElement.id);
+
+      // get the mouse cursor position at startup:
+      pos3 = e.clientX;
+      pos4 = e.clientY;
+      document.onmouseup = closeDragElement;
+      // call a function whenever the cursor moves:
+      document.onmousemove = elementDrag;
+    }
+  
+    function elementDrag(e) {
+      e = e || window.event;
+      e.preventDefault();
+      // calculate the new cursor position:
+      pos1 = pos3 - e.clientX;
+      pos2 = pos4 - e.clientY;
+      pos3 = e.clientX;
+      pos4 = e.clientY;
+      // set the element's new position:
+      if(moveParent){
+        elmnt.parentElement.style.top = (elmnt.parentElement.offsetTop - pos2) + "px";
+        elmnt.parentElement.style.left = (elmnt.parentElement.offsetLeft - pos1) + "px";
+      }
+      else{
+        elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
+        elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+      }
+    }
+  
+    function closeDragElement() {
+      // stop moving when mouse button is released:
+      document.onmouseup = null;
+      document.onmousemove = null;
+    }
+}
+
+function UpdateWindowZOrder(focusedWindowID){
+    let focused = document.getElementById(focusedWindowID);
+    for(let i = 0; i < hiddenWindowArray.length; i++){
+        if(hiddenWindowArray[i].id == focusedWindowID){
+            focused.style.zIndex = "3";
+        }
+        else{
+            hiddenWindowArray[i].style.zIndex--;
+            if(hiddenWindowArray[i].style.zIndex < "0"){
+                hiddenWindowArray[i].style.zIndex = "0";
+            }
+        }
+    }
+}
+
+function OpenWindows(){
+    let count = 0;
+    for(let i = 0; i < hiddenWindowArray.length; i++){
+        if(getComputedStyle(hiddenWindowArray[i]).display != "none"){
+            count++;
+        }
+    }
+    return count;
 }

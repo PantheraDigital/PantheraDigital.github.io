@@ -111,7 +111,9 @@ button > i {
     background-color: rgb(60, 60, 61);
     outline: solid black 1px;
     box-shadow: 5px 5px 15px black;
-
+    resize: both;
+    overflow: auto;
+    z-index: 1;
 }
 .hidden-window-animation{
     animation: grow 0.3s ease-out both normal !important; 
@@ -142,6 +144,12 @@ button > i {
     text-indent: 5px;
     color:white;
     text-shadow: 1px 1px 2px black;
+}
+.hidden-window-title-bar:hover{
+    cursor: grab;
+}
+.hidden-window-title-bar:active{
+    cursor: grabbing;
 }
 
 .close-hidden-window-button{
@@ -325,6 +333,9 @@ h2 > a:hover{
     margin-right: auto;
     margin-top: calc(50vh - (min(min(80vw, 80vh), 300px)/2));
     width: min(min(80vw, 80vh), 300px);
+}
+#qr-overlay > p{
+    text-align: center;
 }
 
 #qr-button{
