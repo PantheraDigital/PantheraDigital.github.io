@@ -88,8 +88,8 @@ function FullscreenHiddenWindow(event){
     if(!target.parentElement.classList.contains("fullscreen")){
         target.parentElement.classList.add("fullscreen");
 
-        target.children[0].classList.remove("fa-light", "fa-square");
-        target.children[0].classList.add("fa-regular", "fa-window-restore", "fa-xs");
+        target.children[0].classList.remove("fa-window-maximize");
+        target.children[0].classList.add("fa-window-restore");
 
         target.parentElement.style.top = "50%";
         target.parentElement.style.left = "50%";
@@ -101,8 +101,8 @@ function FullscreenHiddenWindow(event){
     else{
         target.parentElement.classList.remove("fullscreen");
 
-        target.children[0].classList.add("fa-light", "fa-square");
-        target.children[0].classList.remove("fa-regular", "fa-window-restore", "fa-xs");
+        target.children[0].classList.add("fa-window-maximize");
+        target.children[0].classList.remove("fa-window-restore");
 
         if(!target.parentElement.classList.contains("moveable")){
             target.parentElement.classList.add("moveable");
