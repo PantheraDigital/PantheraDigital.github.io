@@ -203,11 +203,6 @@
     margin-top: 0PX;
 }
 
-@media screen and (max-height: 520px) and (max-width: 520px){
-    .hidden-window-text{
-        font-size: x-small;
-    }
-}
 
 
 .frame p{
@@ -228,5 +223,11 @@
 @media screen and (max-height: 520px) and (max-width: 520px){
     .frame p{
         font-size: x-small;
+    }
+}
+@media (pointer:coarse){
+    .frame{
+        --header-height: 38px;
+        --button-to-header-gap: 3px;
     }
 }
