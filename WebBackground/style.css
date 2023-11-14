@@ -1,0 +1,146 @@
+:root {
+    --shape-size: 90px;
+    --shape-x-padding: -43px;
+    --shape-y-padding: 1.5px;
+}
+
+/*-------------------------*/
+#repeatingShapeBackground{
+    position: fixed;
+    margin: 0 auto;
+    overflow: hidden;
+    left: calc(var(--shape-size) * -0.5);
+    top: 0px;
+    width: calc(100vw + var(--shape-size) + var(--shape-x-padding));
+    height: calc(100vh + var(--shape-size));
+    background-color:rgb(30,30,30);
+    background-size: 400% 400%;
+    background-image: linear-gradient(50deg, darkviolet 20%, slategrey 35%, slategrey 65%, DarkTurquoise 80%);
+    animation: movingGradient 15s ease-in-out infinite both;
+}
+@keyframes movingGradient {
+    0% {
+        background-position: 0% 50%;
+      }
+      50% {
+        background-position: 100% 50%;
+      }
+      100% {
+        background-position: 0% 50%;
+      }
+}
+
+/*-------------------------*/
+#mouse-tracker{
+    position: fixed;
+    width: 700px;
+    height: 700px;
+    top: 0px;
+    left: 0px;
+    margin: 0 0 0 0;
+    background: radial-gradient(circle farthest-side, rgba(0, 0, 0, 0.5), transparent);
+    transform: translate(-50%, -50%);
+    border-radius:50%;
+}
+
+/*-------------------------*/
+span.ripple {
+    position: fixed;
+    border-radius: 50%;
+    transform: scale(0);
+    animation: ripple 600ms linear;
+    background-color: rgba(128, 0, 128, 0.705);
+}
+@keyframes ripple {
+    to {
+        transform: scale(2);
+        opacity: 0;
+    }
+}
+
+/*-------------------------*/
+#shape-list{
+    margin-top: 0px;
+    margin-left: 0px;
+    padding-left: 0px;
+    list-style: none;
+}
+#shape-list > li{
+    margin-bottom: var(--shape-y-padding);
+    margin-top: var(--shape-y-padding);
+}
+
+/*-------------------------*/
+.shape-row{
+    display: flex;
+    flex-wrap: nowrap;
+}
+.shape-row > div{
+    margin-right: var(--shape-x-padding);
+}
+
+/*-------------------------*/
+/*affects all shapes*/
+/*.shape-wrapper{
+    filter: drop-shadow(1px 1px 2px rgb(67,67,67));
+    
+    using drop shadow for an outline---
+    filter: drop-shadow(1px 1px rgb(47,47,48)) 
+    drop-shadow(-1px -1px rgb(47,47,48)) 
+    drop-shadow(0 1px rgb(47,47,48)) 
+    drop-shadow(1px 0 rgb(47,47,48));
+}*/
+
+/*-------------------------*/
+.arrow-up, .arrow-right, .arrow-down, .arrow-left, .hex, .circle, .square, .rhombus{
+	flex-grow: 0;
+	flex-shrink: 0;
+    background-color:rgb(37,37,38);
+    width: var(--shape-size);
+    height: var(--shape-size);
+}
+
+.arrow-up {
+    clip-path: polygon(50% 0, 0 100%, 100% 100%);
+}
+
+.arrow-right {
+    clip-path: polygon(0 0, 0 100%, 100% 50%);
+}
+
+.arrow-down {
+    clip-path: polygon(100% 0, 0 0, 50% 100%);
+}
+
+.arrow-left {
+    clip-path: polygon(100% 100%, 100% 0, 0 50%);
+}
+
+.hex{
+    clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+}
+
+.circle{
+    clip-path: circle(50% at 50% 50%);
+    background-color: lightblue;
+}
+/*will create an outline for this shape only*/
+.circle::before{
+    content: "";
+    display: inherit;
+    position: relative;
+    clip-path: inherit;
+    transform:translate(2px, 2px);
+    width: calc(var(--shape-size) - 4px);
+    height: calc(var(--shape-size) - 4px);
+    background-color: rgb(234, 255, 255);
+}
+
+.square{
+    background-color:black;
+    clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);
+}
+
+.rhombus{
+    clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+}

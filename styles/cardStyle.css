@@ -1,0 +1,57 @@
+.dropdown-wrapper {
+  border: inset darkslateblue 4px;
+  height: fit-content;
+  overflow: hidden;
+  padding: 0 0 0 1ch;
+}
+
+.dropdown-wrapper > img{
+  height: calc(calc(calc(1em * 1.1) * 4) + 22.47px);
+  width: auto;
+  float: right;
+}
+
+.dropdown-header{
+  font-size: large;
+  font-family: "Fantasy", Copperplate;
+}
+
+.dropdown-header .title,
+.dropdown-header .toggle {
+  vertical-align: middle;
+  display: inline-block;
+  transition: color 0.2s, text-shadow 0.2s;
+}
+.dropdown-header .toggle {
+  font-family: "Lucida Console", monospace;
+  width: 20px;
+}
+.dropdown-header .title:hover,
+.dropdown-header .toggle:hover {
+  color: lightcyan;
+  text-shadow: 0 0 4px cyan;
+}
+
+.dropdown-body {
+  --line-height: 1.1;
+  color: dimgray;
+  padding-left: 20px;
+  height: fit-content;
+  line-height: var(--line-height);
+}
+
+.dropdown-wrapper.folded .dropdown-body{
+  font-size: medium;
+  height: calc(calc(1em * var(--line-height)) * 4);
+  overflow: hidden;
+
+  -webkit-mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
+  mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
+}
+
+.dropdown-body a:link, .dropdown-body a:visited{
+  color:gainsboro;
+}
+.dropdown-body a:hover{
+  color:turquoise;
+}
