@@ -30,6 +30,8 @@ async function printGoogleDoc(){
         document.getElementById("projects-window").querySelector(".project-grid").appendChild(element);
       });
     }).catch(function(e) {
+        let card = CreateCard("none", "Error", e.toString());
+        document.getElementById("projects-window").querySelector(".project-grid").appendChild(card);
         console.log(e);
     });
 }
@@ -325,13 +327,20 @@ function CreateCard(imagePath, title, body) {
     } 
   });
 
-  clone.querySelector("img").src = imagePath;
-  let titleNodes = StringToHtml(title);
+  if(imagePath !== "none"){
+    clone.querySelector("img").src = imagePath;
+  }
+  else{
+    clone.removeChild(clone.querySelector("img"));
+  }
+    
+  /*let titleNodes = StringToHtml(title);
   titleNodes.forEach(element => {
     clone.querySelector(".title").appendChild(element);  
-  });
-  clone.querySelector(".dropdown-body").appendChild(MultiLineStringToHTML(body));
-
+  });*/
+  AddStringHTMLToElement(clone.querySelector(".title"), title);
+  //clone.querySelector(".dropdown-body").appendChild(MultiLineStringToHTML(body));
+  MultiLineStringToHTML(clone.querySelector(".dropdown-body"), body);
   return clone;
 }
 
@@ -359,16 +368,41 @@ function MultiLineStringToHTML(text) {
   }
   return html;
 }
+function MultiLineStringToHTML(elmnt, text) {
+  let textArray = text.split("<br>").join('\r\n').split('\r\n').join('\n').split('\n');
+  if (textArray.length == 1) {
+    AddStringHTMLToElement(elmnt, textArray[0]);
+  }
+  else{
+    for (let index = 0; index < textArray.length; index++) {
+      if (index > 0){
+        elmnt.appendChild(document.createElement("br"));
+      }
+      
+      AddStringHTMLToElement(elmnt, textArray[index]);
+    }
+  }
+}
+
+//create list of elements to be added to an object
+// warning: does not allow for html tags to contain custom tags in their content. EX <i><unity></i> not allowed
 function StringToHtml(text){
   const tags = ["https://", "<unity>", "<itch>", "<github>"];
   let elements = [];
+  let textNodeCreated = false;
 
   while(text.length > 0){
     let tagIndex  = text.indexOf("<");
     let linkIndex = text.indexOf(tags[0]);
   
     if(tagIndex == -1 && linkIndex == -1){
-      elements.push(document.createTextNode(text));
+      if(textNodeCreated){
+        elements[elements.length - 1].textContent += text;
+      }
+      else{
+        elements.push(document.createTextNode(text));
+      }
+      textNodeCreated = true;
       break;
     }
 
@@ -380,7 +414,13 @@ function StringToHtml(text){
       if(text[endIndex - 1] == '.')
         endIndex--;
 
-      elements.push(document.createTextNode(text.substring(0, linkIndex)));
+      if(textNodeCreated){
+        elements[elements.length - 1].textContent += text.substring(0, linkIndex);
+      }
+      else{
+        elements.push(document.createTextNode(text.substring(0, linkIndex)));
+      }
+      textNodeCreated = false;
       let link = document.createElement("a");
       link.href = text.substring(linkIndex, endIndex);
       link.innerHTML = link.href;
@@ -395,8 +435,16 @@ function StringToHtml(text){
       for (let i = 1; i < tags.length; i++) {
         if(substring.indexOf(tags[i]) == 0){
           validTag = true;
-          if(tagIndex != 0)
-            elements.push(document.createTextNode(text.substring(0, tagIndex)));
+          if(tagIndex != 0){
+            if(textNodeCreated){
+              elements[elements.length - 1].textContent += text.substring(0, tagIndex);
+            }
+            else{
+              elements.push(document.createTextNode(text.substring(0, tagIndex)));
+            }
+            
+          }
+          textNodeCreated = false;
           
           let tag = document.createElement("i");
           switch(i){
@@ -422,7 +470,14 @@ function StringToHtml(text){
         }
       }
       if(validTag == false){
-        elements.push(document.createTextNode(text.substring(0, tagEndIndex)));
+        if(textNodeCreated){
+          elements[elements.length - 1].textContent += text.substring(0, tagEndIndex);
+        }
+        else{
+          elements.push(document.createTextNode(text.substring(0, tagEndIndex)));
+        }
+        textNodeCreated = true;
+
         text = text.replace(text.substring(0, tagEndIndex), '');
       }
 
@@ -433,6 +488,84 @@ function StringToHtml(text){
   }  
   return elements;
 }
+//create and add nodes directly as strings to inner html
+function AddStringHTMLToElement(elmnt, text){
+  const tags = ["https://", "<unity>", "<itch>", "<github>"];
+  let html = "";
+
+  while(text.length > 0){
+    let tagIndex  = text.indexOf("<");
+    let linkIndex = text.indexOf(tags[0]);
+  
+    if(tagIndex == -1 && linkIndex == -1){
+      html += text;
+      break;
+    }
+
+    if(linkIndex > -1 && (linkIndex < tagIndex || tagIndex == -1)){
+      let endIndex = text.indexOf(" ", linkIndex);
+      if(endIndex == -1)
+        endIndex = text.length;
+
+      if(text[endIndex - 1] == '.')
+        endIndex--;
+
+      html += text.substring(0, linkIndex);
+      let link = document.createElement("a");
+      link.href = text.substring(linkIndex, endIndex);
+      link.innerHTML = link.href;
+      html += link.outerHTML;
+      text = text.replace(text.substring(0, endIndex), '');
+    }
+    else if(tagIndex > -1 && (tagIndex < linkIndex || linkIndex == -1)){
+      let tagEndIndex = text.indexOf(">", tagIndex) + 1;
+      let substring = text.substring(tagIndex, tagEndIndex);
+      let validTag = false;
+
+      for (let i = 1; i < tags.length; i++) {
+        if(substring.indexOf(tags[i]) == 0){
+          validTag = true;
+          if(tagIndex != 0){
+            html += text.substring(0, tagIndex);
+          }
+          
+          let tag = document.createElement("i");
+          switch(i){
+            case 1:{
+              tag.classList.add("fa-brands");
+              tag.classList.add("fa-unity");
+              break;
+            }
+            case 2:{
+              tag.classList.add("fa-brands");
+              tag.classList.add("fa-itch-io");
+              break;
+            }
+            case 3:{
+              tag.classList.add("fa-brands");
+              tag.classList.add("fa-github");
+              break;
+            }
+          }
+          html += tag.outerHTML;
+          text = text.replace(text.substring(0, tagEndIndex), '');
+          break;
+        }
+      }
+      if(validTag == false){
+        html += text.substring(0, tagEndIndex);
+        text = text.replace(text.substring(0, tagEndIndex), '');
+      }
+
+    }
+    else{
+      console.log(`undefined: linkIndex=${linkIndex} tagIndex=${tagIndex} text='${text}'`);
+    }
+  }  
+  
+  elmnt.insertAdjacentHTML("beforeend", html);
+}
+
 
 //take in doc as text and return array of cards
 function ParseDocToCard(text){

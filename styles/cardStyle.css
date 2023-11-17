@@ -2,6 +2,7 @@
   border: inset darkslateblue 4px;
   height: fit-content;
   overflow: hidden;
+  overflow-wrap: break-word;
   padding: 0 0 0 1ch;
 }
 
@@ -36,6 +37,7 @@
   --line-height: 1.1;
   color: dimgray;
   padding-left: 20px;
+  padding-right: calc(20px + 1ch);
   height: fit-content;
   line-height: var(--line-height);
 }
