@@ -19,13 +19,13 @@ try {
   passiveSupported = false;
 }
 
-printGoogleDoc();
-async function printGoogleDoc(){
+LoadGoogleDoc();
+async function LoadGoogleDoc(){
     await fetch(`https://www.googleapis.com/drive/v3/files/${docID}/export?mimeType=text/plain&key=${apiKey}`)
     .then(function(res) {
         return res.text();
     }).then(function(text) {
-      let cards = ParseDocToCard(text);
+      let cards = ParseDoc(text);
       cards.forEach(element => {
         document.getElementById("projects-window").querySelector(".project-grid").appendChild(element);
       });
@@ -287,17 +287,29 @@ function AddFrameButton(frame, button) {
 //Project Cards////////////////
 //////////////////////////////
 function FoldDropdownText(dropdownWrapper) {
-  var header = dropdownWrapper.getElementsByClassName("dropdown-header")[0];
-  //var body = header.parentElement.querySelector(".dropdown-body");
-  var toggle = header.getElementsByClassName("toggle")[0];
+  let header = dropdownWrapper.getElementsByClassName("dropdown-header")[0];
+  let body = header.parentElement.querySelector(".dropdown-body");
+  let subBody = header.parentElement.querySelector(".dropdown-subBody");
+  let toggle = header.getElementsByClassName("toggle")[0];
 
-  if (toggle !== null && dropdownWrapper !== null) {
-    if (dropdownWrapper.classList.contains("folded")) {
-      dropdownWrapper.classList.remove("folded");
-      toggle.innerHTML = "-";
-    } else {
-      dropdownWrapper.classList.add("folded");
-      toggle.innerHTML = "+";
+  if (toggle !== null){
+    if(subBody !== null){
+      if (subBody.classList.contains("folded")) {
+        subBody.classList.remove("folded");
+        toggle.innerHTML = "-";
+      } else {
+        subBody.classList.add("folded");
+        toggle.innerHTML = "+";
+      }
+    }
+    else if(body !== null){
+      if (body.classList.contains("folded")) {
+        body.classList.remove("folded");
+        toggle.innerHTML = "-";
+      } else {
+        body.classList.add("folded");
+        toggle.innerHTML = "+";
+      }
     }
   }
 }
@@ -305,14 +317,24 @@ function FoldAllDropdownsInContainer(container){
     let dropdowns = container.getElementsByClassName("dropdown-wrapper");
     if(dropdowns && dropdowns.length > 0){
         for(let i = 0; i < dropdowns.length; i++){
-          if(!dropdowns[i].classList.contains("folded")){
-            dropdowns[i].classList.add("folded");
-            dropdowns[i].getElementsByClassName("toggle")[0].innerHTML = "+";
+          let body = dropdowns[i].querySelector(".dropdown-body");
+          let subBody = dropdowns[i].querySelector(".dropdown-subBody");
+          if(subBody != null){// && !body.classList.contains("folded")){
+            if(!subBody.classList.contains("folded")){
+              subBody.classList.add("folded");
+              dropdowns[i].getElementsByClassName("toggle")[0].innerHTML = "+";
+            }
+          }
+          else if(body !== null){
+            if(!body.classList.contains("folded")){
+              body.classList.add("folded");
+              dropdowns[i].getElementsByClassName("toggle")[0].innerHTML = "+";
+            }
           }
         }
     }
 }
-function CreateCard(imagePath, title, body) {
+function CreateCard(imagePath, title, body, subBody = "") {
   const template = document.querySelector("template");
   const clone = template.content.querySelector(".dropdown-wrapper").cloneNode(true);
 
@@ -334,40 +356,25 @@ function CreateCard(imagePath, title, body) {
     clone.removeChild(clone.querySelector("img"));
   }
     
-  /*let titleNodes = StringToHtml(title);
-  titleNodes.forEach(element => {
-    clone.querySelector(".title").appendChild(element);  
-  });*/
   AddStringHTMLToElement(clone.querySelector(".title"), title);
-  //clone.querySelector(".dropdown-body").appendChild(MultiLineStringToHTML(body));
   MultiLineStringToHTML(clone.querySelector(".dropdown-body"), body);
+
+  if(subBody !== ""){
+    let sub = document.createElement("div");
+    sub.classList.add("dropdown-subBody", "folded");
+    MultiLineStringToHTML(sub, subBody);
+    clone.appendChild(sub);
+  }
+  else{
+    clone.querySelector(".dropdown-body").classList.add("folded");
+  }
+
   return clone;
 }
-
 
 ////////////////////////////////
 //tools ///////////////////////
 //////////////////////////////
-function MultiLineStringToHTML(text) {
-  let html = document.createElement("span");
-  let textArray = text.split("<br>").join('\r\n').split('\r\n').join('\n').split('\n');
-  if (textArray.length == 1) {
-    html.appendChild(document.createTextNode(textArray[0]));
-    return html;
-  }
-
-  for (let index = 0; index < textArray.length; index++) {
-    if (index > 0){
-      html.appendChild(document.createElement("br"));
-    }
-
-    let elements = StringToHtml(textArray[index]);
-    elements.forEach(element => {
-      html.appendChild(element);
-    });
-  }
-  return html;
-}
 function MultiLineStringToHTML(elmnt, text) {
   let textArray = text.split("<br>").join('\r\n').split('\r\n').join('\n').split('\n');
   if (textArray.length == 1) {
@@ -384,110 +391,6 @@ function MultiLineStringToHTML(elmnt, text) {
   }
 }
 
-//create list of elements to be added to an object
-// warning: does not allow for html tags to contain custom tags in their content. EX <i><unity></i> not allowed
-function StringToHtml(text){
-  const tags = ["https://", "<unity>", "<itch>", "<github>"];
-  let elements = [];
-  let textNodeCreated = false;
-
-  while(text.length > 0){
-    let tagIndex  = text.indexOf("<");
-    let linkIndex = text.indexOf(tags[0]);
-  
-    if(tagIndex == -1 && linkIndex == -1){
-      if(textNodeCreated){
-        elements[elements.length - 1].textContent += text;
-      }
-      else{
-        elements.push(document.createTextNode(text));
-      }
-      textNodeCreated = true;
-      break;
-    }
-
-    if(linkIndex > -1 && (linkIndex < tagIndex || tagIndex == -1)){
-      let endIndex = text.indexOf(" ", linkIndex);
-      if(endIndex == -1)
-        endIndex = text.length;
-
-      if(text[endIndex - 1] == '.')
-        endIndex--;
-
-      if(textNodeCreated){
-        elements[elements.length - 1].textContent += text.substring(0, linkIndex);
-      }
-      else{
-        elements.push(document.createTextNode(text.substring(0, linkIndex)));
-      }
-      textNodeCreated = false;
-      let link = document.createElement("a");
-      link.href = text.substring(linkIndex, endIndex);
-      link.innerHTML = link.href;
-      elements.push(link);
-      text = text.replace(text.substring(0, endIndex), '');
-    }
-    else if(tagIndex > -1 && (tagIndex < linkIndex || linkIndex == -1)){
-      let tagEndIndex = text.indexOf(">", tagIndex) + 1;
-      let substring = text.substring(tagIndex, tagEndIndex);
-      let validTag = false;
-
-      for (let i = 1; i < tags.length; i++) {
-        if(substring.indexOf(tags[i]) == 0){
-          validTag = true;
-          if(tagIndex != 0){
-            if(textNodeCreated){
-              elements[elements.length - 1].textContent += text.substring(0, tagIndex);
-            }
-            else{
-              elements.push(document.createTextNode(text.substring(0, tagIndex)));
-            }
-            
-          }
-          textNodeCreated = false;
-          
-          let tag = document.createElement("i");
-          switch(i){
-            case 1:{
-              tag.classList.add("fa-brands");
-              tag.classList.add("fa-unity");
-              break;
-            }
-            case 2:{
-              tag.classList.add("fa-brands");
-              tag.classList.add("fa-itch-io");
-              break;
-            }
-            case 3:{
-              tag.classList.add("fa-brands");
-              tag.classList.add("fa-github");
-              break;
-            }
-          }
-          elements.push(tag);
-          text = text.replace(text.substring(0, tagEndIndex), '');
-          break;
-        }
-      }
-      if(validTag == false){
-        if(textNodeCreated){
-          elements[elements.length - 1].textContent += text.substring(0, tagEndIndex);
-        }
-        else{
-          elements.push(document.createTextNode(text.substring(0, tagEndIndex)));
-        }
-        textNodeCreated = true;
-
-        text = text.replace(text.substring(0, tagEndIndex), '');
-      }
-
-    }
-    else{
-      console.log(`undefined: linkIndex=${linkIndex} tagIndex=${tagIndex} text='${text}'`);
-    }
-  }  
-  return elements;
-}
 //create and add nodes directly as strings to inner html
 function AddStringHTMLToElement(elmnt, text){
   const tags = ["https://", "<unity>", "<itch>", "<github>"];
@@ -502,22 +405,7 @@ function AddStringHTMLToElement(elmnt, text){
       break;
     }
 
-    if(linkIndex > -1 && (linkIndex < tagIndex || tagIndex == -1)){
-      let endIndex = text.indexOf(" ", linkIndex);
-      if(endIndex == -1)
-        endIndex = text.length;
-
-      if(text[endIndex - 1] == '.')
-        endIndex--;
-
-      html += text.substring(0, linkIndex);
-      let link = document.createElement("a");
-      link.href = text.substring(linkIndex, endIndex);
-      link.innerHTML = link.href;
-      html += link.outerHTML;
-      text = text.replace(text.substring(0, endIndex), '');
-    }
-    else if(tagIndex > -1 && (tagIndex < linkIndex || linkIndex == -1)){
+    if(tagIndex > -1 && (tagIndex < linkIndex || linkIndex == -1)){
       let tagEndIndex = text.indexOf(">", tagIndex) + 1;
       let substring = text.substring(tagIndex, tagEndIndex);
       let validTag = false;
@@ -558,6 +446,21 @@ function AddStringHTMLToElement(elmnt, text){
       }
 
     }
+    else if(linkIndex > -1 && (linkIndex < tagIndex || tagIndex == -1)){
+      let endIndex = text.indexOf(" ", linkIndex);
+      if(endIndex == -1)
+        endIndex = text.length;
+
+      if(text[endIndex - 1] == '.')
+        endIndex--;
+
+      html += text.substring(0, linkIndex);
+      let link = document.createElement("a");
+      link.href = text.substring(linkIndex, endIndex);
+      link.innerHTML = link.href;
+      html += link.outerHTML;
+      text = text.replace(text.substring(0, endIndex), '');
+    }
     else{
       console.log(`undefined: linkIndex=${linkIndex} tagIndex=${tagIndex} text='${text}'`);
     }
@@ -566,38 +469,108 @@ function AddStringHTMLToElement(elmnt, text){
   elmnt.insertAdjacentHTML("beforeend", html);
 }
 
-
 //take in doc as text and return array of cards
-function ParseDocToCard(text){
+function ParseDoc(text){
   let startIndex = text.search("<projects>");
   let endIndex = text.length;
   if(text.search("<blogs>") != -1){
-    if(text.search("<blogs>") > startIndex)
+    if(text.search("<blogs>") < endIndex)
       endIndex = text.search("<blogs>");
   }
 
-  let cardsText = text.substring(startIndex, endIndex).split("\r\n");
-  //console.log(cardsText);
+  let textArray = text.substring(startIndex, endIndex).split("\r\n");
   let cardsArray = [];
-  let i = 1;
-  while(i < cardsText.length){
-    if(cardsText[i] === "" || cardsText[i] === "<\\>"){
-      i++;
+  let index = 1;
+  //console.log(textArray);
+  while(index < textArray.length){
+    if(textArray[index] === "" || textArray[index] === "<\\>"){
+      index++;
     }
     else{
-      let img = cardsText[i];
-      let title = cardsText[i + 1];
-      let desc = cardsText[i + 2];
-      let descriptionIndex = 3;
-      while(cardsText[i + descriptionIndex] != "<\\>" && (i + descriptionIndex) < cardsText.length){
-        desc += '\r\n' + cardsText[i + descriptionIndex];
-        descriptionIndex++;
+      //get optional tag, img, title, short desc, desc
+      let hasCategoryTag = false;
+      let hasLongDesc = false;
+      let shortDescIndex = 3;
+      let longDescIndex = shortDescIndex + 1;
+      
+      let category = "";
+      let img = "";
+      let title = "";
+      let shortDesc = "";
+      let longDesc = "";
+
+      if(textArray[index].search('<') == 0 && textArray[index].search('>') > -1){
+        //has a category tag
+        hasCategoryTag = true;
+        category = textArray[index];
+        img = textArray[index + 1];
+        title = textArray[index + 2];
+        shortDesc = textArray[index + 3] + '\r\n';
+        shortDescIndex = 4;
       }
-      i += descriptionIndex;
-      cardsArray.push(CreateCard(img, title, desc));
-      //console.log("img: " + img + "\ntitle: " + title + "\ndesc: " + desc);
+      else{
+        img = textArray[index];
+        title = textArray[index + 1];
+        shortDesc = textArray[index + 2] + '\r\n';
+      }
+      
+      //fill short description
+      while((textArray[index + shortDescIndex] != "<\\>" && textArray[index + shortDescIndex] != "<\\\\>") && (index + shortDescIndex) < textArray.length){
+        if(textArray[index + shortDescIndex] === "" && textArray[index + shortDescIndex + 1] === ""){
+          shortDesc += '\r\n';
+          shortDescIndex += 2;
+        }
+        else{
+          shortDesc += textArray[index + shortDescIndex] + '\r\n';
+          shortDescIndex++;
+        }
+      }
+      shortDesc = (shortDesc.lastIndexOf("\r\n") != -1) ? shortDesc.substring(0, shortDesc.lastIndexOf("\r\n")) : shortDesc;
+
+
+      if(textArray[index + shortDescIndex] === "<\\>"){
+        index += shortDescIndex;
+      }
+      else{
+        hasLongDesc = true;
+        longDescIndex = shortDescIndex + 1;
+        while(textArray[index + longDescIndex] != "<\\>" && (index + longDescIndex) < textArray.length){
+          if(textArray[index + longDescIndex] === "" && textArray[index + longDescIndex + 1] === ""){
+            longDesc += '\r\n';
+            longDescIndex += 2;
+          }
+          else{
+            longDesc += textArray[index + longDescIndex] + '\r\n';
+            longDescIndex++;
+          }
+        }
+        longDesc = (longDesc.lastIndexOf("\r\n") != -1) ? longDesc.substring(0, longDesc.lastIndexOf("\r\n")) : longDesc;
+        index += longDescIndex;
+      }
+      
+      //make card
+      //add to array
+      if(hasLongDesc){
+        if(hasCategoryTag){
+          //console.log("category: " + category + "\nimg: " + img + "\ntitle: " + title + "\ndesc: " + shortDesc + "\nlong desc: " + longDesc);
+        }
+        else{
+          cardsArray.push(CreateCard(img, title, shortDesc, longDesc));
+          //console.log("img: " + img + "\ntitle: " + title + "\ndesc: " + shortDesc + "\nlong desc: " + longDesc);
+        }
+      }
+      else{
+        if(hasCategoryTag){
+          //console.log("category: " + category + "\nimg: " + img + "\ntitle: " + title + "\ndesc: " + shortDesc);
+        }
+        else{
+          cardsArray.push(CreateCard(img, title, shortDesc));
+          //console.log("img: " + img + "\ntitle: " + title + "\ndesc: " + shortDesc);
+        }
+      }
+      
     }
   }
-  
+
   return cardsArray;
 }

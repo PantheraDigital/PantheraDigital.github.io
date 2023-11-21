@@ -37,12 +37,13 @@
   --line-height: 1.1;
   color: dimgray;
   padding-left: 20px;
-  padding-right: calc(20px + 1ch);
+  padding-right: 20px;
+  margin-right: 1ch;
+  margin-bottom: 10px;
   height: fit-content;
   line-height: var(--line-height);
 }
-
-.dropdown-wrapper.folded .dropdown-body{
+.dropdown-body.folded{
   font-size: medium;
   height: calc(calc(1em * var(--line-height)) * 4);
   overflow: hidden;
@@ -51,9 +52,26 @@
   mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
 }
 
-.dropdown-body a:link, .dropdown-body a:visited{
+.dropdown-body a:link, 
+.dropdown-body a:visited{
   color:gainsboro;
 }
 .dropdown-body a:hover{
   color:turquoise;
+}
+
+.dropdown-subBody{
+  color: lightgrey;
+  background-color: grey;
+  padding: 10px 20px 10px 20px;
+  margin: 1ch 1ch 1ch 0;
+  height: fit-content;
+  line-height: 1.1;
+  overflow: hidden;
+  transition: 0.5s;
+}
+.dropdown-subBody.folded{
+  height: 0;
+  margin: 0;
+  padding: 0;
 }
