@@ -7,7 +7,7 @@
 }
 
 .dropdown-wrapper > img{
-  height: calc(calc(calc(1em * 1.1) * 4) + 22.47px);
+  height: calc(calc(calc(1em * 1.1) * 4) + 22.47px);/*((1ch * line height) * number of lines) + title height*/
   width: auto;
   float: right;
 }
@@ -39,8 +39,9 @@
   padding-left: 20px;
   padding-right: 20px;
   margin-right: 1ch;
-  margin-bottom: 10px;
+  margin-bottom: 0.5px;
   height: fit-content;
+  min-height: calc(calc(1em * var(--line-height)) * 4);
   line-height: var(--line-height);
 }
 .dropdown-body.folded{
@@ -64,7 +65,7 @@
   color: lightgrey;
   background-color: grey;
   padding: 10px 20px 10px 20px;
-  margin: 1ch 1ch 1ch 0;
+  margin: calc(10px + 1ch) 1ch 1ch 0;
   height: fit-content;
   line-height: 1.1;
   overflow: hidden;
