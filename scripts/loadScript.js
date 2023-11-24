@@ -47,16 +47,20 @@ for (let i = 0; i < frameArray.length; i++) {
   let closeBtn = frameArray[i].querySelector("[name='close-frame-button']");
   if(closeBtn){
     closeBtn.addEventListener("mouseup", function(e){
-      if(e.button == 0)
-      HideFrame(e.target.closest(".frame"));
+      if(e.button == 0){
+        HideFrame(e.target.closest(".frame"));
+        e.stopPropagation();
+      }
     });  
   }
 
   let fullscreenBtn = frameArray[i].querySelector("[name='fullscreen-frame-button']");
   if(fullscreenBtn){
     fullscreenBtn.addEventListener("mouseup", function(e){
-      if(e.button == 0)
-      FullscreenFrame(e.target.closest(".frame"));
+      if(e.button == 0){
+        FullscreenFrame(e.target.closest(".frame"));
+        e.stopPropagation();
+      }
     });
   }
 }
