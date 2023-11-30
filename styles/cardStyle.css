@@ -67,7 +67,6 @@
   padding: 10px 20px 10px 20px;
   margin: calc(10px + 1ch) 1ch 1ch 0;
   height: fit-content;
-  line-height: 1.1;
   overflow: hidden;
   transition: 0.5s;
 }

@@ -300,18 +300,22 @@ function FoldDropdownText(dropdownWrapper) {
     if(subBody !== null){
       if (subBody.classList.contains("folded")) {
         subBody.classList.remove("folded");
+        subBody.ariaHidden = "false";
         toggle.innerHTML = "-";
       } else {
         subBody.classList.add("folded");
+        subBody.ariaHidden = "true";
         toggle.innerHTML = "+";
       }
     }
     else if(body !== null){
       if (body.classList.contains("folded")) {
         body.classList.remove("folded");
+        body.ariaHidden = "false";
         toggle.innerHTML = "-";
       } else {
         body.classList.add("folded");
+        body.ariaHidden = "true";
         toggle.innerHTML = "+";
       }
     }
@@ -323,15 +327,17 @@ function FoldAllDropdownsInContainer(container){
         for(let i = 0; i < dropdowns.length; i++){
           let body = dropdowns[i].querySelector(".dropdown-body");
           let subBody = dropdowns[i].querySelector(".dropdown-subBody");
-          if(subBody != null){// && !body.classList.contains("folded")){
+          if(subBody != null){
             if(!subBody.classList.contains("folded")){
               subBody.classList.add("folded");
+              subBody.ariaHidden = "true";
               dropdowns[i].getElementsByClassName("toggle")[0].innerHTML = "+";
             }
           }
           else if(body !== null){
             if(!body.classList.contains("folded")){
               body.classList.add("folded");
+              body.ariaHidden = "true";
               dropdowns[i].getElementsByClassName("toggle")[0].innerHTML = "+";
             }
           }
@@ -353,7 +359,7 @@ function CreateCard(imagePath, title, body, subBody = "") {
     } 
   });
 
-  if(imagePath !== "none"){
+  if(imagePath.toLowerCase() !== "none"){
     clone.querySelector("img").src = imagePath;
   }
   else{
@@ -366,11 +372,14 @@ function CreateCard(imagePath, title, body, subBody = "") {
   if(subBody !== ""){
     let sub = document.createElement("div");
     sub.classList.add("dropdown-subBody", "folded");
+    sub.ariaHidden = "true";
     MultiLineStringToHTML(sub, subBody);
     clone.appendChild(sub);
   }
   else{
-    clone.querySelector(".dropdown-body").classList.add("folded");
+    let dorpBody = clone.querySelector(".dropdown-body");
+    dorpBody.classList.add("folded");
+    dorpBody.ariaHidden = "true";
   }
 
   return clone;
@@ -487,7 +496,7 @@ function ParseDoc(text){
   let index = 1;
   //console.log(textArray);
   while(index < textArray.length){
-    if(textArray[index] === "" || textArray[index] === "<\\>"){
+    if(textArray[index] === "" || textArray[index] === "</>"){
       index++;
     }
     else{
@@ -519,7 +528,7 @@ function ParseDoc(text){
       }
       
       //fill short description
-      while((textArray[index + shortDescIndex] != "<\\>" && textArray[index + shortDescIndex] != "<\\\\>") && (index + shortDescIndex) < textArray.length){
+      while((textArray[index + shortDescIndex] != "</>" && textArray[index + shortDescIndex] != "<//>") && (index + shortDescIndex) < textArray.length){
         if(textArray[index + shortDescIndex] === "" && textArray[index + shortDescIndex + 1] === ""){
           shortDesc += '\r\n';
           shortDescIndex += 2;
@@ -532,13 +541,13 @@ function ParseDoc(text){
       shortDesc = (shortDesc.lastIndexOf("\r\n") != -1) ? shortDesc.substring(0, shortDesc.lastIndexOf("\r\n")) : shortDesc;
 
 
-      if(textArray[index + shortDescIndex] === "<\\>"){
+      if(textArray[index + shortDescIndex] === "</>"){
         index += shortDescIndex;
       }
       else{
         hasLongDesc = true;
         longDescIndex = shortDescIndex + 1;
-        while(textArray[index + longDescIndex] != "<\\>" && (index + longDescIndex) < textArray.length){
+        while(textArray[index + longDescIndex] != "</>" && (index + longDescIndex) < textArray.length){
           if(textArray[index + longDescIndex] === "" && textArray[index + longDescIndex + 1] === ""){
             longDesc += '\r\n';
             longDescIndex += 2;
