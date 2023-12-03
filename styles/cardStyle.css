@@ -13,8 +13,10 @@
 }
 
 .dropdown-header{
+  display: inline-block;
   font-size: large;
   font-family: "Fantasy", Copperplate;
+  white-space-collapse: preserve-spaces;
 }
 
 .dropdown-header .title,
@@ -57,7 +59,12 @@
 .dropdown-body a:visited{
   color:gainsboro;
 }
-.dropdown-body a:hover{
+.dropdown-subBody a:link, 
+.dropdown-subBody a:visited{
+  color:black;
+}
+.dropdown-body a:hover,
+.dropdown-subBody a:hover{
   color:turquoise;
 }
 

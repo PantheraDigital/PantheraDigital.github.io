@@ -38,46 +38,55 @@ async function LoadGoogleDoc(){
 
 const frameArray = Array.from(document.getElementsByClassName("frame"));
 for (let i = 0; i < frameArray.length; i++) {
-  frameArray[i].addEventListener("mousedown", function(e){ UpdateFrameZOrder(e.currentTarget); });
+  RegisterSpecificMouseAndTouchEvent(frameArray[i], "mousedown", "touchstart", function(e){ 
+    UpdateFrameZOrder(e.currentTarget); 
+  });
 
   if (frameArray[i].classList.contains("fixed") || frameArray[i].classList.contains("absolute")){
-    dragElement(frameArray[i].getElementsByClassName("frame-header")[0], true);
+    let frameHeader = frameArray[i].getElementsByClassName("frame-header")[0];
+    DragElement(frameArray[i], frameHeader, frameHeader.getElementsByClassName("frame-header-title")[0]);
   }
 
   let closeBtn = frameArray[i].querySelector("[name='close-frame-button']");
   if(closeBtn){
-    closeBtn.addEventListener("mouseup", function(e){
-      if(e.button == 0){
-        HideFrame(e.target.closest(".frame"));
-        e.stopPropagation();
+    RegisterMouseAndTouchEvent(closeBtn, function(e){
+      if(e.type == "mouseup" && e.button != 0){
+        return;
       }
-    });  
+      HideFrame(e.target.closest(".frame"));
+      e.stopPropagation();
+    });
   }
 
   let fullscreenBtn = frameArray[i].querySelector("[name='fullscreen-frame-button']");
   if(fullscreenBtn){
-    fullscreenBtn.addEventListener("mouseup", function(e){
-      if(e.button == 0){
-        FullscreenFrame(e.target.closest(".frame"));
-        e.stopPropagation();
+    RegisterMouseAndTouchEvent(fullscreenBtn, function(e){
+      if(e.type == "mouseup" && e.button != 0){
+        return;
       }
+      let frame = e.target.closest(".frame");
+      FullscreenFrame(frame);
+      UpdateFrameZOrder(frame); 
+      e.stopPropagation();
     });
   }
 }
 
-
-document.getElementById("link-button").addEventListener("click", function(){
+RegisterMouseAndTouchEvent(document.getElementById("link-button"), function(event){
   UpdateFrameZOrder(document.getElementById("links-window"));
   ShowFrame(document.getElementById("links-window"));
+  event.preventDefault();
 });
-document.getElementById("projects-button").addEventListener("click", function(){  
+RegisterMouseAndTouchEvent(document.getElementById("projects-button"), function(event){
   FoldAllDropdownsInContainer(document.getElementById("projects-window"));
   UpdateFrameZOrder(document.getElementById("projects-window"));
   ShowFrame(document.getElementById("projects-window"));
+  event.preventDefault();
 });
-document.getElementById("about-button").addEventListener("click", function(){
+RegisterMouseAndTouchEvent(document.getElementById("about-button"), function(event){
   UpdateFrameZOrder(document.getElementById("about-window"));
   ShowFrame(document.getElementById("about-window"));
+  event.preventDefault();
 });
 
 
@@ -125,48 +134,46 @@ function ShownFramesCount(){
 
 //////////////////////////////////////////
 //Moveable frames/////////////////////////
-function dragElement(elmnt, moveParent = false) {
+function DragElement(elmnt, ...handles){//update to allow bubbling from specific handles/ allow or disallow bubbling for elmnt if no handles
   var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
-  // move the DIV from anywhere inside the DIV:
-  elmnt.onmousedown = dragMouseDown;
-  elmnt.addEventListener("touchstart", dragTouch, passiveSupported ? { passive: false } : false);
-  if (moveParent) {
-    if (!elmnt.parentElement.classList.contains("moveable")) {
-      elmnt.parentElement.classList.add("moveable");
-    }
-  }
-  else {
-    if (!elmnt.classList.contains("moveable")) {
-      elmnt.classList.add("moveable");
-    }
-  }
+  elmnt.classList.add("moveable");
   
-
-  function dragMouseDown(e) {
-    if (e.button == 0) {
-      e.preventDefault();
-
-      if ((moveParent && e.target.parentElement.classList.contains("moveable")) || (!moveParent && e.target.classList.contains("moveable"))) {
-        // get the mouse cursor position at startup:
-        pos3 = e.clientX;
-        pos4 = e.clientY;
-        document.onmouseup = closeDragElement;
-        // call a function whenever the cursor moves:
-        document.onmousemove = elementDrag;
-      }
-    }
+  if(handles.length == 0){
+    // move the DIV from anywhere inside the DIV:
+    elmnt.addEventListener("mousedown", Drag);
+    elmnt.addEventListener("touchstart", Drag, passiveSupported ? { passive: false } : false);
   }
-  function dragTouch(e) {
+  else{
+    //loop through handles and add drag event to them so they move elmnt
+    handles.forEach(element => {
+      element.addEventListener("mousedown", Drag);
+      element.addEventListener("touchstart", Drag, passiveSupported ? { passive: false } : false);
+    });
+  }
+
+  function Drag(e){
     e.preventDefault();
-    if ((moveParent && e.target.parentElement.classList.contains("moveable")) || (!moveParent && e.target.classList.contains("moveable"))) {
+    //compare target and current target to fight bubbling
+    if(e.target.classList !== e.currentTarget.classList || !elmnt.classList.contains("moveable")){
+      return;
+    }
+    
+    if(e.type == "mousedown"){
+      // get the mouse cursor position at startup:
+      pos3 = e.clientX;
+      pos4 = e.clientY;
+      document.onmouseup = closeDragElement;
+      // call a function whenever the cursor moves:
+      document.onmousemove = elementDrag;
+    }
+    else if(e.type == "touchstart"){
       // get the mouse cursor position at startup:
       pos3 = e.changedTouches[0].clientX;
       pos4 = e.changedTouches[0].clientY;
-      
+
       document.addEventListener("touchend", closeDragElement, passiveSupported ? { passive: false } : false);
       document.addEventListener("touchmove", elementDrag, passiveSupported ? { passive: false } : false);
     }
-    
   }
 
   function elementDrag(e) {
@@ -177,24 +184,17 @@ function dragElement(elmnt, moveParent = false) {
     pos3 = (e.clientX || e.changedTouches[0].clientX);
     pos4 = (e.clientY || e.changedTouches[0].clientY);
     
-    
     // set the element's new position:
-    if (moveParent) {
-      elmnt.parentElement.style.top = (elmnt.parentElement.offsetTop - pos2) + "px";
-      elmnt.parentElement.style.left = (elmnt.parentElement.offsetLeft - pos1) + "px";
-    }
-    else {
-      elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
-      elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
-    }
+    elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
+    elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
   }
 
   function closeDragElement() {
     // stop moving when mouse button is released:
     document.onmouseup = null;
     document.onmousemove = null;
-    document.removeEventListener("touchend", closeDragElement);
-    document.removeEventListener("touchmove", elementDrag);
+    document.removeEventListener("touchend", closeDragElement, passiveSupported ? { passive: false } : false);
+    document.removeEventListener("touchmove", elementDrag, passiveSupported ? { passive: false } : false);
   }
 }
 
@@ -221,13 +221,13 @@ function UpdateFrameZOrder(frame) {
 function CreateFixedFrame(header, body, buttons = "") {
   let frame = CreateFrame(header, body, buttons);
   frame.classList.add("fixed");
-  dragElement(frame.getElementsByClassName("frame-header")[0], true);
+  DragElement(frame, frame.getElementsByClassName("frame-header")[0], frame.getElementsByClassName("frame-header-title")[0]);
   return frame;
 }
 function CreateAbsoluteFrame(header, body, buttons = "") {
   let frame = CreateFrame(header, body, buttons);
   frame.querySelector(".frame").classList.add("absolute");
-  dragElement(frame.getElementsByClassName("frame-header")[0], true);
+  DragElement(frame, frame.getElementsByClassName("frame-header")[0], frame.getElementsByClassName("frame-header-title")[0]);
   return frame;
 }
 function CreateFrame(header, body, buttons = "") {
@@ -238,7 +238,7 @@ function CreateFrame(header, body, buttons = "") {
   clone.querySelector(".frame-header-title").append(header);
   clone.querySelector(".frame-body").append(body);
   clone.style.setProperty("z-index", frameArray.length);
-  clone.addEventListener("mousedown", function(e){ UpdateFrameZOrder(e.currentTarget); });
+  RegisterSpecificMouseAndTouchEvent(clone, "mousedown", "touchstart", function(e){ UpdateFrameZOrder(e.currentTarget); });
   AddFrameButton(clone, "close");
 
   let btnList = buttons.split(" ");
@@ -263,9 +263,12 @@ function AddFrameButton(frame, button) {
       btn.name = "close-frame-button";
       btn.classList.add("red-hover");
       btn.innerHTML = "X";
-      btn.addEventListener("mouseup", function(e){
-        if(e.button == 0)
+      RegisterMouseAndTouchEvent(btn, function(e){
+        if(e.type == "mouseup" && e.button != 0){
+          return;
+        }
         HideFrame(e.target.closest(".frame"));
+        e.preventDefault();
       });
       break;
     }
@@ -275,9 +278,12 @@ function AddFrameButton(frame, button) {
       let icon = document.createElement("i");
       icon.classList.add("fa-sharp", "fa-light", "fa-square");
       btn.appendChild(icon);
-      btn.addEventListener("mouseup", function(e){
-        if(e.button == 0)
+      RegisterMouseAndTouchEvent(btn, function(e){
+        if(e.type == "mouseup" && e.button != 0){
+          return;
+        }
         FullscreenFrame(e.target.closest(".frame"));
+        e.preventDefault();
       });
       break;
     }
@@ -348,15 +354,12 @@ function CreateCard(imagePath, title, body, subBody = "") {
   const template = document.querySelector("template");
   const clone = template.content.querySelector(".dropdown-wrapper").cloneNode(true);
 
-  clone.querySelector(".toggle").addEventListener("touchstart", function(e){
+  RegisterMouseAndTouchEvent(clone.querySelector(".toggle"), function(e){
+    if(e.type == "mouseup" && e.button != 0){
+      return;
+    }
     FoldDropdownText(e.target.closest(".dropdown-wrapper"));
     e.preventDefault();
-  });
-  clone.querySelector(".toggle").addEventListener("mouseup", function (e) {
-    if (e.button == 0){
-      FoldDropdownText(e.target.closest(".dropdown-wrapper"));
-      e.preventDefault();
-    } 
   });
 
   if(imagePath.toLowerCase() !== "none"){
@@ -586,4 +589,18 @@ function ParseDoc(text){
   }
 
   return cardsArray;
+}
+
+//
+function RegisterSpecificMouseAndTouchEvent(elmnt, mouseEvent, touchEvent, fnctn){
+  if(elmnt !== null){
+    elmnt.addEventListener(mouseEvent, fnctn);
+    elmnt.addEventListener(touchEvent, fnctn);
+  }
+}
+function RegisterMouseAndTouchEvent(elmnt, fnctn){
+  if(elmnt !== null){
+    elmnt.addEventListener("mouseup", fnctn);
+    elmnt.addEventListener("touchend", fnctn);
+  }
 }
