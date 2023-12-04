@@ -1,33 +1,34 @@
 .dropdown-wrapper {
-  border: inset darkslateblue 4px;
-  height: fit-content;
-  overflow: hidden;
   overflow-wrap: break-word;
-  padding: 0 0 0 1ch;
+  overflow: hidden;
+  height:   fit-content;
+  padding:  0 0 0 1ch;
+
+  border: inset darkslateblue 4px;
 }
 
 .dropdown-wrapper > img{
   height: calc(calc(calc(1em * 1.1) * 4) + 22.47px);/*((1ch * line height) * number of lines) + title height*/
-  width: auto;
-  float: right;
+  width:  auto;
+  float:  right;
 }
 
 .dropdown-header{
-  display: inline-block;
-  font-size: large;
+  display:      inline-block;
+  font-size:    large;
   font-family: "Fantasy", Copperplate;
   white-space-collapse: preserve-spaces;
 }
 
 .dropdown-header .title,
 .dropdown-header .toggle {
-  vertical-align: middle;
   display: inline-block;
+  vertical-align: middle;
   transition: color 0.2s, text-shadow 0.2s;
 }
 .dropdown-header .toggle {
-  font-family: "Lucida Console", monospace;
   width: 20px;
+  font-family: "Lucida Console", monospace;
 }
 .dropdown-header .title:hover,
 .dropdown-header .toggle:hover {
@@ -37,20 +38,23 @@
 
 .dropdown-body {
   --line-height: 1.1;
-  color: dimgray;
-  padding-left: 20px;
-  padding-right: 20px;
-  margin-right: 1ch;
-  margin-bottom: 0.5px;
-  height: fit-content;
-  min-height: calc(calc(1em * var(--line-height)) * 4);
+  
+  height:      fit-content;
+  min-height:  calc(calc(1em * var(--line-height)) * 4);
   line-height: var(--line-height);
+
+  padding-left:  20px;
+  padding-right: 20px;
+  margin-right:  1ch;
+  margin-bottom: 0.5px;
+
+  color: dimgray;
 }
 .dropdown-body.folded{
+  overflow:  hidden;
   font-size: medium;
-  height: calc(calc(1em * var(--line-height)) * 4);
-  overflow: hidden;
-
+  height:    calc(calc(1em * var(--line-height)) * 4);
+  
   -webkit-mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
   mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
 }
@@ -69,12 +73,14 @@
 }
 
 .dropdown-subBody{
+  overflow: hidden;
+  height:   fit-content;
+  padding:  10px 20px 10px 20px;
+  margin:   calc(10px + 1ch) 1ch 1ch 0;
+  
   color: lightgrey;
   background-color: grey;
-  padding: 10px 20px 10px 20px;
-  margin: calc(10px + 1ch) 1ch 1ch 0;
-  height: fit-content;
-  overflow: hidden;
+  
   transition: 0.5s;
 }
 .dropdown-subBody.folded{

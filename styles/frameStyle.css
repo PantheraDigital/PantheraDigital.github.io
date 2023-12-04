@@ -205,12 +205,14 @@
 
 
 .frame p{
-    color: gainsboro;
-    font-family: "Lucida Console", monospace;
-    overflow-wrap: break-word;
-    line-height: 1.4;
+    overflow-wrap:  break-word;
+    font-family:   "Lucida Console", monospace;
+    line-height:    1.4;
+
     padding: 5px 0 0 10px;
-    margin: 0 0 0 5px;
+    margin:  0 0 0 5px;
+
+    color: gainsboro;
 }
 .frame p > a:link, .frame p > a:visited{
     color:gainsboro;
@@ -228,7 +230,7 @@
     .frame{
         --header-height: 38px;
         --button-to-header-gap: 3px;
-        
+
         resize: none !important;
     }
 }

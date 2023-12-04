@@ -134,6 +134,18 @@ function ShownFramesCount(){
 
 //////////////////////////////////////////
 //Moveable frames/////////////////////////
+
+//an element can be moved by clicking and dragging the element if no handles are passed
+// if handles are passed then the element can be moved by dragging those handles
+
+// "bubbling" not supported by handles. all elements must be added as handle even if child of element
+// bubling will happen but if a child element is not a handle and the parent is then dragging the child will not drag the element
+// update
+// DragElement(element, {{handle, false}, {handle, true}})
+// handles with true will bubble
+//  will not check if target == current target in Drag func
+// handles with false will not bubble
+//  target must == current target in Drag func
 function DragElement(elmnt, ...handles){//update to allow bubbling from specific handles/ allow or disallow bubbling for elmnt if no handles
   var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
   elmnt.classList.add("moveable");
