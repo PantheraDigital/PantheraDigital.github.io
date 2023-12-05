@@ -5,6 +5,7 @@
   padding:  0 0 0 1ch;
 
   border: inset darkslateblue 4px;
+  background-color: rgba(255, 255, 255, 0.05);
 }
 
 /*imgs are fit into cards and constrained by height of wrapper to preserve aspect ratio rather than constraining by width*/
@@ -58,7 +59,7 @@
   margin-right:  1ch;
   margin-bottom: 0.5px;
 
-  color: dimgray;
+  color: lightgrey;
 }
 .dropdown-body.folded{
   overflow:  hidden;
@@ -71,11 +72,11 @@
 
 .dropdown-body a:link, 
 .dropdown-body a:visited{
-  color:gainsboro;
+  color:lightblue;
 }
 .dropdown-subBody a:link, 
 .dropdown-subBody a:visited{
-  color:black;
+  color:lightblue;
 }
 .dropdown-body a:hover,
 .dropdown-subBody a:hover{
@@ -89,7 +90,8 @@
   margin:   calc(10px + 1ch) 1ch 1ch 0;
   
   color: lightgrey;
-  background-color: grey;
+  background-color: rgba(255, 255, 255, 0.05);
+  box-shadow: inset 0 0 5px black;
   
   transition: 0.5s;
 }
