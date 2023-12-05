@@ -2,7 +2,10 @@ const hiddenWindowArray = [document.getElementById("links-window"), document.get
 var qrOverlay = document.getElementById("qr-overlay");
 var qrOverlayButton = document.getElementById("qr-button");
 
-document.getElementById("qr-button").addEventListener("click", function(){
+document.getElementById("qr-button").addEventListener("click", function(e){
+    if(e.target.classList !== e.currentTarget.classList){
+        return;
+    }
     if(this.style.backgroundImage == "none"){
         this.style.backgroundImage = "url('./Pics/QR.png')";
         this.style.color = "rgba(255, 255, 255, 0)";
