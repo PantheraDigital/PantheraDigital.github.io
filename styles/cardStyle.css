@@ -7,10 +7,16 @@
   border: inset darkslateblue 4px;
 }
 
-.dropdown-wrapper > img{
-  height: calc(calc(calc(1em * 1.1) * 4) + 22.47px);/*((1ch * line height) * number of lines) + title height*/
-  width:  auto;
+/*imgs are fit into cards and constrained by height of wrapper to preserve aspect ratio rather than constraining by width*/
+.dropdown-wrapper .img-wrapper{
+  height: calc(calc(calc(1em * 1.1) * 4) + 50px);/*((1ch * line height) * number of lines) + (title height + title margins)*/
+  width:  fit-content;
   float:  right;
+}
+.dropdown-wrapper .img-wrapper > img{
+  max-height: 100%;
+  max-width:  100%;
+  width:      auto;
 }
 
 .dropdown-header{
@@ -29,6 +35,10 @@
 .dropdown-header .toggle {
   width: 20px;
   font-family: "Lucida Console", monospace;
+}
+.dropdown-header .title{
+  display: inline-block;
+  margin: 15px 0 10px 0;
 }
 .dropdown-header .title:hover,
 .dropdown-header .toggle:hover {

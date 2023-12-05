@@ -2,6 +2,7 @@ const docID = "1QdR-rhAUXKioBX6O_77ADhYKNA6EaSEQB0xiHqOHGf4";
 const link = `https://docs.google.com/document/d/${docID}/edit?usp=sharing`;
 const apiKey = "AIzaSyBHhqGZRJIo90yIk1K-J86C9PU3whMe8CA";
 
+//https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener#safely_detecting_option_support
 let passiveSupported = false;
 try {
   const options = {
@@ -54,7 +55,6 @@ for (let i = 0; i < frameArray.length; i++) {
         return;
       }
       HideFrame(e.target.closest(".frame"));
-      e.stopPropagation();
     });
   }
 
@@ -66,8 +66,7 @@ for (let i = 0; i < frameArray.length; i++) {
       }
       let frame = e.target.closest(".frame");
       FullscreenFrame(frame);
-      UpdateFrameZOrder(frame); 
-      e.stopPropagation();
+      UpdateFrameZOrder(frame);
     });
   }
 }
@@ -137,52 +136,76 @@ function ShownFramesCount(){
 
 //an element can be moved by clicking and dragging the element if no handles are passed
 // if handles are passed then the element can be moved by dragging those handles
-
-// "bubbling" not supported by handles. all elements must be added as handle even if child of element
-// bubling will happen but if a child element is not a handle and the parent is then dragging the child will not drag the element
-// update
-// DragElement(element, {{handle, false}, {handle, true}})
-// handles with true will bubble
-//  will not check if target == current target in Drag func
-// handles with false will not bubble
-//  target must == current target in Drag func
-function DragElement(elmnt, ...handles){//update to allow bubbling from specific handles/ allow or disallow bubbling for elmnt if no handles
+//
+//bubbling may cause issues in some cases. (when the element has children that you want to block the movement action)
+// because of this The FilterDrag function is used defaultly. To not filter pass handles or the element alone as an object with a property "transparent" set true
+// EX: DragElement(element, {handle: element2, transparent: true}); or DragElement({handle: element, transparent: true});
+function DragElement(elmnt, ...handles){
   var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
-  elmnt.classList.add("moveable");
   
+  //assign the corrent drag function based on passed in object and possible properties
   if(handles.length == 0){
-    // move the DIV from anywhere inside the DIV:
-    elmnt.addEventListener("mousedown", Drag);
-    elmnt.addEventListener("touchstart", Drag, passiveSupported ? { passive: false } : false);
+    if(elmnt.hasOwnProperty("handle") && elmnt.hasOwnProperty("transparent")){
+      elmnt.handle.addEventListener("mousedown", (elmnt.transparent ? Drag : FilterDrag));
+      elmnt.handle.addEventListener("touchstart", (elmnt.transparent ? Drag : FilterDrag), passiveSupported ? { passive: false } : false);
+    }
+    else{
+      elmnt.addEventListener("mousedown", FilterDrag);
+      elmnt.addEventListener("touchstart", FilterDrag, passiveSupported ? { passive: false } : false);
+    }
   }
   else{
     //loop through handles and add drag event to them so they move elmnt
-    handles.forEach(element => {
-      element.addEventListener("mousedown", Drag);
-      element.addEventListener("touchstart", Drag, passiveSupported ? { passive: false } : false);
+    handles.forEach(hndl => {
+      if(hndl.hasOwnProperty("handle")){
+        if(hndl.hasOwnProperty("transparent")){
+          hndl.handle.addEventListener("mousedown", (hndl.transparent ? Drag : FilterDrag));
+          hndl.handle.addEventListener("touchstart", (hndl.transparent ? Drag : FilterDrag), passiveSupported ? { passive: false } : false);
+        }
+        else{
+          hndl.handle.addEventListener("mousedown", FilterDrag);
+          hndl.handle.addEventListener("touchstart", FilterDrag, passiveSupported ? { passive: false } : false);
+        }
+      }
+      else{
+        hndl.addEventListener("mousedown", FilterDrag);
+        hndl.addEventListener("touchstart", FilterDrag, passiveSupported ? { passive: false } : false);
+      }
     });
   }
 
+  if(elmnt.hasOwnProperty("handle")){
+    //properties no longer used so we set elmnt to the element to prevent more checks to determin syntax
+    elmnt = elmnt.handle;
+  }
+  elmnt.classList.add("moveable");
+
+  //only move elmnt if clicking on a handle
+  function FilterDrag(e){
+    //compare target and current target to fight bubbling
+    if(e.target.classList === e.currentTarget.classList){
+      Drag(e);
+    }
+  }
+  
+  //move the elmnt from anywhere inside the elmnt
   function Drag(e){
     e.preventDefault();
-    //compare target and current target to fight bubbling
-    if(e.target.classList !== e.currentTarget.classList || !elmnt.classList.contains("moveable")){
+    if(!elmnt.classList.contains("moveable")){
       return;
     }
     
     if(e.type == "mousedown"){
-      // get the mouse cursor position at startup:
+      //get the mouse cursor position on down
       pos3 = e.clientX;
       pos4 = e.clientY;
-      document.onmouseup = closeDragElement;
-      // call a function whenever the cursor moves:
-      document.onmousemove = elementDrag;
+      document.addEventListener("mouseup", closeDragElement);
+      document.addEventListener("mousemove", elementDrag);
     }
     else if(e.type == "touchstart"){
-      // get the mouse cursor position at startup:
+      //get touch position on start
       pos3 = e.changedTouches[0].clientX;
       pos4 = e.changedTouches[0].clientY;
-
       document.addEventListener("touchend", closeDragElement, passiveSupported ? { passive: false } : false);
       document.addEventListener("touchmove", elementDrag, passiveSupported ? { passive: false } : false);
     }
@@ -190,21 +213,24 @@ function DragElement(elmnt, ...handles){//update to allow bubbling from specific
 
   function elementDrag(e) {
     e.preventDefault();
-    // calculate the new cursor position:
+    if(!elmnt.classList.contains("moveable")){
+      return;
+    }
+    //calculate the cursor position
     pos1 = pos3 - (e.clientX || e.changedTouches[0].clientX);
     pos2 = pos4 - (e.clientY || e.changedTouches[0].clientY);
     pos3 = (e.clientX || e.changedTouches[0].clientX);
     pos4 = (e.clientY || e.changedTouches[0].clientY);
     
-    // set the element's new position:
+    //set the element's new position
     elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
     elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
   }
 
   function closeDragElement() {
-    // stop moving when mouse button is released:
-    document.onmouseup = null;
-    document.onmousemove = null;
+    //stop moving when released
+    document.removeEventListener("mouseup", closeDragElement);
+    document.removeEventListener("mousemove", elementDrag);
     document.removeEventListener("touchend", closeDragElement, passiveSupported ? { passive: false } : false);
     document.removeEventListener("touchmove", elementDrag, passiveSupported ? { passive: false } : false);
   }
@@ -378,7 +404,7 @@ function CreateCard(imagePath, title, body, subBody = "") {
     clone.querySelector("img").src = imagePath;
   }
   else{
-    clone.removeChild(clone.querySelector("img"));
+    clone.removeChild(clone.querySelector(".img-wrapper"));
   }
     
   AddStringHTMLToElement(clone.querySelector(".title"), title);
@@ -603,7 +629,7 @@ function ParseDoc(text){
   return cardsArray;
 }
 
-//
+
 function RegisterSpecificMouseAndTouchEvent(elmnt, mouseEvent, touchEvent, fnctn){
   if(elmnt !== null){
     elmnt.addEventListener(mouseEvent, fnctn);
