@@ -173,7 +173,7 @@
 
     background-color: rgb(60, 60, 60);
     border: outset rgb(43, 43, 43) 2px;
-    transition: 0.4s;
+    transition: 0.2s;
 }
 .frame .frame-header .frame-header-button:active{
     border-style: inset;
@@ -193,7 +193,9 @@
 .project-grid{
     display: flex;
     flex-direction: column;
-    margin: 20px 20px 20px 20px;
+    max-width: 1000px;
+    margin: 20px auto 20px auto;
+    padding: 0 20px 0 20px;
 }
 .project-grid .dropdown-wrapper{
     margin-top: 20PX;
@@ -225,15 +227,11 @@
     .frame p{
         font-size: x-small;
     }
-    .project-grid{
-        margin-right: 10px;
-        margin-left: 10px;
-    }
 }
 @media screen and (max-width: 520px){
     .project-grid{
-        margin-right: 10px;
-        margin-left: 10px;
+        padding-right: 10px;
+        padding-left: 10px;
     }
 }
 @media (pointer:coarse){

@@ -2,6 +2,9 @@ const docID = "1QdR-rhAUXKioBX6O_77ADhYKNA6EaSEQB0xiHqOHGf4";
 const link = `https://docs.google.com/document/d/${docID}/edit?usp=sharing`;
 const apiKey = "AIzaSyBHhqGZRJIo90yIk1K-J86C9PU3whMe8CA";
 
+let urlSearch = window.location.search;
+let urlParams = new URLSearchParams(urlSearch);
+
 //https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener#safely_detecting_option_support
 let passiveSupported = false;
 try {
@@ -19,61 +22,6 @@ try {
 } catch (err) {
   passiveSupported = false;
 }
-
-const frameArray = Array.from(document.getElementsByClassName("frame"));
-for (let i = 0; i < frameArray.length; i++) {
-  RegisterSpecificMouseAndTouchEvent(frameArray[i], "mousedown", "touchstart", function(e){ 
-    UpdateFrameZOrder(e.currentTarget); 
-  });
-
-  if (frameArray[i].classList.contains("fixed") || frameArray[i].classList.contains("absolute")){
-    let frameHeader = frameArray[i].getElementsByClassName("frame-header")[0];
-    DragElement(frameArray[i], frameHeader, frameHeader.getElementsByClassName("frame-header-title")[0]);
-  }
-
-  let closeBtn = frameArray[i].querySelector("[name='close-frame-button']");
-  if(closeBtn){
-    RegisterMouseAndTouchEvent(closeBtn, function(e){
-      e.preventDefault();
-      if(e.type == "mouseup" && e.button != 0){
-        return;
-      }
-      HideFrame(e.target.closest(".frame"));
-    });
-  }
-
-  let fullscreenBtn = frameArray[i].querySelector("[name='fullscreen-frame-button']");
-  if(fullscreenBtn){
-    RegisterMouseAndTouchEvent(fullscreenBtn, function(e){
-      e.preventDefault();
-      if(e.type == "mouseup" && e.button != 0){
-        return;
-      }
-      let frame = e.target.closest(".frame");
-      FullscreenFrame(frame);
-      UpdateFrameZOrder(frame);
-    });
-  }
-}
-
-var qrOverlay = document.getElementById("qr-overlay");
-var qrOverlayButton = document.getElementById("qr-button");
-RegisterMouseAndTouchEvent(qrOverlayButton, function(e){
-    e.preventDefault();
-    if(qrOverlayButton.style.backgroundImage == "none"){
-        qrOverlayButton.style.backgroundImage = "url('./Pics/QR.png')";
-        qrOverlayButton.style.color = "rgba(255, 255, 255, 0)";
-        qrOverlayButton.style.zIndex = 0;
-        qrOverlay.style.display = "none";
-    }
-    else{
-        qrOverlayButton.style.backgroundImage = "none";
-        qrOverlayButton.style.color = "black";
-        qrOverlayButton.style.zIndex = 1001;
-        qrOverlay.style.display = "block";
-    }
-});
-
 
 ////////////////////////////////
 //Load Google Doc contents/////
@@ -200,25 +148,141 @@ function ParseDoc(text) {
   return cardsArray;
 }
 
+
+////////////////////////////////
+//add frame functionality//////
+//////////////////////////////
+const frameArray = Array.from(document.getElementsByClassName("frame"));
+for (let i = 0; i < frameArray.length; i++) {
+  RegisterSpecificMouseAndTouchEvent(frameArray[i], "mousedown", "touchstart", function(e){ 
+    UpdateFrameZOrder(e.currentTarget); 
+  });
+
+  if (frameArray[i].classList.contains("fixed") || frameArray[i].classList.contains("absolute")){
+    let frameHeader = frameArray[i].getElementsByClassName("frame-header")[0];
+    DragElement(frameArray[i], frameHeader, frameHeader.getElementsByClassName("frame-header-title")[0]);
+  }
+
+  let closeBtn = frameArray[i].querySelector("[name='close-frame-button']");
+  if(closeBtn){
+    RegisterMouseAndTouchEvent(closeBtn, function(e){
+      e.preventDefault();
+      if(e.type == "mouseup" && e.button != 0){
+        return;
+      }
+      HideFrame(e.target.closest(".frame"));
+    });
+  }
+
+  let fullscreenBtn = frameArray[i].querySelector("[name='fullscreen-frame-button']");
+  if(fullscreenBtn){
+    RegisterMouseAndTouchEvent(fullscreenBtn, function(e){
+      e.preventDefault();
+      if(e.type == "mouseup" && e.button != 0){
+        return;
+      }
+      let frame = e.target.closest(".frame");
+      ToggleFrameFullscreen(frame);
+      UpdateFrameZOrder(frame);
+    });
+  }
+}
+
+let qrOverlay = document.getElementById("qr-overlay");
+let qrOverlayButton = document.getElementById("qr-button");
+RegisterMouseAndTouchEvent(qrOverlayButton, function(e){
+    e.preventDefault();
+    if(qrOverlayButton.style.backgroundImage == "none"){
+        qrOverlayButton.style.backgroundImage = "url('./Pics/QR.png')";
+        qrOverlayButton.style.color = "rgba(255, 255, 255, 0)";
+        qrOverlayButton.style.zIndex = 0;
+        qrOverlay.style.display = "none";
+    }
+    else{
+        qrOverlayButton.style.backgroundImage = "none";
+        qrOverlayButton.style.color = "black";
+        qrOverlayButton.style.zIndex = 1001;
+        qrOverlay.style.display = "block";
+    }
+});
+
 ////////////////////////////////
 //register menu button events//
 //////////////////////////////
+let aboutBFirstPush = projectsBFirstPush = linkBFirstPush = true;
 RegisterMouseAndTouchEvent(document.getElementById("link-button"), function(event){
-  UpdateFrameZOrder(document.getElementById("links-window"));
-  ShowFrame(document.getElementById("links-window"));
+  let frame = document.getElementById("links-window");
+  
   event.preventDefault();
+  if(event.type == "mouseup" && event.button != 0){
+    return;
+  }
+  if(linkBFirstPush == true){
+    linkBFirstPush = false;
+    SetFrameFullscreen(frame, true);
+  }
+  
+  UpdateFrameZOrder(frame);
+  ShowFrame(frame);
 });
 RegisterMouseAndTouchEvent(document.getElementById("projects-button"), function(event){
-  FoldAllDropdownsInContainer(document.getElementById("projects-window"));
-  UpdateFrameZOrder(document.getElementById("projects-window"));
-  ShowFrame(document.getElementById("projects-window"));
+  let frame = document.getElementById("projects-window");
+  
   event.preventDefault();
+  if(event.type == "mouseup" && event.button != 0){
+    return;
+  }
+  if(projectsBFirstPush == true){
+    projectsBFirstPush = false;
+    SetFrameFullscreen(frame, true);
+  }
+
+  FoldAllDropdownsInContainer(frame);
+  UpdateFrameZOrder(frame);
+  ShowFrame(frame);
 });
 RegisterMouseAndTouchEvent(document.getElementById("about-button"), function(event){
-  UpdateFrameZOrder(document.getElementById("about-window"));
-  ShowFrame(document.getElementById("about-window"));
+  let frame = document.getElementById("about-window");
   event.preventDefault();
+
+  if(event.type == "mouseup" && event.button != 0){
+    return;
+  }
+  if(aboutBFirstPush == true){
+    aboutBFirstPush = false;
+    SetFrameFullscreen(frame, true);
+  }
+  UpdateFrameZOrder(frame);
+  ShowFrame(frame);
 });
+
+//open windows based on url search values
+PreOpenWindow();
+function PreOpenWindow(){
+  let frame = null;
+
+  if(urlParams.has("projects")){
+    frame = document.getElementById("projects-window");
+    SetFrameFullscreen(frame, true);
+    UpdateFrameZOrder(frame);
+    ShowFrame(frame);
+    projectsBFirstPush = false;
+  }
+  if(urlParams.has("about")){
+    frame = document.getElementById("about-window");
+    SetFrameFullscreen(frame, true);
+    UpdateFrameZOrder(frame);
+    ShowFrame(frame);
+    aboutBFirstPush = false;
+  }
+  if(urlParams.has("links")){
+    frame = document.getElementById("links-window");
+    SetFrameFullscreen(frame, true);
+    UpdateFrameZOrder(frame);
+    ShowFrame(frame);
+    linkBFirstPush = false;
+  }
+}
 
 
 
@@ -227,31 +291,48 @@ RegisterMouseAndTouchEvent(document.getElementById("about-button"), function(eve
 //////////////////////////////
 function HideFrame(frame) {
   frame.style.display = "none";
+  
+  //update url to remove frame
+  urlParams.delete(frame.id.split('-')[0]);
+  if(urlParams.size == 0){
+    history.pushState(null, "", window.location.origin);
+  }
+  else{
+    history.pushState(null, "", ("?" + urlParams.toString()));
+  }
 }
 function ShowFrame(frame) {
   frame.style.display = "block";
+
+  //update url to add frame
+  urlParams.set(frame.id.split('-')[0],"");
+  history.pushState(null, "", ("?" + urlParams.toString()));
 }
-function FullscreenFrame(frame) {
-  let btn = frame.querySelector("[name='fullscreen-frame-button']");
+function ToggleFrameFullscreen(frame) {
   if (!frame.classList.contains("fullscreen")) {
+    SetFrameFullscreen(frame, true);
+  }
+  else {
+    SetFrameFullscreen(frame, false);
+  }
+}
+function SetFrameFullscreen(frame, fullscreen){
+  let btn = frame.querySelector("[name='fullscreen-frame-button']");
+  if(fullscreen == true && !frame.classList.contains("fullscreen")){
     frame.classList.add("fullscreen");
-
-    btn.children[0].classList.remove("fa-light", "fa-square");
-    btn.children[0].classList.add("fa-regular", "fa-window-restore", "fa-xs");
-
     if (frame.classList.contains("moveable")) {
       frame.classList.remove("moveable");
     }
+    btn.children[0].classList.remove("fa-light", "fa-square");
+    btn.children[0].classList.add("fa-regular", "fa-window-restore", "fa-xs");
   }
-  else {
+  else if(fullscreen == false && frame.classList.contains("fullscreen")){
     frame.classList.remove("fullscreen");
-
-    btn.children[0].classList.add("fa-light", "fa-square");
-    btn.children[0].classList.remove("fa-regular", "fa-window-restore", "fa-xs");
-
     if (!frame.classList.contains("moveable")) {
       frame.classList.add("moveable");
     }
+    btn.children[0].classList.add("fa-light", "fa-square");
+    btn.children[0].classList.remove("fa-regular", "fa-window-restore", "fa-xs");
   }
 }
 
