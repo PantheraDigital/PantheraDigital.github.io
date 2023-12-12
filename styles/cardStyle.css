@@ -13,6 +13,7 @@
   height: calc(calc(calc(1em * 1.1) * 4) + 50px);/*((1ch * line height) * number of lines) + (title height + title margins)*/
   width:  fit-content;
   float:  right;
+  padding-left: 1ch;
 }
 .dropdown-wrapper .img-wrapper > img{
   max-height: 100%;
@@ -54,16 +55,13 @@
   min-height:  calc(calc(1em * var(--line-height)) * 4);
   line-height: var(--line-height);
 
-  padding-left:  20px;
-  padding-right: 20px;
-  margin-right:  1ch;
-  margin-bottom: 0.5px;
+  padding: 0 20px 0 20px;
+  margin: 0 1ch 0.5px 0;
 
   color: lightgrey;
 }
 .dropdown-body.folded{
   overflow:  hidden;
-  font-size: medium;
   height:    calc(calc(1em * var(--line-height)) * 4);
   
   -webkit-mask-image: linear-gradient(to bottom, black 80%, transparent 100%);

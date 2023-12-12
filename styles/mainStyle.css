@@ -100,26 +100,6 @@ button > i {
 }
 
 
-/*---Headings---*/
-h2{
-    font-size: large;
-    color: gainsboro;
-    margin: 5px 0 5px 10px;
-    font-family: "Lucida Console", monospace;
-}
-h2 > a:link, h2 > a:visited{
-    color:gainsboro;
-}
-h2 > a:hover{
-    color:turquoise;
-}
-@media screen and (max-height: 520px) and (max-width: 520px){
-    h2{
-        font-size: medium;
-    }
-}
-
-
 /*---Scroll Bar---*/
 ::-webkit-scrollbar {
     width: 12px;

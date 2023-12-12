@@ -36,7 +36,9 @@
     <div class="dropdown-wrapper">
         <span class="img-wrapper"><img src="" alt="" onerror="this.onerror=null; this.src='./Pics/PageScreenshot.png'" loading="lazy"></span>
         <div class="dropdown-header"><span class="toggle">+</span><h3 class="title"><!--Title--></h3></div>
-        <div class="dropdown-body"><!--description--></div>
+        <p class="dropdown-body"><!--short description--></p>
+        <p class="dropdown-subBody"><!--description--></p>
+        <ul class="dropdown-tags"></ul>
     </div>
     
     <article class="frame">
@@ -80,15 +82,15 @@
         </div>
     </div>
 
-    <div id="links-window" class="frame fixed" style="display: none;">
+    <article id="links-window" class="frame fixed" style="display: none;">
         <div class="frame-header">
-            <div class="frame-header-title">/Links</div><!--header text-->
+            <h2 class="frame-header-title">/Links</h2><!--header text-->
             <div class="frame-header-button-container">
                 <button type="button" name="close-frame-button" class="frame-header-button red-hover">X</button>
                 <button type="button" name="fullscreen-frame-button" class="frame-header-button cyan-hover icon-button"><i class="fa-sharp fa-light fa-square"></i></button>
             </div><!--header buttons-->
         </div>
-        <div class="frame-body" style="color:white">
+        <div class="frame-body frame-text" style="color:white">
             <p class="hidden-window-text">
                 <i class="fa-regular fa-envelope"></i> <a href="mailto:pantheradigitalonline@gmail.com">pantheradigitalonline@gmail.com</a><br>
                 <i class="fa-brands fa-github"></i> <a href="https://github.com/PantheraDigital?tab=repositories" target="_blank">Github</a><br>
@@ -96,11 +98,11 @@
                 <i class="fa-brands fa-unity"></i> <a href="https://assetstore.unity.com/publishers/57131"  target="_blank">Unity Asset Store Page</a>
             </p>
         </div><!--body-->
-    </div>
+    </article>
 
-    <div id="projects-window" class="frame fixed" style="display: none;">
+    <article id="projects-window" class="frame fixed" style="display: none;">
         <div class="frame-header">
-            <div class="frame-header-title">/Projects</div><!--header text-->
+            <h2 class="frame-header-title">/Projects</h2><!--header text-->
             <div class="frame-header-button-container">
                 <button type="button" name="close-frame-button" class="frame-header-button red-hover">X</button>
                 <button type="button" name="fullscreen-frame-button" class="frame-header-button cyan-hover icon-button"><i class="fa-sharp fa-light fa-square"></i></button>
@@ -109,18 +111,18 @@
         <div class="frame-body" style="color:white">
             <div class="project-grid"></div>
         </div><!--body-->
-    </div>
+    </article>
 
-    <div id="about-window" class="frame fixed" style="display: none;">
+    <article id="about-window" class="frame fixed" style="display: none;">
         <div class="frame-header">
-            <div class="frame-header-title">/About Panthera</div><!--header text-->
+            <h2 class="frame-header-title">/About Panthera</h2><!--header text-->
             <div class="frame-header-button-container">
                 <button type="button" name="close-frame-button" class="frame-header-button red-hover">X</button>
                 <button type="button" name="fullscreen-frame-button" class="frame-header-button cyan-hover icon-button"><i class="fa-sharp fa-light fa-square"></i></button>
             </div><!--header buttons-->
         </div>
-        <div class="frame-body" style="color:white">
-            <h2>From playing games to making games.</h2>
+        <div class="frame-body frame-text" style="color:white">
+            <h3>From playing games to making games.</h3>
             <p class="hidden-window-text">
                 My passion for creation and games has led me to become a programmer. 
                 Programming provides challenges I enjoy overcoming and a way for me to create new things. 
@@ -139,7 +141,7 @@
                 I have also recently (2023) picked up HTML, CSS, and JavaScript to begin learning web development which has allowed me to create this page myself allong with other web projects found in my github repos.<br><br>
             </p>
         </div><!--body-->
-    </div>
+    </article>
 
     <div id="qr-overlay">
         <img src="./Pics/QR.png" alt="A QR code that shares the link to this website">

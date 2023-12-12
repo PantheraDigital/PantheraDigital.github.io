@@ -17,10 +17,10 @@
 .frame{
     --framing-border: 4px;
     --header-height: 28px;
-    --header-content-height: calc(var(--header-height) - calc(var(--header-border-size) * 2));
+    --header-content-height: calc(var(--header-height) - (var(--header-border-size) * 2));
     --header-border-size: 2px;
     --text-to-header-gap: 3px;
-    --button-size: calc(var(--header-content-height) - calc(var(--button-to-header-gap) * 2));
+    --button-size: calc(var(--header-content-height) - (var(--button-to-header-gap) * 2));
     --button-to-header-gap: 1px;
 
     overflow: auto;
@@ -82,9 +82,9 @@
     box-sizing: border-box;
     overflow:   auto;
 
-    width:  calc(100% - calc(var(--framing-border) * 2));
-    height: calc(100% - var(--header-height) - calc(var(--framing-border) * 3));
-    top:    calc(var(--header-height) + calc(var(--framing-border) * 2));
+    width:  calc(100% - (var(--framing-border) * 2));
+    height: calc(100% - var(--header-height) - (var(--framing-border) * 3));
+    top:    calc(var(--header-height) + (var(--framing-border) * 2));
     left:   var(--framing-border);
 
     background-color: rgb(35, 35, 35);
@@ -99,9 +99,9 @@
     flex-direction: row-reverse;
     justify-content: center;
 
-    width:  calc(100% - calc(var(--framing-border) * 2));
-    height: calc(100% - var(--header-height) - calc(var(--framing-border) * 3));
-    top:  calc(var(--header-height) + calc(var(--framing-border) * 2));
+    width:  calc(100% - (var(--framing-border) * 2));
+    height: calc(100% - var(--header-height) - (var(--framing-border) * 3));
+    top:  calc(var(--header-height) + (var(--framing-border) * 2));
     left: var(--framing-border);
 }
 .frame .frame-body-container > .frame-body{
@@ -120,7 +120,7 @@
     overflow:   hidden;
     
     height: var(--header-height);
-    width:  calc(100% - calc(var(--framing-border) * 2));
+    width:  calc(100% - (var(--framing-border) * 2));
     top:    var(--framing-border);
     left:   var(--framing-border);
     
@@ -135,8 +135,12 @@
     left: 7px;
 
     font-family: "Lucida Console", monospace;
-    font-size:   calc(var(--header-content-height) - calc(var(--text-to-header-gap) * 2));
-    line-height: calc(var(--header-content-height));
+    font-size:   calc(var(--header-content-height) - (var(--text-to-header-gap) * 2));
+    line-height: var(--header-content-height);
+    font-weight: normal;
+
+    margin: 0;
+    padding: 0;
     
     color: white;
     text-shadow: 1px 1px 2px black;
@@ -206,7 +210,7 @@
 
 
 
-.frame p{
+.frame-text p{
     overflow-wrap:  break-word;
     font-family:   "Lucida Console", monospace;
     line-height:    1.4;
@@ -216,16 +220,34 @@
 
     color: gainsboro;
 }
-.frame p > a:link, .frame p > a:visited{
+.frame-text p > a:link, .frame-text p > a:visited{
     color:gainsboro;
 }
-.frame p > a:hover{
+.frame-text p > a:hover{
     color:turquoise;
 }
 
+/*---Headings---*/
+.frame-text h3{
+    font-size: large;
+    color: gainsboro;
+    margin: 5px 0 5px 10px;
+    font-family: "Lucida Console", monospace;
+}
+.frame-text h3 > a:link, .frame-text h3 > a:visited{
+    color:gainsboro;
+}
+.frame-text h3 > a:hover{
+    color:turquoise;
+}
+
+
 @media screen and (max-height: 520px) and (max-width: 520px){
-    .frame p{
+    .frame-text p{
         font-size: x-small;
+    }
+    .frame-text h3{
+        font-size: medium;
     }
 }
 @media screen and (max-width: 520px){

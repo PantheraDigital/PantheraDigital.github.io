@@ -44,11 +44,11 @@ async function LoadGoogleDoc(){
 }
 //take in doc as text and return array of cards
 function ParseDoc(text) {
-  let startIndex = text.search("<projects>");
+  let startIndex = text.indexOf("<projects>");
   let endIndex = text.length;
-  if (text.search("<blogs>") != -1) {
-    if (text.search("<blogs>") < endIndex)
-      endIndex = text.search("<blogs>");
+  if (text.indexOf("<blogs>") != -1) {
+    if (text.indexOf("<blogs>") < endIndex)
+      endIndex = text.indexOf("<blogs>");
   }
 
   let textArray = text.substring(startIndex, endIndex).split("\r\n");
@@ -72,7 +72,7 @@ function ParseDoc(text) {
       let shortDesc = "";
       let longDesc = "";
 
-      if (textArray[index].search('<') == 0 && textArray[index].search('>') > -1) {
+      if (textArray[index].indexOf('<') == 0 && textArray[index].indexOf('>') > -1) {
         //has a category tag
         hasCategoryTag = true;
         category = textArray[index];
@@ -125,6 +125,7 @@ function ParseDoc(text) {
       //add to array
       if (hasLongDesc) {
         if (hasCategoryTag) {
+          cardsArray.push(CreateCard(img, title, shortDesc, longDesc));
           //console.log("category: " + category + "\nimg: " + img + "\ntitle: " + title + "\ndesc: " + shortDesc + "\nlong desc: " + longDesc);
         }
         else {
@@ -134,6 +135,7 @@ function ParseDoc(text) {
       }
       else {
         if (hasCategoryTag) {
+          cardsArray.push(CreateCard(img, title, shortDesc));
           //console.log("category: " + category + "\nimg: " + img + "\ntitle: " + title + "\ndesc: " + shortDesc);
         }
         else {
@@ -209,7 +211,7 @@ RegisterMouseAndTouchEvent(qrOverlayButton, function(e){
 ////////////////////////////////
 //register menu button events//
 //////////////////////////////
-let aboutBFirstPush = projectsBFirstPush = linkBFirstPush = true;
+let aboutBFirstPush = projectsBFirstPush = linkBFirstPush = window.matchMedia("(pointer: coarse)").matches;
 RegisterMouseAndTouchEvent(document.getElementById("link-button"), function(event){
   let frame = document.getElementById("links-window");
   
@@ -263,21 +265,21 @@ function PreOpenWindow(){
 
   if(urlParams.has("projects")){
     frame = document.getElementById("projects-window");
-    SetFrameFullscreen(frame, true);
+    SetFrameFullscreen(frame, projectsBFirstPush);
     UpdateFrameZOrder(frame);
     ShowFrame(frame);
     projectsBFirstPush = false;
   }
   if(urlParams.has("about")){
     frame = document.getElementById("about-window");
-    SetFrameFullscreen(frame, true);
+    SetFrameFullscreen(frame, aboutBFirstPush);
     UpdateFrameZOrder(frame);
     ShowFrame(frame);
     aboutBFirstPush = false;
   }
   if(urlParams.has("links")){
     frame = document.getElementById("links-window");
-    SetFrameFullscreen(frame, true);
+    SetFrameFullscreen(frame, linkBFirstPush);
     UpdateFrameZOrder(frame);
     ShowFrame(frame);
     linkBFirstPush = false;
@@ -527,7 +529,7 @@ function FoldAllDropdownsInContainer(container) {
     }
   }
 }
-function CreateCard(imagePath, title, body, subBody = "") {
+function CreateCard(imagePath, title, body, subBody = "", tags = "") {
   const template = document.querySelector("template");
   const clone = template.content.querySelector(".dropdown-wrapper").cloneNode(true);
 
@@ -550,16 +552,20 @@ function CreateCard(imagePath, title, body, subBody = "") {
   MultiLineStringToHTML(clone.querySelector(".dropdown-body"), body);
 
   if (subBody !== "") {
-    let sub = document.createElement("div");
-    sub.classList.add("dropdown-subBody", "folded");
+    let sub = clone.querySelector(".dropdown-subBody");
+    sub.classList.add("folded");
     sub.ariaHidden = "true";
     MultiLineStringToHTML(sub, subBody);
-    clone.appendChild(sub);
   }
   else {
     let dorpBody = clone.querySelector(".dropdown-body");
     dorpBody.classList.add("folded");
     dorpBody.ariaHidden = "true";
+    clone.removeChild(clone.querySelector(".dropdown-subBody"));
+  }
+
+  if(tags === ""){
+    clone.removeChild(clone.querySelector(".dropdown-tags"));
   }
 
   return clone;
