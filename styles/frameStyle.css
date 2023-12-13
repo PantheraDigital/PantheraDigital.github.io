@@ -44,8 +44,8 @@
     left: 50%;
     transform: translate(-50%, -50%);
 
-    height: min(500px, calc(100% - 20px)) ;
-    width:  min(800px, calc(100% - 20px)) ;
+    height: min(800px, calc(100% - 20px)) ;
+    width:  min(1000px, calc(100% - 20px)) ;
     min-width:  130px;
     min-height: 130px;
 }
