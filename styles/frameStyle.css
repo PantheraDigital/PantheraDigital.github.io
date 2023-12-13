@@ -194,22 +194,6 @@
 }
 
 
-.project-grid{
-    display: flex;
-    flex-direction: column;
-    max-width: 1000px;
-    margin: 20px auto 20px auto;
-    padding: 0 20px 0 20px;
-}
-.project-grid .dropdown-wrapper{
-    margin-top: 20PX;
-}
-.project-grid .dropdown-wrapper:first-child{
-    margin-top: 0PX;
-}
-
-
-
 .frame-text p{
     overflow-wrap:  break-word;
     font-family:   "Lucida Console", monospace;
@@ -220,7 +204,8 @@
 
     color: gainsboro;
 }
-.frame-text p > a:link, .frame-text p > a:visited{
+.frame-text p > a:link, 
+.frame-text p > a:visited{
     color:gainsboro;
 }
 .frame-text p > a:hover{
@@ -234,7 +219,8 @@
     margin: 5px 0 5px 10px;
     font-family: "Lucida Console", monospace;
 }
-.frame-text h3 > a:link, .frame-text h3 > a:visited{
+.frame-text h3 > a:link, 
+.frame-text h3 > a:visited{
     color:gainsboro;
 }
 .frame-text h3 > a:hover{

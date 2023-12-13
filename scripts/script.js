@@ -33,8 +33,12 @@ async function LoadGoogleDoc(){
         return res.text();
     }).then(function(text) {
       let cards = ParseDoc(text);
+      let cardList = document.getElementById("projects-window").querySelector(".project-grid");
       cards.forEach(element => {
-        document.getElementById("projects-window").querySelector(".project-grid").appendChild(element);
+        let item = document.createElement("li");
+        item.appendChild(element);
+        item.id = "project_" + element.querySelector(".title").textContent.replaceAll(' ', '-');
+        cardList.appendChild(item);
       });
     }).catch(function(e) {
         let card = CreateCard("none", "Error", e.toString());
@@ -125,7 +129,7 @@ function ParseDoc(text) {
       //add to array
       if (hasLongDesc) {
         if (hasCategoryTag) {
-          cardsArray.push(CreateCard(img, title, shortDesc, longDesc));
+          cardsArray.push(CreateCard(img, title, shortDesc, longDesc, category));
           //console.log("category: " + category + "\nimg: " + img + "\ntitle: " + title + "\ndesc: " + shortDesc + "\nlong desc: " + longDesc);
         }
         else {
@@ -135,7 +139,7 @@ function ParseDoc(text) {
       }
       else {
         if (hasCategoryTag) {
-          cardsArray.push(CreateCard(img, title, shortDesc));
+          cardsArray.push(CreateCard(img, title, shortDesc, category));
           //console.log("category: " + category + "\nimg: " + img + "\ntitle: " + title + "\ndesc: " + shortDesc);
         }
         else {
@@ -487,10 +491,12 @@ function FoldDropdownText(dropdownWrapper) {
         subBody.classList.remove("folded");
         subBody.ariaHidden = "false";
         toggle.innerHTML = "-";
+        return false;
       } else {
         subBody.classList.add("folded");
         subBody.ariaHidden = "true";
         toggle.innerHTML = "+";
+        return true;
       }
     }
     else if (body !== null) {
@@ -498,13 +504,16 @@ function FoldDropdownText(dropdownWrapper) {
         body.classList.remove("folded");
         body.ariaHidden = "false";
         toggle.innerHTML = "-";
+        return false;
       } else {
         body.classList.add("folded");
         body.ariaHidden = "true";
         toggle.innerHTML = "+";
+        return true;
       }
     }
   }
+  return false;
 }
 function FoldAllDropdownsInContainer(container) {
   let dropdowns = container.getElementsByClassName("dropdown-wrapper");
@@ -529,7 +538,7 @@ function FoldAllDropdownsInContainer(container) {
     }
   }
 }
-function CreateCard(imagePath, title, body, subBody = "", tags = "") {
+function CreateCard(imagePath, title, body, subBody = "", category = "") {
   const template = document.querySelector("template");
   const clone = template.content.querySelector(".dropdown-wrapper").cloneNode(true);
 
@@ -537,7 +546,9 @@ function CreateCard(imagePath, title, body, subBody = "", tags = "") {
     if (e.type == "mouseup" && e.button != 0) {
       return;
     }
-    FoldDropdownText(e.target.closest(".dropdown-wrapper"));
+    if(!FoldDropdownText(e.target.closest(".dropdown-wrapper"))){
+      e.target.closest(".dropdown-wrapper").scrollIntoView();
+    }
     e.preventDefault();
   });
 
@@ -549,6 +560,8 @@ function CreateCard(imagePath, title, body, subBody = "", tags = "") {
   }
 
   AddStringHTMLToElement(clone.querySelector(".title"), title);
+  clone.querySelector(".toggle").href = "#project_" + title.replaceAll(' ', '-');
+  
   MultiLineStringToHTML(clone.querySelector(".dropdown-body"), body);
 
   if (subBody !== "") {
@@ -564,8 +577,8 @@ function CreateCard(imagePath, title, body, subBody = "", tags = "") {
     clone.removeChild(clone.querySelector(".dropdown-subBody"));
   }
 
-  if(tags === ""){
-    clone.removeChild(clone.querySelector(".dropdown-tags"));
+  if(category !== ""){
+    clone.dataset.category = category;
   }
 
   return clone;

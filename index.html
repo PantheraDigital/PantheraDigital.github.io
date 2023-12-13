@@ -33,12 +33,11 @@
     </head>
 <body>
     <template>
-    <div class="dropdown-wrapper">
+    <div class="dropdown-wrapper" data-category="none">
         <span class="img-wrapper"><img src="" alt="" onerror="this.onerror=null; this.src='./Pics/PageScreenshot.png'" loading="lazy"></span>
-        <div class="dropdown-header"><span class="toggle">+</span><h3 class="title"><!--Title--></h3></div>
+        <div class="dropdown-header"><a class="toggle">+</a><h3 class="title"><!--Title--></h3></div>
         <p class="dropdown-body"><!--short description--></p>
         <p class="dropdown-subBody"><!--description--></p>
-        <ul class="dropdown-tags"></ul>
     </div>
     
     <article class="frame">
@@ -109,7 +108,7 @@
             </div><!--header buttons-->
         </div>
         <div class="frame-body" style="color:white">
-            <div class="project-grid"></div>
+            <ul class="project-grid"></ul>
         </div><!--body-->
     </article>
 
