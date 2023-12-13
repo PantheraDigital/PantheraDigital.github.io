@@ -21,40 +21,40 @@
   width:      auto;
 }
 
+/*get rid of default a styling*/
+.dropdown-header, 
+.dropdown-header:hover, 
+.dropdown-header:focus, 
+.dropdown-header:active {
+  text-decoration: none;
+  color: inherit;
+}
+
 .dropdown-header{
   display:      inline-block;
   font-size:    large;
   font-family: "Fantasy", Copperplate;
   white-space-collapse: preserve-spaces;
+  transition: color 0.2s, text-shadow 0.2s;
 }
-
-.dropdown-header .toggle, 
-.dropdown-header .toggle:hover, 
-.dropdown-header .toggle:focus, 
-.dropdown-header .toggle:active {
-  text-decoration: none;
-  color: inherit;
+.dropdown-header:hover {
+  color: lightcyan;
+  text-shadow: 0 0 4px cyan;
 }
 
 .dropdown-header .title,
 .dropdown-header .toggle {
   display: inline-block;
   vertical-align: middle;
-  transition: color 0.2s, text-shadow 0.2s;
 }
 .dropdown-header .toggle {
   width: 20px;
   font-family: "Lucida Console", monospace;
 }
 .dropdown-header .title{
-  display: inline-block;
   margin: 15px 0 10px 0;
 }
-.dropdown-header .title:hover,
-.dropdown-header .toggle:hover {
-  color: lightcyan;
-  text-shadow: 0 0 4px cyan;
-}
+
 
 .dropdown-body {
   --line-height: 1.1;

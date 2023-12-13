@@ -329,16 +329,16 @@ function SetFrameFullscreen(frame, fullscreen){
     if (frame.classList.contains("moveable")) {
       frame.classList.remove("moveable");
     }
-    btn.children[0].classList.remove("fa-light", "fa-square");
-    btn.children[0].classList.add("fa-regular", "fa-window-restore", "fa-xs");
+    btn.children[0].classList.remove("fa-plus");
+    btn.children[0].classList.add("fa-minus");
   }
   else if(fullscreen == false && frame.classList.contains("fullscreen")){
     frame.classList.remove("fullscreen");
     if (!frame.classList.contains("moveable")) {
       frame.classList.add("moveable");
     }
-    btn.children[0].classList.add("fa-light", "fa-square");
-    btn.children[0].classList.remove("fa-regular", "fa-window-restore", "fa-xs");
+    btn.children[0].classList.add("fa-plus");
+    btn.children[0].classList.remove("fa-minus");
   }
 }
 
@@ -542,7 +542,7 @@ function CreateCard(imagePath, title, body, subBody = "", category = "") {
   const template = document.querySelector("template");
   const clone = template.content.querySelector(".dropdown-wrapper").cloneNode(true);
 
-  RegisterMouseAndTouchEvent(clone.querySelector(".toggle"), function (e) {
+  RegisterMouseAndTouchEvent(clone.querySelector(".dropdown-header"), function (e) {
     if (e.type == "mouseup" && e.button != 0) {
       return;
     }
@@ -560,8 +560,8 @@ function CreateCard(imagePath, title, body, subBody = "", category = "") {
   }
 
   AddStringHTMLToElement(clone.querySelector(".title"), title);
-  clone.querySelector(".toggle").href = "#project_" + title.replaceAll(' ', '-');
-  
+  clone.querySelector(".dropdown-header").href = "#project_" + title.replaceAll(' ', '-');
+
   MultiLineStringToHTML(clone.querySelector(".dropdown-body"), body);
 
   if (subBody !== "") {
