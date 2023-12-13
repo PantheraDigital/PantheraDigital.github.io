@@ -46,13 +46,11 @@
 .dropdown-header .toggle {
   display: inline-block;
   vertical-align: middle;
+  margin: 15px 0 10px 0;
 }
 .dropdown-header .toggle {
   width: 20px;
   font-family: "Lucida Console", monospace;
-}
-.dropdown-header .title{
-  margin: 15px 0 10px 0;
 }
 
 
@@ -114,11 +112,17 @@
   flex-direction: column;
   max-width: 1000px;
   margin: 20px auto 20px auto;
-  padding: 0 20px 0 20px;
+  padding: 0 10px 0 10px;
 }
 .project-grid li{
   margin-top: 20PX;
 }
 .project-grid li:first-child{
   margin-top: 0PX;
+}
+@media screen and (max-width: 520px){
+  .project-grid{
+      padding-right: 10px;
+      padding-left: 10px;
+  }
 }

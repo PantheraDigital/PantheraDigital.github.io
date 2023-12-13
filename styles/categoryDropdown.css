@@ -1,0 +1,35 @@
+.category-dropdown {
+    overflow-wrap: break-word;
+    overflow: hidden;
+    height: fit-content;
+    padding: 0 2ch 2ch 2ch;
+
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+.category-dropdown .body{
+    overflow: hidden;
+    height:   fit-content;
+    
+    transition: 0.5s;
+}
+.category-dropdown .body.folded{
+    max-height: 0;
+}
+
+
+.category-dropdown .project-list{
+    display: flex;
+    list-style-type: none;
+    flex-direction: column;
+    max-width: 1000px;
+    margin: 0 auto 0 auto;
+    padding: 0;
+}
+
+.category-dropdown .project-list li{
+    margin-top: 20PX;
+}
+.category-dropdown .project-list li:first-child{
+    margin-top: 0PX;
+}

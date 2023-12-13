@@ -34,16 +34,55 @@ async function LoadGoogleDoc(){
     }).then(function(text) {
       let cards = ParseDoc(text);
       let cardList = document.getElementById("projects-window").querySelector(".project-grid");
+      let categories = [];
       cards.forEach(element => {
-        let item = document.createElement("li");
-        item.appendChild(element);
-        item.id = "project_" + element.querySelector(".title").textContent.replaceAll(' ', '-');
-        cardList.appendChild(item);
+        let category = element.dataset.category;
+        if(category.toLowerCase() === "none" || category.toLowerCase() === "" || category === undefined){
+          let item = document.createElement("li");
+          item.appendChild(element);
+          item.id = "project_" + element.querySelector(".title").textContent.replaceAll(' ', '-');
+          if(categories.length == 0){
+            cardList.appendChild(item);
+          }
+          else{
+            cardList.insertBefore(item, cardList.querySelector("#category_" + categories[0]));
+          }
+        }
+        else{
+          category = category.substring(1, element.dataset.category.length - 1);
+          if(!categories.includes(category)){
+            const template = document.querySelector("template");
+            const clone = template.content.querySelector(".category-dropdown").cloneNode(true);
+            let item = document.createElement("li");
+
+            clone.querySelector(".title").textContent = category;
+            item.appendChild(clone);
+            item.id = "category_" + category;
+            cardList.appendChild(item);
+            categories.push(category);
+
+            RegisterMouseAndTouchEvent(clone.querySelector(".dropdown-header"), function (e) {
+              if (e.type == "mouseup" && e.button != 0) {
+                return;
+              }
+              if(!FoldDropdownText(e.target.closest(".category-dropdown"), "dropdown-header", "body")){
+                e.target.closest(".category-dropdown").scrollIntoView();
+              }
+              e.preventDefault();
+            });
+          }
+
+          let categoryDropdown = cardList.querySelector("#category_" + category).querySelector(".project-list");
+          let item = document.createElement("li");
+          item.appendChild(element);
+          item.id = "project_" + element.querySelector(".title").textContent.replaceAll(' ', '-');
+          categoryDropdown.appendChild(item);
+        }
+
       });
     }).catch(function(e) {
         let card = CreateCard("none", "Error", e.toString());
         document.getElementById("projects-window").querySelector(".project-grid").appendChild(card);
-        console.log(e);
     });
 }
 //take in doc as text and return array of cards
@@ -76,18 +115,18 @@ function ParseDoc(text) {
       let shortDesc = "";
       let longDesc = "";
 
-      if (textArray[index].indexOf('<') == 0 && textArray[index].indexOf('>') > -1) {
+      if (textArray[index + 1].indexOf('<') == 0 && textArray[index + 1].indexOf('>') > -1) {
         //has a category tag
         hasCategoryTag = true;
-        category = textArray[index];
-        img = textArray[index + 1];
-        title = textArray[index + 2];
+        title = textArray[index];
+        category = textArray[index + 1];
+        img = textArray[index + 2];
         shortDesc = textArray[index + 3] + '\r\n';
         shortDescIndex = 4;
       }
       else {
-        img = textArray[index];
-        title = textArray[index + 1];
+        title = textArray[index];
+        img = textArray[index + 1];
         shortDesc = textArray[index + 2] + '\r\n';
       }
 
@@ -479,14 +518,14 @@ function DragElement(elmnt, ...handles) {
 ////////////////////////////////
 //Project Cards////////////////
 //////////////////////////////
-function FoldDropdownText(dropdownWrapper) {
-  let header = dropdownWrapper.getElementsByClassName("dropdown-header")[0];
-  let body = header.parentElement.querySelector(".dropdown-body");
-  let subBody = header.parentElement.querySelector(".dropdown-subBody");
+function FoldDropdownText(dropdownWrapper, headerClass, bodyClass, subBodyClass = "") {
+  let header = headerClass ? dropdownWrapper.getElementsByClassName(headerClass)[0] : undefined;
+  let body = bodyClass ? header.parentElement.querySelector("." + bodyClass) : undefined;
+  let subBody = (subBodyClass != "") ? header.parentElement.querySelector("." + subBodyClass) : undefined;
   let toggle = header.getElementsByClassName("toggle")[0];
 
-  if (toggle !== null) {
-    if (subBody !== null) {
+  if (toggle) {
+    if (subBody) {
       if (subBody.classList.contains("folded")) {
         subBody.classList.remove("folded");
         subBody.ariaHidden = "false";
@@ -499,7 +538,7 @@ function FoldDropdownText(dropdownWrapper) {
         return true;
       }
     }
-    else if (body !== null) {
+    else if (body) {
       if (body.classList.contains("folded")) {
         body.classList.remove("folded");
         body.ariaHidden = "false";
@@ -546,7 +585,7 @@ function CreateCard(imagePath, title, body, subBody = "", category = "") {
     if (e.type == "mouseup" && e.button != 0) {
       return;
     }
-    if(!FoldDropdownText(e.target.closest(".dropdown-wrapper"))){
+    if(!FoldDropdownText(e.target.closest(".dropdown-wrapper"), "dropdown-header", "dropdown-body", "dropdown-subBody")){
       e.target.closest(".dropdown-wrapper").scrollIntoView();
     }
     e.preventDefault();

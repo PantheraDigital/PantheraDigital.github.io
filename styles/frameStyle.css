@@ -236,12 +236,6 @@
         font-size: medium;
     }
 }
-@media screen and (max-width: 520px){
-    .project-grid{
-        padding-right: 10px;
-        padding-left: 10px;
-    }
-}
 @media (pointer:coarse){
     .frame{
         --header-height: 38px;

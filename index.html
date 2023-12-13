@@ -25,6 +25,7 @@
         <link rel="stylesheet" href="styles/mainStyle.css" />
         <link rel="stylesheet" href="styles/cardStyle.css" />
         <link rel="stylesheet" href="styles/frameStyle.css" />
+        <link rel="stylesheet" href="styles/categoryDropdown.css" />
 
         <link rel="stylesheet" href="Logo/style.css" />
         <link rel="stylesheet" href="WebBackground/style.css" />
@@ -34,8 +35,8 @@
 <body>
     <template>
     <div class="category-dropdown">
-        <div class="header"><a class="toggle">+</a><h3 class="title"><!--title--></h3></div>
-        <div class="body"><!--body--></div>
+        <div class="dropdown-header"><a class="toggle">-</a><h3 class="title"><!--title--></h3></div>
+        <div class="body"><!--body--><ul class="project-list"></ul></div>
     </div>
 
     <div class="dropdown-wrapper" data-category="none">
@@ -66,7 +67,6 @@
         </ul>
     </div>
     
-
     <div id="main-block">
         <div id="logo-container">
             <div class="header-w-buttons rotating-border">
