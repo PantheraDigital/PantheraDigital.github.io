@@ -5,6 +5,8 @@ const apiKey = "AIzaSyBHhqGZRJIo90yIk1K-J86C9PU3whMe8CA";
 let urlSearch = window.location.search;
 let urlParams = new URLSearchParams(urlSearch);
 
+const projectDataArray = [];
+
 //https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener#safely_detecting_option_support
 let passiveSupported = false;
 try {
@@ -32,61 +34,49 @@ async function LoadGoogleDoc(){
     .then(function(res) {
         return res.text();
     }).then(function(text) {
-      let cards = ParseDoc(text);
-      let cardList = document.getElementById("projects-window").querySelector(".project-grid");
-      let categories = [];
-      cards.forEach(element => {
-        let category = element.dataset.category;
-        if(category.toLowerCase() === "none" || category.toLowerCase() === "" || category === undefined){
-          let item = document.createElement("li");
-          item.appendChild(element);
-          item.id = "project_" + element.querySelector(".title").textContent.replaceAll(' ', '-');
-          if(categories.length == 0){
-            cardList.appendChild(item);
+      let categoriesArray = ParseDocProjects(text);
+      let projectGrid = document.getElementById("projects-window").querySelector(".project-grid");
+      categoriesArray.forEach(cat => {
+        const template = document.querySelector("template");
+        const clone = template.content.querySelector(".category-dropdown").cloneNode(true);
+        let item = document.createElement("li");
+
+        clone.querySelector(".title").textContent = cat;
+        item.appendChild(clone);
+        item.id = "category_" + cat;
+        projectGrid.appendChild(item);
+
+        RegisterMouseAndTouchEvent(clone.querySelector(".dropdown-header"), function (e) {
+          if (e.type == "mouseup" && e.button != 0) {
+            return;
           }
-          else{
-            cardList.insertBefore(item, cardList.querySelector("#category_" + categories[0]));
+          if(!FoldDropdownText(e.target.closest(".category-dropdown"), "dropdown-header", "body")){
+            e.target.closest(".category-dropdown").scrollIntoView();
           }
+          e.preventDefault();
+        });
+      });
+
+      projectDataArray.forEach(object =>{
+        let card = CreateCard(object.img, object.title, object.shortDesc, object.longDesc, object.category);
+        let item = document.createElement("li");
+        item.appendChild(card);
+        item.id = "project_" + object.title.replaceAll(' ', '-');
+        if(object.category){
+          projectGrid.querySelector("#category_" + object.category).querySelector(".project-list").appendChild(item);
         }
         else{
-          category = category.substring(1, element.dataset.category.length - 1);
-          if(!categories.includes(category)){
-            const template = document.querySelector("template");
-            const clone = template.content.querySelector(".category-dropdown").cloneNode(true);
-            let item = document.createElement("li");
-
-            clone.querySelector(".title").textContent = category;
-            item.appendChild(clone);
-            item.id = "category_" + category;
-            cardList.appendChild(item);
-            categories.push(category);
-
-            RegisterMouseAndTouchEvent(clone.querySelector(".dropdown-header"), function (e) {
-              if (e.type == "mouseup" && e.button != 0) {
-                return;
-              }
-              if(!FoldDropdownText(e.target.closest(".category-dropdown"), "dropdown-header", "body")){
-                e.target.closest(".category-dropdown").scrollIntoView();
-              }
-              e.preventDefault();
-            });
-          }
-
-          let categoryDropdown = cardList.querySelector("#category_" + category).querySelector(".project-list");
-          let item = document.createElement("li");
-          item.appendChild(element);
-          item.id = "project_" + element.querySelector(".title").textContent.replaceAll(' ', '-');
-          categoryDropdown.appendChild(item);
+          projectGrid.insertBefore(item, projectGrid.querySelector("#category_" + categoriesArray[0]));
         }
-
       });
+
     }).catch(function(e) {
         let card = CreateCard("none", "Error", e.toString());
         document.getElementById("projects-window").querySelector(".project-grid").appendChild(card);
     });
 }
 //take in doc as text and return array of cards
-function ParseDoc(text) {
+function ParseDocProjects(text){
   let startIndex = text.indexOf("<projects>");
   let endIndex = text.length;
   if (text.indexOf("<blogs>") != -1) {
@@ -95,7 +85,7 @@ function ParseDoc(text) {
   }
 
   let textArray = text.substring(startIndex, endIndex).split("\r\n");
-  let cardsArray = [];
+  let categoryArray = [];
   let index = 1;
   //console.log(textArray);
   while (index < textArray.length) {
@@ -104,8 +94,6 @@ function ParseDoc(text) {
     }
     else {
       //get optional tag, img, title, short desc, desc
-      let hasCategoryTag = false;
-      let hasLongDesc = false;
       let shortDescIndex = 3;
       let longDescIndex = shortDescIndex + 1;
 
@@ -117,9 +105,8 @@ function ParseDoc(text) {
 
       if (textArray[index + 1].indexOf('<') == 0 && textArray[index + 1].indexOf('>') > -1) {
         //has a category tag
-        hasCategoryTag = true;
         title = textArray[index];
-        category = textArray[index + 1];
+        category = textArray[index + 1].substring(1, textArray[index + 1].length - 1);
         img = textArray[index + 2];
         shortDesc = textArray[index + 3] + '\r\n';
         shortDescIndex = 4;
@@ -148,7 +135,6 @@ function ParseDoc(text) {
         index += shortDescIndex;
       }
       else {
-        hasLongDesc = true;
         longDescIndex = shortDescIndex + 1;
         while (textArray[index + longDescIndex] != "</>" && (index + longDescIndex) < textArray.length) {
           if (textArray[index + longDescIndex] === "" && textArray[index + longDescIndex + 1] === "") {
@@ -164,35 +150,21 @@ function ParseDoc(text) {
         index += longDescIndex;
       }
 
-      //make card
-      //add to array
-      if (hasLongDesc) {
-        if (hasCategoryTag) {
-          cardsArray.push(CreateCard(img, title, shortDesc, longDesc, category));
-          //console.log("category: " + category + "\nimg: " + img + "\ntitle: " + title + "\ndesc: " + shortDesc + "\nlong desc: " + longDesc);
-        }
-        else {
-          cardsArray.push(CreateCard(img, title, shortDesc, longDesc));
-          //console.log("img: " + img + "\ntitle: " + title + "\ndesc: " + shortDesc + "\nlong desc: " + longDesc);
-        }
+      projectDataArray.push({
+        "title": title,
+        "img": img,
+        "category": category,
+        "shortDesc": shortDesc,
+        "longDesc": longDesc
+      });
+      if(category !== "none" && category !== "" && !categoryArray.includes(category)){
+        categoryArray.push(category);
       }
-      else {
-        if (hasCategoryTag) {
-          cardsArray.push(CreateCard(img, title, shortDesc, category));
-          //console.log("category: " + category + "\nimg: " + img + "\ntitle: " + title + "\ndesc: " + shortDesc);
-        }
-        else {
-          cardsArray.push(CreateCard(img, title, shortDesc));
-          //console.log("img: " + img + "\ntitle: " + title + "\ndesc: " + shortDesc);
-        }
-      }
-
     }
   }
 
-  return cardsArray;
+  return categoryArray;
 }
-
 
 ////////////////////////////////
 //add frame functionality//////
@@ -524,32 +496,18 @@ function FoldDropdownText(dropdownWrapper, headerClass, bodyClass, subBodyClass 
   let subBody = (subBodyClass != "") ? header.parentElement.querySelector("." + subBodyClass) : undefined;
   let toggle = header.getElementsByClassName("toggle")[0];
 
-  if (toggle) {
-    if (subBody) {
-      if (subBody.classList.contains("folded")) {
-        subBody.classList.remove("folded");
-        subBody.ariaHidden = "false";
-        toggle.innerHTML = "-";
-        return false;
-      } else {
-        subBody.classList.add("folded");
-        subBody.ariaHidden = "true";
-        toggle.innerHTML = "+";
-        return true;
-      }
-    }
-    else if (body) {
-      if (body.classList.contains("folded")) {
-        body.classList.remove("folded");
-        body.ariaHidden = "false";
-        toggle.innerHTML = "-";
-        return false;
-      } else {
-        body.classList.add("folded");
-        body.ariaHidden = "true";
-        toggle.innerHTML = "+";
-        return true;
-      }
+  let targetBody = subBody ? subBody : body;
+  if (toggle && targetBody) {
+    if (targetBody.classList.contains("folded")) {
+      targetBody.classList.remove("folded");
+      targetBody.ariaHidden = "false";
+      toggle.innerHTML = "-";
+      return false;
+    } else {
+      targetBody.classList.add("folded");
+      targetBody.ariaHidden = "true";
+      toggle.innerHTML = "+";
+      return true;
     }
   }
   return false;

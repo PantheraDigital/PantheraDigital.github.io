@@ -10,13 +10,10 @@
 .category-dropdown .body{
     overflow: hidden;
     height:   fit-content;
-    
-    transition: 0.5s;
 }
 .category-dropdown .body.folded{
-    max-height: 0;
+    height: 0;
 }
-
 
 .category-dropdown .project-list{
     display: flex;
