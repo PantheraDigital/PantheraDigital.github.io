@@ -34,6 +34,8 @@ async function LoadGoogleDoc(){
     .then(function(res) {
         return res.text();
     }).then(function(text) {
+      ParseDocBlogs(text);
+
       let categoriesArray = ParseDocProjects(text);
       let projectGrid = document.getElementById("projects-window").querySelector(".project-grid");
       categoriesArray.forEach(cat => {
@@ -50,8 +52,12 @@ async function LoadGoogleDoc(){
           if (e.type == "mouseup" && e.button != 0) {
             return;
           }
-          if(!FoldDropdownText(e.target.closest(".category-dropdown"), "dropdown-header", "body")){
+          let body = e.currentTarget.closest(".category-dropdown").querySelector(".body");
+          if(!ToggleClass(body, "folded")){
             e.target.closest(".category-dropdown").scrollIntoView();
+          }
+          else{
+            FoldAllDropdownsInContainer(body);
           }
           e.preventDefault();
         });
@@ -80,8 +86,10 @@ function ParseDocProjects(text){
   let startIndex = text.indexOf("<projects>");
   let endIndex = text.length;
   if (text.indexOf("<blogs>") != -1) {
-    if (text.indexOf("<blogs>") < endIndex)
-      endIndex = text.indexOf("<blogs>");
+    let blogIndex = text.indexOf("<blogs>");
+    if(blogIndex < endIndex && blogIndex > startIndex){
+      endIndex = blogIndex;
+    }
   }
 
   let textArray = text.substring(startIndex, endIndex).split("\r\n");
@@ -164,6 +172,38 @@ function ParseDocProjects(text){
   }
 
   return categoryArray;
+}
+function ParseDocBlogs(text){
+  let startIndex = text.indexOf("<blogs>");
+  let endIndex = text.length;
+  if (text.indexOf("<projects>") != -1) {
+    let projectsIndex = text.indexOf("<projects>");
+    if(projectsIndex < endIndex && projectsIndex > startIndex){
+      endIndex = projectsIndex;
+    }
+  }
+
+  let textArray = text.substring(startIndex, endIndex).split("\r\n");
+  const blogArray = [];
+
+  console.log(textArray);
+  let blog = {
+    "title": textArray[1],//start at 1 to skip <blogs> tag
+    "img": textArray[2],
+    "tags": textArray[3],
+    "text": ""
+  };
+  let index = 4;
+  while(textArray[index] !== "</>"){
+    if(textArray[index] === "" && textArray[index + 1] === ""){
+      index += 2;  
+    } else {
+      index++;
+    }
+    blog.text += textArray[index] + "\r\n";
+  }
+  blogArray.push(blog);
+  console.log(blog);
 }
 
 ////////////////////////////////
@@ -490,27 +530,29 @@ function DragElement(elmnt, ...handles) {
 ////////////////////////////////
 //Project Cards////////////////
 //////////////////////////////
-function FoldDropdownText(dropdownWrapper, headerClass, bodyClass, subBodyClass = "") {
-  let header = headerClass ? dropdownWrapper.getElementsByClassName(headerClass)[0] : undefined;
-  let body = bodyClass ? header.parentElement.querySelector("." + bodyClass) : undefined;
-  let subBody = (subBodyClass != "") ? header.parentElement.querySelector("." + subBodyClass) : undefined;
-  let toggle = header.getElementsByClassName("toggle")[0];
+function ToggleClass(element, onClass, offClass = "", force = ""){
+  let classes = element.classList;
 
-  let targetBody = subBody ? subBody : body;
-  if (toggle && targetBody) {
-    if (targetBody.classList.contains("folded")) {
-      targetBody.classList.remove("folded");
-      targetBody.ariaHidden = "false";
-      toggle.innerHTML = "-";
-      return false;
-    } else {
-      targetBody.classList.add("folded");
-      targetBody.ariaHidden = "true";
-      toggle.innerHTML = "+";
-      return true;
+  if(force === "on"){ return on(); }
+  else if(force === "off") {return off(); }
+
+  if(classes.contains(onClass)){return off();}
+  else{return on();}
+
+  function on(){
+    classes.add(onClass);
+    if(offClass && classes.contains(offClass)){
+      classes.remove(offClass);
     }
+    return true;
   }
-  return false;
+  function off(){
+    classes.remove(onClass);
+    if(offClass && !classes.contains(offClass)){
+      classes.add(offClass);
+    }
+    return false;
+  }
 }
 function FoldAllDropdownsInContainer(container) {
   let dropdowns = container.getElementsByClassName("dropdown-wrapper");
@@ -518,20 +560,16 @@ function FoldAllDropdownsInContainer(container) {
     for (let i = 0; i < dropdowns.length; i++) {
       let body = dropdowns[i].querySelector(".dropdown-body");
       let subBody = dropdowns[i].querySelector(".dropdown-subBody");
-      if (subBody != null) {
-        if (!subBody.classList.contains("folded")) {
-          subBody.classList.add("folded");
-          subBody.ariaHidden = "true";
+      let targetBody = subBody ? subBody : body;
+
+      if (targetBody != null) {
+        if (!targetBody.classList.contains("folded")) {
+          ToggleClass(targetBody, "folded", "", "on");
+          targetBody.ariaHidden = "true";
           dropdowns[i].getElementsByClassName("toggle")[0].innerHTML = "+";
         }
       }
-      else if (body !== null) {
-        if (!body.classList.contains("folded")) {
-          body.classList.add("folded");
-          body.ariaHidden = "true";
-          dropdowns[i].getElementsByClassName("toggle")[0].innerHTML = "+";
-        }
-      }
+
     }
   }
 }
@@ -540,13 +578,37 @@ function CreateCard(imagePath, title, body, subBody = "", category = "") {
   const clone = template.content.querySelector(".dropdown-wrapper").cloneNode(true);
 
   RegisterMouseAndTouchEvent(clone.querySelector(".dropdown-header"), function (e) {
+    e.preventDefault();
     if (e.type == "mouseup" && e.button != 0) {
       return;
     }
-    if(!FoldDropdownText(e.target.closest(".dropdown-wrapper"), "dropdown-header", "dropdown-body", "dropdown-subBody")){
-      e.target.closest(".dropdown-wrapper").scrollIntoView();
+    let wrapper = e.target.closest(".dropdown-wrapper");
+    let body = wrapper.querySelector(".dropdown-body");
+    let subBody = wrapper.querySelector(".dropdown-subBody");
+    let targetBody = subBody ? subBody : body;
+    let button = wrapper.querySelector(".toggle");
+
+    if(targetBody){
+      if(ToggleClass(targetBody, "folded")){
+        if(button){
+          button.innerHTML = "+";
+        }
+        if(subBody){
+          subBody.ariaHidden = true;
+        }
+      }
+      else{
+        if(button){
+          button.innerHTML = "-";
+        }
+        if(subBody){
+          subBody.ariaHidden = false;
+        }
+        wrapper.scrollIntoView();
+        history.pushState(null, "", (e.currentTarget.href));
+      }
     }
-    e.preventDefault();
+
   });
 
   if (imagePath.toLowerCase() !== "none") {
@@ -558,6 +620,7 @@ function CreateCard(imagePath, title, body, subBody = "", category = "") {
 
   AddStringHTMLToElement(clone.querySelector(".title"), title);
   clone.querySelector(".dropdown-header").href = "#project_" + title.replaceAll(' ', '-');
+  clone.querySelector(".dropdown-header").addEventListener("click", function(e){e.preventDefault(); return false;});//prevent href jump
 
   MultiLineStringToHTML(clone.querySelector(".dropdown-body"), body);
 

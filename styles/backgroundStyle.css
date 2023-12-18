@@ -1,0 +1,10 @@
+.cube-pattern{
+    width:  69.141;
+    height: 40;
+
+}
+.cube-pattern .pattern{
+    fill: white; 
+    stroke: black;
+    stroke-width: 1; 
+}

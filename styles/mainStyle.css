@@ -4,7 +4,9 @@ html, body {
     margin: 0; 
     padding: 0;
     background-color:rgb(54, 54, 54);
+    background-image: linear-gradient(50deg, darkviolet 20%, slategrey 35%, slategrey 65%, DarkTurquoise 80%);   
 }
+
 
 button > i {
     pointer-events: none;

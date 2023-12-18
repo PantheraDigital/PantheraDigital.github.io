@@ -26,9 +26,9 @@
         <link rel="stylesheet" href="styles/cardStyle.css" />
         <link rel="stylesheet" href="styles/frameStyle.css" />
         <link rel="stylesheet" href="styles/categoryDropdown.css" />
+        <link rel="stylesheet" href="styles/backgroundStyle.css" />
 
         <link rel="stylesheet" href="Logo/style.css" />
-        <link rel="stylesheet" href="WebBackground/style.css" />
 
         <script src="https://kit.fontawesome.com/879ec05024.js" crossorigin="anonymous"></script>
     </head>
@@ -55,18 +55,22 @@
     </article>
     </template>
     
-
-    <div id="repeatingShapeBackground">
-        <ul id="shape-list">
-            <li id="shape-row_0" class="shape-row">
-            </li>
-            <li id="shape-row_1" class="shape-row">
-            </li>
-            <li id="shape-row_2" class="shape-row">
-            </li>
-        </ul>
-    </div>
+    <svg width='100%' height='100%' xmlns="http://www.w3.org/2000/svg" style="position: absolute;">
+        <defs>
+            <pattern id="myPattern" class="cube-pattern" patternUnits='userSpaceOnUse' width='69.141' height='40' patternTransform='scale(2) rotate(0)'>
+                <mask id="myMask">
+                    <path class="pattern"
+                        d='M69.212 40H46.118L34.57 20 46.118 0h23.094l11.547 20zM57.665 60H34.57L23.023 40 34.57 20h23.095l11.547 20zm0-40H34.57L23.023 0 34.57-20h23.095L69.212 0zM34.57 60H11.476L-.07 40l11.547-20h23.095l11.547 20zm0-40H11.476L-.07 0l11.547-20h23.095L46.118 0zM23.023 40H-.07l-11.547-20L-.07 0h23.094L34.57 20z'
+                        fill="white" stroke-width='1' stroke='black' />
+                </mask>
     
+                <rect x="0" y="0" width="100%" height="100%" fill="rgb(54, 54, 54)" mask="url(#myMask)" />
+            </pattern>
+        </defs>
+    
+        <rect x="0" y="0" width="100%" height="100%" fill="url(#myPattern)" />
+    </svg>
+
     <div id="main-block">
         <div id="logo-container">
             <div class="header-w-buttons rotating-border">
@@ -156,7 +160,6 @@
         <i class="fa-solid fa-x"></i>
     </button>
 
-    <script src="WebBackground/script.js"></script>
     <script src="scripts/script.js"></script>
 </body>
 </html>
