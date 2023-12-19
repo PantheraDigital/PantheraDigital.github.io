@@ -754,3 +754,52 @@ function RegisterMouseAndTouchEvent(elmnt, fnctn) {
     elmnt.addEventListener("touchend", fnctn);
   }
 }
+
+
+//---attach mouse-tracker element to mouse
+var mouseGradient = null;
+if (window.matchMedia( "(hover: hover)" ).matches) {
+  mouseGradient = document.getElementById("mouse-tracker");
+  document.addEventListener('mousemove', function(e){
+    if(mouseGradient){
+      mouseGradient.style.left = e.pageX + 'px';
+      mouseGradient.style.top = e.pageY + 'px';
+  }
+  });
+}
+else{
+  document.getElementById("mouse-tracker").remove();
+}
+
+//---assign ripple effect on click
+RegisterSpecificMouseAndTouchEvent(document.getElementById("background"), "mousedown", "touchstart", createRipple);
+function createRipple(event) {
+    event.preventDefault();
+    let element = event.currentTarget;
+    let circle = document.createElement("span");
+    let diameter = document.documentElement.clientWidth * 0.40;//40% view width
+    let radius = diameter / 2;
+
+    circle.style.width = circle.style.height = `${diameter}px`;
+    if (event.type == "mousedown"){
+      circle.style.left = `${event.clientX - radius}px`;
+      circle.style.top = `${event.clientY - radius}px`;
+    }
+    else if (event.type == "touchstart"){
+      circle.style.left = `${event.changedTouches[0].clientX - radius}px`;
+      circle.style.top = `${event.changedTouches[0].clientY - radius}px`;
+    }
+    circle.classList.add("ripple");
+
+    let ripple = element.getElementsByClassName("ripple")[0];
+
+    if (ripple) {
+        ripple.remove();
+    }
+
+    //---this will place wave above all shapes
+    //element.appendChild(circle);
+
+    //---this will place the wave bellow all elements
+    element.insertBefore(circle, element.firstChild);
+}

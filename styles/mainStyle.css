@@ -2,16 +2,44 @@ html, body {
     height: 100%;
     width: 100%;
     margin: 0; 
-    padding: 0;
+    padding: 0;  
+}
+body{
     background-color:rgb(54, 54, 54);
-    background-image: linear-gradient(50deg, darkviolet 20%, slategrey 35%, slategrey 65%, DarkTurquoise 80%);   
 }
 
-
-button > i {
-    pointer-events: none;
+#background{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    
+    background-color:rgb(54, 54, 54);
+    background-image: linear-gradient(50deg, darkviolet 20%, slategrey 45%, slategrey 55%, DarkTurquoise 80%); 
 }
-
+span.ripple {
+    position: fixed;
+    border-radius: 50%;
+    transform: scale(0);
+    animation: ripple 650ms ease-out;
+    background-color: rgba(255, 255, 255, 0.5);
+}
+@keyframes ripple {
+    to {
+        transform: scale(2);
+        opacity: 0;
+    }
+}
+#mouse-tracker{
+    position: fixed;
+    width: 40vw;
+    height: 40vw;
+    top: 0px;
+    left: 0px;
+    margin: 0 0 0 0;
+    background: radial-gradient(circle farthest-side, rgba(255, 255, 255, 0.45), transparent);
+    transform:translate(-50%, -50%);
+    border-radius:50%;
+}
 
 .cool-border{
     border-image: linear-gradient(135deg, cyan, magenta) 1 !important;
@@ -48,6 +76,7 @@ button > i {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+    pointer-events: none;
 }
 .header-w-buttons{
     overflow: visible;
@@ -65,6 +94,7 @@ button > i {
 }
 .main-block-button{
     position: relative;
+    pointer-events: all;
     margin: 10px 5px 10px 5px;
     width: 30%;
     height: 4ch;
