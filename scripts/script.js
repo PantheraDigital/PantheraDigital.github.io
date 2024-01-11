@@ -1,11 +1,13 @@
-const docID = "1QdR-rhAUXKioBX6O_77ADhYKNA6EaSEQB0xiHqOHGf4";
-const link = `https://docs.google.com/document/d/${docID}/edit?usp=sharing`;
+const projectDocID = "1QdR-rhAUXKioBX6O_77ADhYKNA6EaSEQB0xiHqOHGf4";
+const blogDocID = "1AqB-qUFwaGI5-mfEfUVkTaEIPRo5DlVwvnI2wsWmRDI";
+const link = `https://docs.google.com/document/d/${projectDocID}/edit?usp=sharing`;
 const apiKey = "AIzaSyBHhqGZRJIo90yIk1K-J86C9PU3whMe8CA";
+
+const projectDataArray = [];
+const blogDataArray = [];
 
 let urlSearch = window.location.search;
 let urlParams = new URLSearchParams(urlSearch);
-
-const projectDataArray = [];
 
 //https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener#safely_detecting_option_support
 let passiveSupported = false;
@@ -28,59 +30,83 @@ try {
 ////////////////////////////////
 //Load Google Doc contents/////
 //////////////////////////////
-LoadGoogleDoc();
-async function LoadGoogleDoc(){
-    await fetch(`https://www.googleapis.com/drive/v3/files/${docID}/export?mimeType=text/plain&key=${apiKey}`)
-    .then(function(res) {
-        return res.text();
-    }).then(function(text) {
-      ParseDocBlogs(text);
+ParseDoc(projectDocID, 
+  function(text) {
+    let categoriesArray = ParseDocProjects(text);
+    let projectGrid = document.getElementById("projects-window").querySelector(".project-grid");
+    categoriesArray.forEach(cat => {
+      const template = document.querySelector("template");
+      const clone = template.content.querySelector(".category-dropdown").cloneNode(true);
+      let item = document.createElement("li");
 
-      let categoriesArray = ParseDocProjects(text);
-      let projectGrid = document.getElementById("projects-window").querySelector(".project-grid");
-      categoriesArray.forEach(cat => {
-        const template = document.querySelector("template");
-        const clone = template.content.querySelector(".category-dropdown").cloneNode(true);
-        let item = document.createElement("li");
+      clone.querySelector(".title").textContent = cat;
+      item.appendChild(clone);
+      item.id = "category_" + cat;
+      projectGrid.appendChild(item);
 
-        clone.querySelector(".title").textContent = cat;
-        item.appendChild(clone);
-        item.id = "category_" + cat;
-        projectGrid.appendChild(item);
-
-        RegisterMouseAndTouchEvent(clone.querySelector(".dropdown-header"), function (e) {
-          if (e.type == "mouseup" && e.button != 0) {
-            return;
-          }
-          let body = e.currentTarget.closest(".category-dropdown").querySelector(".body");
-          if(!ToggleClass(body, "folded")){
-            e.target.closest(".category-dropdown").scrollIntoView();
-          }
-          else{
-            FoldAllDropdownsInContainer(body);
-          }
-          e.preventDefault();
-        });
-      });
-
-      projectDataArray.forEach(object =>{
-        let card = CreateCard(object.img, object.title, object.shortDesc, object.longDesc, object.category);
-        let item = document.createElement("li");
-        item.appendChild(card);
-        item.id = "project_" + object.title.replaceAll(' ', '-');
-        if(object.category){
-          projectGrid.querySelector("#category_" + object.category).querySelector(".project-list").appendChild(item);
+      RegisterMouseAndTouchEvent(clone.querySelector(".dropdown-header"), function (e) {
+        if (e.type == "mouseup" && e.button != 0) 
+        { return; }
+        let body = e.currentTarget.closest(".category-dropdown").querySelector(".body");
+        let button = e.currentTarget.closest(".category-dropdown").querySelector(".toggle");
+        if(!ToggleClass(body, "folded")){
+          e.target.closest(".category-dropdown").scrollIntoView();
+          if(button){ button.innerHTML = "-"; }
         }
         else{
-          projectGrid.insertBefore(item, projectGrid.querySelector("#category_" + categoriesArray[0]));
+          FoldAllDropdownsInContainer(body);
+          if(button){ button.innerHTML = "+"; }
         }
+        e.preventDefault();
       });
-
-    }).catch(function(e) {
-        let card = CreateCard("none", "Error", e.toString());
-        document.getElementById("projects-window").querySelector(".project-grid").appendChild(card);
     });
+
+    projectDataArray.forEach(object =>{
+      let card = CreateCard(object.img, object.title, object.shortDesc, object.longDesc, object.category);
+      let item = document.createElement("li");
+      item.appendChild(card);
+      item.id = "project_" + object.title.replaceAll(' ', '-');
+      if(object.category){
+        projectGrid.querySelector("#category_" + object.category).querySelector(".project-list").appendChild(item);
+      }
+      else{
+        projectGrid.insertBefore(item, projectGrid.querySelector("#category_" + categoriesArray[0]));
+      }
+    });
+
+  },
+  function(e) {
+    let card = CreateCard("none", "Error", e.toString());
+    document.getElementById("projects-window").querySelector(".project-grid").appendChild(card);
+  });
+
+(function () {
+  const cookie = document.cookie.split(";").find((item) => item.trim().startsWith("reader="));
+  if(cookie){
+    ParseDocBlogs(cookie);
+  }
+  else{
+    ParseDoc(blogDocID, 
+      function(text){
+        ParseDocBlogs(text);
+        document.cookie = "blogs=" + text.substring(text.indexOf("<blogs>"), text.length);
+        console.log(document.cookie);
+      },
+      function(e){
+        console.log(e.toString());
+      });
+  }
+})();
+
+
+async function ParseDoc(docID, textParser, errorCall){
+  await fetch(`https://www.googleapis.com/drive/v3/files/${docID}/export?mimeType=text/plain&key=${apiKey}`)
+  .then(function(res) {
+      return res.text();
+  }).then(textParser
+  ).catch(errorCall);
 }
+
 //take in doc as text and return array of cards
 function ParseDocProjects(text){
   let startIndex = text.indexOf("<projects>");
@@ -174,36 +200,50 @@ function ParseDocProjects(text){
   return categoryArray;
 }
 function ParseDocBlogs(text){
-  let startIndex = text.indexOf("<blogs>");
-  let endIndex = text.length;
-  if (text.indexOf("<projects>") != -1) {
-    let projectsIndex = text.indexOf("<projects>");
-    if(projectsIndex < endIndex && projectsIndex > startIndex){
-      endIndex = projectsIndex;
+  let textArray = text.substring(text.indexOf("<blogs>"), text.length).split("\r\n");
+  let index = 1; //skip <blogs> tag
+
+  while(index < textArray.length){
+    if(textArray[index] === ""){
+      index++;
+      continue;
     }
-  }
+    
+    let blog = {
+      "title": textArray[index],
+      "img": textArray[index + 1],
+      "desc": "",
+      "body": "",
+      "tags": ""
+    };
 
-  let textArray = text.substring(startIndex, endIndex).split("\r\n");
-  const blogArray = [];
+    let blogText = "";
+    index += 2;//jump over title and img
 
-  console.log(textArray);
-  let blog = {
-    "title": textArray[1],//start at 1 to skip <blogs> tag
-    "img": textArray[2],
-    "tags": textArray[3],
-    "text": ""
-  };
-  let index = 4;
-  while(textArray[index] !== "</>"){
-    if(textArray[index] === "" && textArray[index + 1] === ""){
-      index += 2;  
-    } else {
+    for( ;index < textArray.length; index++){
+      if(textArray[index] === "</>") { 
+        index++;
+        blog.body = blogText;
+        break;
+      }
+      else if(textArray[index] === "<//>"){ 
+        blog.desc = blogText;
+        blogText = "";
+        continue;
+      }
+
+      blogText += textArray[index] + "\r\n";
+      if(textArray[index] === "" && textArray[index + 1] === ""){
+        index++;  
+      }
+    }
+    if(/^<.*>$/.test(textArray[index])){
+      blog.tags = textArray[index].substring(1, textArray[index].length - 1);
       index++;
     }
-    blog.text += textArray[index] + "\r\n";
+    blogDataArray.push(blog);
+    console.log(blog);
   }
-  blogArray.push(blog);
-  console.log(blog);
 }
 
 ////////////////////////////////
@@ -579,31 +619,21 @@ function CreateCard(imagePath, title, body, subBody = "", category = "") {
 
   RegisterMouseAndTouchEvent(clone.querySelector(".dropdown-header"), function (e) {
     e.preventDefault();
-    if (e.type == "mouseup" && e.button != 0) {
-      return;
-    }
+    if (e.type == "mouseup" && e.button != 0) 
+    { return; }
     let wrapper = e.target.closest(".dropdown-wrapper");
-    let body = wrapper.querySelector(".dropdown-body");
     let subBody = wrapper.querySelector(".dropdown-subBody");
-    let targetBody = subBody ? subBody : body;
+    let targetBody = subBody ? subBody : wrapper.querySelector(".dropdown-body");
     let button = wrapper.querySelector(".toggle");
 
     if(targetBody){
       if(ToggleClass(targetBody, "folded")){
-        if(button){
-          button.innerHTML = "+";
-        }
-        if(subBody){
-          subBody.ariaHidden = true;
-        }
+        if(button){ button.innerHTML = "+"; }
+        if(subBody){ subBody.ariaHidden = true; }
       }
       else{
-        if(button){
-          button.innerHTML = "-";
-        }
-        if(subBody){
-          subBody.ariaHidden = false;
-        }
+        if(button){ button.innerHTML = "-"; }
+        if(subBody){ subBody.ariaHidden = false; }
         wrapper.scrollIntoView();
         history.pushState(null, "", (e.currentTarget.href));
       }
@@ -637,10 +667,7 @@ function CreateCard(imagePath, title, body, subBody = "", category = "") {
     clone.removeChild(clone.querySelector(".dropdown-subBody"));
   }
 
-  if(category !== ""){
-    clone.dataset.category = category;
-  }
-
+  if(category !== ""){ clone.dataset.category = category; }
   return clone;
 }
 
@@ -745,7 +772,7 @@ function AddStringHTMLToElement(elmnt, text) {
 function RegisterSpecificMouseAndTouchEvent(elmnt, mouseEvent, touchEvent, fnctn) {
   if (elmnt !== null) {
     elmnt.addEventListener(mouseEvent, fnctn);
-    elmnt.addEventListener(touchEvent, fnctn);
+    elmnt.addEventListener(touchEvent, fnctn, {passive: true});
   }
 }
 function RegisterMouseAndTouchEvent(elmnt, fnctn) {
