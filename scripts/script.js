@@ -30,8 +30,25 @@ try {
 ////////////////////////////////
 //Load Google Doc contents/////
 //////////////////////////////
-ParseDoc(projectDocID, 
-  function(text) {
+(function () {
+  const projectText = localStorage.getItem("projects");
+  const time = localStorage.getItem("projecttime");
+  if(projectText && time && Date.now() < time){//no api call if data is stored and current
+    AddProjectsToDOM(projectText);
+  }
+  else{//call api to get text and parse
+    ParseDoc(projectDocID, 
+      function(text) {
+        AddProjectsToDOM(text);
+        localStorage.setItem("projects", text.substring(text.indexOf("<projects>"), text.length));
+        localStorage.setItem("projecttime", Date.now() + (60000 * 60 * 48));
+      },
+      function(e) {
+        let card = CreateCard("none", "Error", e.toString());
+        document.getElementById("projects-window").querySelector(".project-grid").appendChild(card);
+      });
+  }
+  function AddProjectsToDOM(text){
     let categoriesArray = ParseDocProjects(text);
     let projectGrid = document.getElementById("projects-window").querySelector(".project-grid");
     categoriesArray.forEach(cat => {
@@ -73,29 +90,7 @@ ParseDoc(projectDocID,
         projectGrid.insertBefore(item, projectGrid.querySelector("#category_" + categoriesArray[0]));
       }
     });
-
-  },
-  function(e) {
-    let card = CreateCard("none", "Error", e.toString());
-    document.getElementById("projects-window").querySelector(".project-grid").appendChild(card);
-  });
-
-(function () {
-  const cookie = document.cookie.split(";").find((item) => item.trim().startsWith("reader="));
-  if(cookie){
-    ParseDocBlogs(cookie);
-  }
-  else{
-    ParseDoc(blogDocID, 
-      function(text){
-        ParseDocBlogs(text);
-        document.cookie = "blogs=" + text.substring(text.indexOf("<blogs>"), text.length);
-        console.log(document.cookie);
-      },
-      function(e){
-        console.log(e.toString());
-      });
-  }
+  };
 })();
 
 
@@ -109,92 +104,58 @@ async function ParseDoc(docID, textParser, errorCall){
 
 //take in doc as text and return array of cards
 function ParseDocProjects(text){
-  let startIndex = text.indexOf("<projects>");
-  let endIndex = text.length;
-  if (text.indexOf("<blogs>") != -1) {
-    let blogIndex = text.indexOf("<blogs>");
-    if(blogIndex < endIndex && blogIndex > startIndex){
-      endIndex = blogIndex;
-    }
-  }
-
-  let textArray = text.substring(startIndex, endIndex).split("\r\n");
+  let textArray = text.substring(text.indexOf("<projects>"), text.length).split("\r\n");
   let categoryArray = [];
   let index = 1;
-  //console.log(textArray);
-  while (index < textArray.length) {
+
+  while (index < textArray.length){
     if (textArray[index] === "" || textArray[index] === "</>") {
       index++;
+      continue;
     }
-    else {
-      //get optional tag, img, title, short desc, desc
-      let shortDescIndex = 3;
-      let longDescIndex = shortDescIndex + 1;
 
-      let category = "";
-      let img = "";
-      let title = "";
-      let shortDesc = "";
-      let longDesc = "";
+    let projectObj = {
+      "title": "",
+      "category": "",
+      "img": "",
+      "shortDesc": "",
+      "longDesc": ""
+    };
 
-      if (textArray[index + 1].indexOf('<') == 0 && textArray[index + 1].indexOf('>') > -1) {
-        //has a category tag
-        title = textArray[index];
-        category = textArray[index + 1].substring(1, textArray[index + 1].length - 1);
-        img = textArray[index + 2];
-        shortDesc = textArray[index + 3] + '\r\n';
-        shortDescIndex = 4;
+    projectObj.title = textArray[index++];
+    if (textArray[index].indexOf('<') == 0 && textArray[index].indexOf('>') > -1){
+      projectObj.category = textArray[index].substring(1, textArray[index].length - 1);
+      if(projectObj.category !== "none" && projectObj.category !== "" && !categoryArray.includes(projectObj.category)){
+        categoryArray.push(projectObj.category);
       }
-      else {
-        title = textArray[index];
-        img = textArray[index + 1];
-        shortDesc = textArray[index + 2] + '\r\n';
-      }
+      index++;
+    }
+    projectObj.img = textArray[index++];
 
-      //fill short description
-      while ((textArray[index + shortDescIndex] != "</>" && textArray[index + shortDescIndex] != "<//>") && (index + shortDescIndex) < textArray.length) {
-        if (textArray[index + shortDescIndex] === "" && textArray[index + shortDescIndex + 1] === "") {
-          shortDesc += '\r\n';
-          shortDescIndex += 2;
+    let projectText = "";
+    for( ;index < textArray.length; index++){
+      if(textArray[index] === "</>") { //end of project
+        index++;
+        if(projectObj.shortDesc === ""){
+          projectObj.shortDesc = projectText;
         }
-        else {
-          shortDesc += textArray[index + shortDescIndex] + '\r\n';
-          shortDescIndex++;
+        else{
+          projectObj.longDesc = projectText;
         }
+        break;
       }
-      shortDesc = (shortDesc.lastIndexOf("\r\n") != -1) ? shortDesc.substring(0, shortDesc.lastIndexOf("\r\n")) : shortDesc;
-
-
-      if (textArray[index + shortDescIndex] === "</>") {
-        index += shortDescIndex;
-      }
-      else {
-        longDescIndex = shortDescIndex + 1;
-        while (textArray[index + longDescIndex] != "</>" && (index + longDescIndex) < textArray.length) {
-          if (textArray[index + longDescIndex] === "" && textArray[index + longDescIndex + 1] === "") {
-            longDesc += '\r\n';
-            longDescIndex += 2;
-          }
-          else {
-            longDesc += textArray[index + longDescIndex] + '\r\n';
-            longDescIndex++;
-          }
-        }
-        longDesc = (longDesc.lastIndexOf("\r\n") != -1) ? longDesc.substring(0, longDesc.lastIndexOf("\r\n")) : longDesc;
-        index += longDescIndex;
+      else if(textArray[index] === "<//>"){ //end of short desc
+        projectObj.shortDesc = projectText;
+        projectText = "";
+        continue;
       }
 
-      projectDataArray.push({
-        "title": title,
-        "img": img,
-        "category": category,
-        "shortDesc": shortDesc,
-        "longDesc": longDesc
-      });
-      if(category !== "none" && category !== "" && !categoryArray.includes(category)){
-        categoryArray.push(category);
+      projectText += textArray[index] + "\r\n";
+      if(textArray[index] === "" && textArray[index + 1] === ""){
+        index++;  
       }
     }
+    projectDataArray.push(projectObj);
   }
 
   return categoryArray;
@@ -210,16 +171,14 @@ function ParseDocBlogs(text){
     }
     
     let blog = {
-      "title": textArray[index],
-      "img": textArray[index + 1],
+      "title": textArray[index++],
+      "img": textArray[index++],
       "desc": "",
       "body": "",
       "tags": ""
     };
 
     let blogText = "";
-    index += 2;//jump over title and img
-
     for( ;index < textArray.length; index++){
       if(textArray[index] === "</>") { 
         index++;
@@ -242,7 +201,6 @@ function ParseDocBlogs(text){
       index++;
     }
     blogDataArray.push(blog);
-    console.log(blog);
   }
 }
 
