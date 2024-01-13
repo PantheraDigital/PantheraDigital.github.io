@@ -1,5 +1,3 @@
-import { RegisterMouseAndTouchEvent, RegisterSpecificMouseAndTouchEvent } from "./test";
-
 const projectDocID = "1QdR-rhAUXKioBX6O_77ADhYKNA6EaSEQB0xiHqOHGf4";
 const blogDocID = "1AqB-qUFwaGI5-mfEfUVkTaEIPRo5DlVwvnI2wsWmRDI";
 const link = `https://docs.google.com/document/d/${projectDocID}/edit?usp=sharing`;
@@ -766,7 +764,18 @@ function AddStringHTMLToElement(elmnt, text) {
 }
 
 
-
+function RegisterSpecificMouseAndTouchEvent(elmnt, mouseEvent, touchEvent, fnctn) {
+  if (elmnt !== null) {
+    elmnt.addEventListener(mouseEvent, fnctn);
+    elmnt.addEventListener(touchEvent, fnctn, {passive: true});
+  }
+}
+function RegisterMouseAndTouchEvent(elmnt, fnctn) {
+  if (elmnt !== null) {
+    elmnt.addEventListener("mouseup", fnctn);
+    elmnt.addEventListener("touchend", fnctn);
+  }
+}
 
 
 
