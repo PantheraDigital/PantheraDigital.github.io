@@ -1,3 +1,5 @@
+import { RegisterMouseAndTouchEvent, RegisterSpecificMouseAndTouchEvent } from "./test";
+
 const projectDocID = "1QdR-rhAUXKioBX6O_77ADhYKNA6EaSEQB0xiHqOHGf4";
 const blogDocID = "1AqB-qUFwaGI5-mfEfUVkTaEIPRo5DlVwvnI2wsWmRDI";
 const link = `https://docs.google.com/document/d/${projectDocID}/edit?usp=sharing`;
@@ -92,6 +94,24 @@ try {
     });
   };
 })();
+(function () {
+  const blogText = localStorage.getItem("blogs");
+  const time = localStorage.getItem("blogtime");
+  /*if(blogText && time && Date.now() < time){
+    ParseDocBlogs(blogText);
+  }
+  else{*/
+    ParseDoc(blogDocID, 
+      function(text){
+        ParseDocBlogs(text);
+        localStorage.setItem("blogs", text.substring(text.indexOf("<blogs>"), text.length));
+        localStorage.setItem("blogtime", Date.now() + (60000 * 60 * 48));
+      },
+      function(e){
+        console.log(e.toString());
+      });
+  //}
+})();
 
 
 async function ParseDoc(docID, textParser, errorCall){
@@ -172,10 +192,9 @@ function ParseDocBlogs(text){
     
     let blog = {
       "title": textArray[index++],
-      "img": textArray[index++],
       "desc": "",
       "body": "",
-      "tags": ""
+      "data": ""
     };
 
     let blogText = "";
@@ -196,12 +215,32 @@ function ParseDocBlogs(text){
         index++;  
       }
     }
-    if(/^<.*>$/.test(textArray[index])){
-      blog.tags = textArray[index].substring(1, textArray[index].length - 1);
-      index++;
+    
+    if(textArray[index].includes("{")){
+      if(textArray[index].includes("}")){
+        blog.data = textArray[index].substring(textArray[index].indexOf("{") + 1, textArray[index].indexOf("}"));
+        index++;
+      }
+      else{
+        for( ;index < textArray.length; index++){
+          if(textArray[index].includes("{")){
+            blog.data = textArray[index].substring(textArray[index].indexOf("{") + 1, textArray[index].length) + " ";
+          }
+          else if(textArray[index].includes("}")){
+            blog.data += textArray[index].substring(0, textArray[index].indexOf("}"));
+            index++;
+            break;
+          }
+          else{
+            blog.data += textArray[index].substring(0, textArray[index].length) + " ";
+          }
+        }
+      }
     }
+    
     blogDataArray.push(blog);
   }
+  console.log(blogDataArray);
 }
 
 ////////////////////////////////
@@ -727,34 +766,9 @@ function AddStringHTMLToElement(elmnt, text) {
 }
 
 
-function RegisterSpecificMouseAndTouchEvent(elmnt, mouseEvent, touchEvent, fnctn) {
-  if (elmnt !== null) {
-    elmnt.addEventListener(mouseEvent, fnctn);
-    elmnt.addEventListener(touchEvent, fnctn, {passive: true});
-  }
-}
-function RegisterMouseAndTouchEvent(elmnt, fnctn) {
-  if (elmnt !== null) {
-    elmnt.addEventListener("mouseup", fnctn);
-    elmnt.addEventListener("touchend", fnctn);
-  }
-}
 
 
-//---attach mouse-tracker element to mouse
-var mouseGradient = null;
-if (window.matchMedia( "(hover: hover)" ).matches) {
-  mouseGradient = document.getElementById("mouse-tracker");
-  document.addEventListener('mousemove', function(e){
-    if(mouseGradient){
-      mouseGradient.style.left = e.pageX + 'px';
-      mouseGradient.style.top = e.pageY + 'px';
-  }
-  });
-}
-else{
-  document.getElementById("mouse-tracker").remove();
-}
+
 
 //---assign ripple effect on click
 RegisterSpecificMouseAndTouchEvent(document.getElementById("background"), "mousedown", "touchstart", createRipple);
