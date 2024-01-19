@@ -44,7 +44,7 @@ try {
         localStorage.setItem("projecttime", Date.now() + (60000 * 60 * 48));
       },
       function(e) {
-        let card = CreateCard("none", "Error", e.toString());
+        let card = CreateProjectCard("none", "Error", e.toString());
         document.getElementById("projects-window").querySelector(".project-grid").appendChild(card);
       });
   }
@@ -59,27 +59,31 @@ try {
       clone.querySelector(".title").textContent = cat;
       item.appendChild(clone);
       item.id = "category_" + cat;
+      clone.querySelector(".toggle").innerHTML = clone.querySelector(".toggle").getAttribute("data-prime");
       projectGrid.appendChild(item);
 
-      RegisterMouseAndTouchEvent(clone.querySelector(".dropdown-header"), function (e) {
+      RegisterMouseAndTouchEvent(clone.querySelector(".header"), function (e) {
         if (e.type == "mouseup" && e.button != 0) 
         { return; }
-        let body = e.currentTarget.closest(".category-dropdown").querySelector(".body");
-        let button = e.currentTarget.closest(".category-dropdown").querySelector(".toggle");
-        if(!ToggleClass(body, "folded")){
-          e.target.closest(".category-dropdown").scrollIntoView();
-          if(button){ button.innerHTML = "-"; }
+        let body = clone.querySelector(".body");
+        let button = clone.querySelector(".toggle");
+
+        if(body.classList.contains("folded")){
+          body.classList.remove("folded");
+          clone.scrollIntoView();
+          if(button){ button.innerHTML = button.getAttribute("data-prime"); }
         }
         else{
-          FoldAllDropdownsInContainer(body);
-          if(button){ button.innerHTML = "+"; }
+          body.classList.add("folded");
+          FoldProjectCardsInContainer(body);
+          if(button){ button.innerHTML = button.getAttribute("data-alt"); }
         }
         e.preventDefault();
       });
     });
 
     projectDataArray.forEach(object =>{
-      let card = CreateCard(object.img, object.title, object.shortDesc, object.longDesc, object.category);
+      let card = CreateProjectCard(object.img, object.title, object.shortDesc, object.longDesc, object.category, (object.category === "Certifications"));
       let item = document.createElement("li");
       item.appendChild(card);
       item.id = "project_" + object.title.replaceAll(' ', '-');
@@ -95,10 +99,10 @@ try {
 (function () {
   const blogText = localStorage.getItem("blogs");
   const time = localStorage.getItem("blogtime");
-  /*if(blogText && time && Date.now() < time){
+  if(blogText && time && Date.now() < time){
     ParseDocBlogs(blogText);
   }
-  else{*/
+  else{
     ParseDoc(blogDocID, 
       function(text){
         ParseDocBlogs(text);
@@ -108,7 +112,7 @@ try {
       function(e){
         console.log(e.toString());
       });
-  //}
+  }
 })();
 
 
@@ -329,7 +333,7 @@ RegisterMouseAndTouchEvent(document.getElementById("projects-button"), function(
     SetFrameFullscreen(frame, true);
   }
 
-  FoldAllDropdownsInContainer(frame);
+  FoldProjectCardsInContainer(frame);
   UpdateFrameZOrder(frame);
   ShowFrame(frame);
 });
@@ -563,114 +567,10 @@ function DragElement(elmnt, ...handles) {
 
 
 ////////////////////////////////
-//Project Cards////////////////
-//////////////////////////////
-function ToggleClass(element, onClass, offClass = "", force = ""){
-  let classes = element.classList;
-
-  if(force === "on"){ return on(); }
-  else if(force === "off") {return off(); }
-
-  if(classes.contains(onClass)){return off();}
-  else{return on();}
-
-  function on(){
-    classes.add(onClass);
-    if(offClass && classes.contains(offClass)){
-      classes.remove(offClass);
-    }
-    return true;
-  }
-  function off(){
-    classes.remove(onClass);
-    if(offClass && !classes.contains(offClass)){
-      classes.add(offClass);
-    }
-    return false;
-  }
-}
-function FoldAllDropdownsInContainer(container) {
-  let dropdowns = container.getElementsByClassName("dropdown-wrapper");
-  if (dropdowns && dropdowns.length > 0) {
-    for (let i = 0; i < dropdowns.length; i++) {
-      let body = dropdowns[i].querySelector(".dropdown-body");
-      let subBody = dropdowns[i].querySelector(".dropdown-subBody");
-      let targetBody = subBody ? subBody : body;
-
-      if (targetBody != null) {
-        if (!targetBody.classList.contains("folded")) {
-          ToggleClass(targetBody, "folded", "", "on");
-          targetBody.ariaHidden = "true";
-          dropdowns[i].getElementsByClassName("toggle")[0].innerHTML = "+";
-        }
-      }
-
-    }
-  }
-}
-function CreateCard(imagePath, title, body, subBody = "", category = "") {
-  const template = document.querySelector("template");
-  const clone = template.content.querySelector(".dropdown-wrapper").cloneNode(true);
-
-  RegisterMouseAndTouchEvent(clone.querySelector(".dropdown-header"), function (e) {
-    e.preventDefault();
-    if (e.type == "mouseup" && e.button != 0) 
-    { return; }
-    let wrapper = e.target.closest(".dropdown-wrapper");
-    let subBody = wrapper.querySelector(".dropdown-subBody");
-    let targetBody = subBody ? subBody : wrapper.querySelector(".dropdown-body");
-    let button = wrapper.querySelector(".toggle");
-
-    if(targetBody){
-      if(ToggleClass(targetBody, "folded")){
-        if(button){ button.innerHTML = "+"; }
-        if(subBody){ subBody.ariaHidden = true; }
-      }
-      else{
-        if(button){ button.innerHTML = "-"; }
-        if(subBody){ subBody.ariaHidden = false; }
-        wrapper.scrollIntoView();
-        history.pushState(null, "", (e.currentTarget.href));
-      }
-    }
-
-  });
-
-  if (imagePath.toLowerCase() !== "none") {
-    clone.querySelector("img").src = imagePath;
-  }
-  else {
-    clone.removeChild(clone.querySelector(".img-wrapper"));
-  }
-
-  AddStringHTMLToElement(clone.querySelector(".title"), title);
-  clone.querySelector(".dropdown-header").href = "#project_" + title.replaceAll(' ', '-');
-  clone.querySelector(".dropdown-header").addEventListener("click", function(e){e.preventDefault(); return false;});//prevent href jump
-
-  MultiLineStringToHTML(clone.querySelector(".dropdown-body"), body);
-
-  if (subBody !== "") {
-    let sub = clone.querySelector(".dropdown-subBody");
-    sub.classList.add("folded");
-    sub.ariaHidden = "true";
-    MultiLineStringToHTML(sub, subBody);
-  }
-  else {
-    let dorpBody = clone.querySelector(".dropdown-body");
-    dorpBody.classList.add("folded");
-    dorpBody.ariaHidden = "true";
-    clone.removeChild(clone.querySelector(".dropdown-subBody"));
-  }
-
-  if(category !== ""){ clone.dataset.category = category; }
-  return clone;
-}
-
-////////////////////////////////
 //tools ///////////////////////
 //////////////////////////////
 function MultiLineStringToHTML(elmnt, text) {
-  let textArray = text.split("<br>").join('\r\n').split('\r\n').join('\n').split('\n');
+  let textArray = text.split(/<br>|\r\n|\n/g);
   if (textArray.length == 1) {
     AddStringHTMLToElement(elmnt, textArray[0]);
   }
@@ -679,7 +579,6 @@ function MultiLineStringToHTML(elmnt, text) {
       if (index > 0) {
         elmnt.appendChild(document.createElement("br"));
       }
-
       AddStringHTMLToElement(elmnt, textArray[index]);
     }
   }
@@ -694,37 +593,35 @@ function AddStringHTMLToElement(elmnt, text) {
     let tagIndex = text.indexOf("<");
     let linkIndex = text.indexOf(tags[0]);
 
-    if (tagIndex == -1 && linkIndex == -1) {
+    if (tagIndex === -1 && linkIndex === -1) {
       html += text;
       break;
     }
 
-    if (tagIndex > -1 && (tagIndex < linkIndex || linkIndex == -1)) {
+    if (tagIndex > -1 && (tagIndex < linkIndex || linkIndex === -1)) {
       let tagEndIndex = text.indexOf(">", tagIndex) + 1;
       let substring = text.substring(tagIndex, tagEndIndex);
       let validTag = false;
 
       for (let i = 1; i < tags.length; i++) {
-        if (substring.indexOf(tags[i]) == 0) {
+        if (substring.indexOf(tags[i]) === 0) {
           validTag = true;
           if (tagIndex != 0) {
             html += text.substring(0, tagIndex);
           }
 
           let tag = document.createElement("i");
+          tag.classList.add("fa-brands");
           switch (i) {
             case 1: {
-              tag.classList.add("fa-brands");
               tag.classList.add("fa-unity");
               break;
             }
             case 2: {
-              tag.classList.add("fa-brands");
               tag.classList.add("fa-itch-io");
               break;
             }
             case 3: {
-              tag.classList.add("fa-brands");
               tag.classList.add("fa-github");
               break;
             }
@@ -734,18 +631,17 @@ function AddStringHTMLToElement(elmnt, text) {
           break;
         }
       }
-      if (validTag == false) {
+      if (validTag === false) {
         html += text.substring(0, tagEndIndex);
         text = text.replace(text.substring(0, tagEndIndex), '');
       }
-
     }
-    else if (linkIndex > -1 && (linkIndex < tagIndex || tagIndex == -1)) {
+    else if (linkIndex > -1 && (linkIndex < tagIndex || tagIndex === -1)) {
       let endIndex = text.indexOf(" ", linkIndex);
       if (endIndex == -1)
         endIndex = text.length;
 
-      if (text[endIndex - 1] == '.')
+      if (text[endIndex - 1] === '.')
         endIndex--;
 
       html += text.substring(0, linkIndex);
@@ -759,21 +655,19 @@ function AddStringHTMLToElement(elmnt, text) {
       console.log(`undefined: linkIndex=${linkIndex} tagIndex=${tagIndex} text='${text}'`);
     }
   }
-
   elmnt.insertAdjacentHTML("beforeend", html);
 }
 
-
-function RegisterSpecificMouseAndTouchEvent(elmnt, mouseEvent, touchEvent, fnctn) {
+function RegisterSpecificMouseAndTouchEvent(elmnt, mouseEvent, touchEvent, fnc) {
   if (elmnt !== null) {
-    elmnt.addEventListener(mouseEvent, fnctn);
-    elmnt.addEventListener(touchEvent, fnctn, {passive: true});
+    elmnt.addEventListener(mouseEvent, fnc);
+    elmnt.addEventListener(touchEvent, fnc, {passive: true});
   }
 }
-function RegisterMouseAndTouchEvent(elmnt, fnctn) {
+function RegisterMouseAndTouchEvent(elmnt, fnc) {
   if (elmnt !== null) {
-    elmnt.addEventListener("mouseup", fnctn);
-    elmnt.addEventListener("touchend", fnctn);
+    elmnt.addEventListener("mouseup", fnc);
+    elmnt.addEventListener("touchend", fnc);
   }
 }
 
@@ -810,4 +704,91 @@ function createRipple(event) {
 
     //---this will place the wave bellow all elements
     element.insertBefore(circle, element.firstChild);
+}
+
+
+function FoldProjectCardsInContainer(container){
+  let projects = container.getElementsByClassName("card-wrapper");
+  if (projects && projects.length > 0){
+    for (let i = 0; i < projects.length; i++){
+      let subBody = projects[i].querySelector(".subBody");
+      let targetBody = subBody ? subBody : projects[i].querySelector(".body");
+      
+      if (targetBody != null) {
+        if (!targetBody.classList.contains("folded")) {    
+          const btn = projects[i].querySelector(".two-step-button");
+          btn.innerHTML = btn.getAttribute("data-prime");
+
+          targetBody.classList.add("folded");
+          targetBody.ariaHidden = true; 
+        }
+      }
+    }
+  }
+}
+function CreateProjectCard(imagePath, title, body, subBody = "", category = "", removeButton = false){
+  const template = document.querySelector("template");
+  const clone = template.content.querySelector(".card-wrapper").cloneNode(true);
+
+  clone.querySelector(".flex").classList.add("reverse");
+  clone.style.setProperty("--border-color", "slateblue");
+  clone.querySelector(".card-heading").style.setProperty("--underline-color", "lightskyblue");
+
+  if(imagePath.toLowerCase() === "none"){
+    clone.querySelector(".flex").removeChild(clone.querySelector(".card-img"));
+  } else {
+    clone.querySelector(".card-img").src = imagePath;
+    clone.querySelector(".card-img").classList.add("right")
+  }
+
+  //fill card with text and add to grid
+  AddStringHTMLToElement(clone.querySelector(".card-heading"), title);
+  MultiLineStringToHTML(clone.querySelector(".body"), body);
+
+  if(subBody !== ""){
+    let sub = document.createElement("div");
+    sub.classList.add("subBody", "folded");
+    sub.ariaHidden = "true";
+    MultiLineStringToHTML(sub, subBody);
+    clone.appendChild(sub);
+  }
+  else{
+    clone.querySelector(".body").ariaHidden = true;
+    clone.querySelector(".body").classList.add("folded");
+  }
+
+  if (category !== ""){ clone.setAttribute('data-category', category); }
+
+  if (removeButton){
+    clone.removeChild(clone.querySelector(".two-step-button"));
+    if(imagePath.toLowerCase() !== "none"){
+      clone.querySelector(".card-img").classList.add("btn-ignore");
+    }
+  } else { 
+    const btn = clone.querySelector(".two-step-button");
+    btn.classList.remove("right");
+    btn.innerHTML = btn.dataset.prime;
+    RegisterMouseAndTouchEvent(btn, function(e){
+      e.preventDefault();
+      if (e.type == "mouseup" && e.button != 0) 
+      { return; }
+      let subBody = clone.querySelector(".subBody");
+      let targetBody = subBody ? subBody : clone.querySelector(".body");
+      if(e.currentTarget.innerHTML.toString() === e.currentTarget.getAttribute("data-alt")){
+        e.currentTarget.innerHTML = e.currentTarget.getAttribute("data-prime");
+        if(targetBody){ 
+          targetBody.classList.add("folded");
+          targetBody.ariaHidden = true; 
+        }
+      } else {
+        e.currentTarget.innerHTML = e.currentTarget.getAttribute("data-alt");
+        clone.scrollIntoView();
+        if(targetBody){ 
+          targetBody.classList.remove("folded");
+          targetBody.ariaHidden = false; 
+        }
+      }
+    });
+  }
+  return clone;
 }

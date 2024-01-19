@@ -1,10 +1,28 @@
 .category-dropdown {
-    overflow-wrap: break-word;
-    overflow: hidden;
-    height: fit-content;
     padding: 0 2ch 2ch 2ch;
-
     background-color: rgba(255, 255, 255, 0.05);
+}
+
+.category-dropdown .header{
+    display:      inline-block;
+    font-size:    large;
+    transition: color 0.2s, text-shadow 0.2s;
+}
+.category-dropdown .header:hover {
+    color: lightcyan;
+    text-shadow: 0 0 4px cyan;
+    cursor: pointer;
+}
+  
+.category-dropdown .title,
+.category-dropdown .toggle {
+    display: inline-block;
+    vertical-align: middle;
+    margin: 15px 0 10px 0;
+}
+.category-dropdown .toggle {
+    padding-right: 5px;
+    font-family: "Lucida Console", monospace;
 }
 
 .category-dropdown .body{
@@ -19,7 +37,6 @@
     display: flex;
     list-style-type: none;
     flex-direction: column;
-    max-width: 1000px;
     margin: 0 auto 0 auto;
     padding: 0;
 }
