@@ -26,6 +26,7 @@
         <link rel="stylesheet" href="styles/frameStyle.css" />
         <link rel="stylesheet" href="styles/categoryDropdown.css" />
         <link rel="stylesheet" href="styles/cardStyle.css" />
+        <link rel="stylesheet" href="styles/blogStyle.css" />
 
         <link rel="stylesheet" href="Logo/style.css" />
 
@@ -38,11 +39,14 @@
             <h2 class="frame-header-title"><!--header text--></h2>
             <div class="frame-header-button-container"><!--header buttons--></div>
         </div>
-        <div class="frame-body" style="color:white"><!--body--></div>
+        <div class="frame-body"><!--body--></div>
     </article>
 
     <div class="category-dropdown">
-        <div class="header"><a class="toggle" data-prime="&lt;i class=&quot;fa-solid fa-minus&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;" data-alt="&lt;i class=&quot;fa-solid fa-angles-down&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;"></a><h3 class="title"><!--title--></h3></div>
+        <div class="header">
+            <a class="toggle" data-prime="&lt;i class=&quot;fa-solid fa-minus&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;" data-alt="&lt;i class=&quot;fa-solid fa-angles-down&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;"></a>
+            <h3 class="title"><!--title--></h3>
+        </div>
         <div class="body"><!--body--><ul class="project-list"></ul></div>
     </div>
 
@@ -57,20 +61,12 @@
         </div>
     </div>
 
-    <div class="blog-card-wrapper"><!--add "stack" class when width too small-->
-        <button>Open</button>
-        <img src="" alt="" onerror="this.onerror=null; this.src='./Pics/PageScreenshot.png'" loading="lazy">
-        <div class="blog-card-text-wrapper">
-            <h3 class="card-heading"></h3><!--title-->
-            <!--body-->
-        </div>
-    </div>
     </template>
     
     <span id="background" aria-hidden="true">
         <svg width='100%' height='100%' xmlns="http://www.w3.org/2000/svg" style="position: absolute;">
             <defs>
-                <pattern id="myPattern" class="cube-pattern" patternUnits='userSpaceOnUse' width='69.141' height='40' patternTransform='scale(2) rotate(0)'>
+                <pattern id="myPattern" patternUnits='userSpaceOnUse' width='69.141' height='40' patternTransform='scale(2) rotate(0)'>
                     <mask id="myMask">
                         <path fill="white" stroke-width='1' stroke='black'
                             d='M69.212 40H46.118L34.57 20 46.118 0h23.094l11.547 20zM57.665 60H34.57L23.023 40 34.57 20h23.095l11.547 20zm0-40H34.57L23.023 0 34.57-20h23.095L69.212 0zM34.57 60H11.476L-.07 40l11.547-20h23.095l11.547 20zm0-40H11.476L-.07 0l11.547-20h23.095L46.118 0zM23.023 40H-.07l-11.547-20L-.07 0h23.094L34.57 20z'/>
@@ -88,6 +84,7 @@
                 <h1 id="name">Panthera</h1>
                 <button type="button" id="about-button" class="main-block-button">About</button>
                 <button type="button" id="projects-button" class="main-block-button">Projects</button>
+                <button type="button" id="blogs-button" class="main-block-button">Blogs</button>
                 <button type="button" id="link-button" class="main-block-button">Links</button>
             </div>
     
@@ -109,7 +106,7 @@
                 <button type="button" name="fullscreen-frame-button" class="frame-header-button cyan-hover icon-button"><i class="fa-solid fa-xs fa-plus"></i></button>
             </div><!--header buttons-->
         </div>
-        <div class="frame-body frame-text" style="color:white">
+        <div class="frame-body frame-text">
             <p class="hidden-window-text">
                 <i class="fa-regular fa-envelope"></i> <a href="mailto:pantheradigitalonline@gmail.com">pantheradigitalonline@gmail.com</a><br><br>
                 <i class="fa-brands fa-codepen"></i> <a href="https://codepen.io/PantheraDigital" target="_blank">CodePen.io</a><br>
@@ -128,7 +125,7 @@
                 <button type="button" name="fullscreen-frame-button" class="frame-header-button cyan-hover icon-button"><i class="fa-solid fa-xs fa-plus"></i></button>
             </div><!--header buttons-->
         </div>
-        <div class="frame-body" style="color:white">
+        <div class="frame-body">
             <ul class="project-grid"></ul>
         </div><!--body-->
     </article>
@@ -141,7 +138,7 @@
                 <button type="button" name="fullscreen-frame-button" class="frame-header-button cyan-hover icon-button"><i class="fa-solid fa-xs fa-plus"></i></button>
             </div><!--header buttons-->
         </div>
-        <div class="frame-body frame-text" style="color:white">
+        <div class="frame-body frame-text">
             <h3>From playing games to making games.</h3>
             <p class="hidden-window-text">
                 My passion for creation and games has led me to become a programmer. 
@@ -165,7 +162,7 @@
 
     <div id="qr-overlay">
         <img src="./Pics/QR.png" alt="A QR code that shares the link to this website">
-        <p class="hidden-window-text">PageLink</p>
+        <p>PageLink</p>
     </div>
     <button id="qr-button" type="button">
         <i class="fa-solid fa-x"></i>

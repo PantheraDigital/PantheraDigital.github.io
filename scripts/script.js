@@ -3,6 +3,7 @@ const blogDocID = "1AqB-qUFwaGI5-mfEfUVkTaEIPRo5DlVwvnI2wsWmRDI";
 const link = `https://docs.google.com/document/d/${projectDocID}/edit?usp=sharing`;
 const apiKey = "AIzaSyBHhqGZRJIo90yIk1K-J86C9PU3whMe8CA";
 
+const frameArray = Array.from(document.getElementsByClassName("frame"));
 const projectDataArray = [];
 const blogDataArray = [];
 
@@ -27,9 +28,12 @@ try {
   passiveSupported = false;
 }
 
+window.onload = (event) => {
+  PreOpenWindow();
+};
+
 ////////////////////////////////
 //Load Google Doc contents/////
-//////////////////////////////
 (function () {
   const projectText = localStorage.getItem("projects");
   const time = localStorage.getItem("projecttime");
@@ -113,8 +117,27 @@ try {
         console.log(e.toString());
       });
   }
-})();
 
+  let frame = CreateFrame("<b>BlogBrowser</b>", "", {frameType: "fixed", buttons: "close fullscreen", hidden: true});
+  frame.id = "blog-browser-window";
+  frame.querySelector(".frame-body").classList.add("blog-browser-body");
+  
+  let heading = document.createElement("h3");
+  heading.innerHTML = "Blog Browser";
+  frame.querySelector(".frame-body").appendChild(heading);
+
+  let blogList = document.createElement("ul");
+  blogList.classList.add("project-grid");
+  AddBodyToFrame(frame, blogList);
+  blogDataArray.forEach(element => {
+    let item = document.createElement("li");
+    item.appendChild(CreateBlogCard(element), false, false);
+    blogList.appendChild(item);
+  });
+
+  if(window.matchMedia("(pointer: coarse)").matches) {SetFrameFullscreen(frame, true);}
+  document.body.appendChild(frame);
+})();
 
 async function ParseDoc(docID, textParser, errorCall){
   await fetch(`https://www.googleapis.com/drive/v3/files/${docID}/export?mimeType=text/plain&key=${apiKey}`)
@@ -123,7 +146,6 @@ async function ParseDoc(docID, textParser, errorCall){
   }).then(textParser
   ).catch(errorCall);
 }
-
 //take in doc as text and return array of cards
 function ParseDocProjects(text){
   let textArray = text.substring(text.indexOf("<projects>"), text.length).split("\r\n");
@@ -218,7 +240,7 @@ function ParseDocBlogs(text){
       }
     }
     
-    if(textArray[index].includes("{")){
+    if(index < textArray.length && textArray[index].includes("{")){
       if(textArray[index].includes("}")){
         blog.data = textArray[index].substring(textArray[index].indexOf("{") + 1, textArray[index].indexOf("}"));
         index++;
@@ -239,16 +261,12 @@ function ParseDocBlogs(text){
         }
       }
     }
-    
     blogDataArray.push(blog);
   }
-  console.log(blogDataArray);
 }
 
 ////////////////////////////////
 //add frame functionality//////
-//////////////////////////////
-const frameArray = Array.from(document.getElementsByClassName("frame"));
 for (let i = 0; i < frameArray.length; i++) {
   RegisterSpecificMouseAndTouchEvent(frameArray[i], "mousedown", "touchstart", function(e){ 
     UpdateFrameZOrder(e.currentTarget); 
@@ -263,9 +281,7 @@ for (let i = 0; i < frameArray.length; i++) {
   if(closeBtn){
     RegisterMouseAndTouchEvent(closeBtn, function(e){
       e.preventDefault();
-      if(e.type == "mouseup" && e.button != 0){
-        return;
-      }
+      if(e.type == "mouseup" && e.button != 0) {return;}
       HideFrame(e.target.closest(".frame"));
     });
   }
@@ -274,9 +290,7 @@ for (let i = 0; i < frameArray.length; i++) {
   if(fullscreenBtn){
     RegisterMouseAndTouchEvent(fullscreenBtn, function(e){
       e.preventDefault();
-      if(e.type == "mouseup" && e.button != 0){
-        return;
-      }
+      if(e.type == "mouseup" && e.button != 0) {return;}
       let frame = e.target.closest(".frame");
       ToggleFrameFullscreen(frame);
       UpdateFrameZOrder(frame);
@@ -304,87 +318,45 @@ RegisterMouseAndTouchEvent(qrOverlayButton, function(e){
 
 ////////////////////////////////
 //register menu button events//
-//////////////////////////////
-let aboutBFirstPush = projectsBFirstPush = linkBFirstPush = window.matchMedia("(pointer: coarse)").matches;
-RegisterMouseAndTouchEvent(document.getElementById("link-button"), function(event){
-  let frame = document.getElementById("links-window");
-  
-  event.preventDefault();
-  if(event.type == "mouseup" && event.button != 0){
-    return;
-  }
-  if(linkBFirstPush == true){
-    linkBFirstPush = false;
-    SetFrameFullscreen(frame, true);
-  }
-  
-  UpdateFrameZOrder(frame);
-  ShowFrame(frame);
-});
-RegisterMouseAndTouchEvent(document.getElementById("projects-button"), function(event){
-  let frame = document.getElementById("projects-window");
-  
-  event.preventDefault();
-  if(event.type == "mouseup" && event.button != 0){
-    return;
-  }
-  if(projectsBFirstPush == true){
-    projectsBFirstPush = false;
-    SetFrameFullscreen(frame, true);
-  }
+RegisterMouseAndTouchEvent(document.getElementById("link-button"), function(event){ OpenWindow("links-window", event); });
+RegisterMouseAndTouchEvent(document.getElementById("projects-button"), function(event){ OpenWindow("projects-window", event, FoldProjectCardsInContainer); });
+RegisterMouseAndTouchEvent(document.getElementById("about-button"), function(event){ OpenWindow("about-window", event); });
+RegisterMouseAndTouchEvent(document.getElementById("blogs-button"), function(event){ OpenWindow("blog-browser-window", event); });
 
-  FoldProjectCardsInContainer(frame);
-  UpdateFrameZOrder(frame);
-  ShowFrame(frame);
-});
-RegisterMouseAndTouchEvent(document.getElementById("about-button"), function(event){
-  let frame = document.getElementById("about-window");
+function OpenWindow(id, event, func = null){
   event.preventDefault();
-
-  if(event.type == "mouseup" && event.button != 0){
-    return;
-  }
-  if(aboutBFirstPush == true){
-    aboutBFirstPush = false;
-    SetFrameFullscreen(frame, true);
-  }
+  if(event.type == "mouseup" && event.button != 0) {return;}
+  let frame = document.getElementById(id);
+  if(window.matchMedia("(pointer: coarse)").matches) {SetFrameFullscreen(frame, true);}
+  if(func) { func(frame); }
   UpdateFrameZOrder(frame);
   ShowFrame(frame);
-});
+}
 
 //open windows based on url search values
-PreOpenWindow();
 function PreOpenWindow(){
-  let frame = null;
-
   if(urlParams.has("projects")){
-    frame = document.getElementById("projects-window");
-    SetFrameFullscreen(frame, projectsBFirstPush);
-    UpdateFrameZOrder(frame);
-    ShowFrame(frame);
-    projectsBFirstPush = false;
+    open("projects-window");
   }
   if(urlParams.has("about")){
-    frame = document.getElementById("about-window");
-    SetFrameFullscreen(frame, aboutBFirstPush);
-    UpdateFrameZOrder(frame);
-    ShowFrame(frame);
-    aboutBFirstPush = false;
+    open("about-window");
   }
   if(urlParams.has("links")){
-    frame = document.getElementById("links-window");
-    SetFrameFullscreen(frame, linkBFirstPush);
+    open("links-window");
+  }
+  if(urlParams.has("blog")){
+    open("blog-browser-window");
+  }
+  function open(id){
+    let frame = document.getElementById(id);
+    SetFrameFullscreen(frame, window.matchMedia("(pointer: coarse)").matches);
     UpdateFrameZOrder(frame);
     ShowFrame(frame);
-    linkBFirstPush = false;
   }
 }
 
-
-
 ////////////////////////////////
-//Frame button functions //////
-//////////////////////////////
+//Frame functions /////////////
 function HideFrame(frame) {
   frame.style.display = "none";
   
@@ -459,6 +431,292 @@ function ShownFramesCount() {
   return count;
 }
 
+// options = {frameType: "fixed/absolute fullscreen", position: {top: val, right: val, bottom: val, left: val},
+//     width: val, height: val, buttons: "fullscreen close", bodyAsString: true, hidden: false}
+function CreateFrame(title, body = "", options = {}){
+  const clone = document.querySelector("template").content.querySelector(".frame").cloneNode(true);
+  frameArray.push(clone);
+
+  if(options.hasOwnProperty("hidden") && options.hidden) {
+    clone.style.display = "none";
+  } else {
+    UpdateFrameZOrder(clone);
+  }
+  if(options.hasOwnProperty("frameType")){
+    let canMove = false;
+    if(options.frameType.includes("fixed")){
+      clone.classList.add("fixed");
+      canMove = true;
+    } else if(options.frameType.includes("absolute")){
+      clone.classList.add("absolute");
+      canMove = true;
+    }
+    if(canMove){
+      DragElement(clone, clone.querySelector(".frame-header"), clone.querySelector(".frame-header-title"));
+    }
+  }
+  if(options.hasOwnProperty("position")){
+    let pos = options.position;
+    if(pos.hasOwnProperty("top")) { clone.style.top = pos.top; }
+    if(pos.hasOwnProperty("right")) { clone.style.right = pos.right; }
+    if(pos.hasOwnProperty("bottom")) { clone.style.bottom = pos.bottom; }
+    if(pos.hasOwnProperty("left")) { clone.style.left = pos.left; }
+  }
+  if(options.hasOwnProperty("width")){ clone.style.width = options.width; }
+  if(options.hasOwnProperty("height")){ clone.style.height = options.height; }
+
+  clone.querySelector(".frame-header-title").insertAdjacentHTML("beforeend", CustomTagReplacer(title));
+
+  if(options.hasOwnProperty("buttons")){
+    let buttonNames = options.buttons.split(" ");
+    buttonNames.forEach(name => {
+      let btn = CreateButton(name);
+      if(btn) { clone.querySelector(".frame-header-button-container").appendChild(btn); }
+    });
+
+    if(options.hasOwnProperty("frameType") && options.frameType.includes("fullscreen") && options.buttons.includes("fullscreen")){
+      SetFrameFullscreen(clone, true);
+    }
+  }
+
+  if(body !== ""){
+    AddBodyToFrame(clone, body, (options.hasOwnProperty("bodyAsString") && options.bodyAsString));
+  }
+  
+  RegisterSpecificMouseAndTouchEvent(clone, "mousedown", "touchstart", function(){ 
+    UpdateFrameZOrder(clone); 
+  });
+
+  function CreateButton(name){
+    let button = null;
+    switch(name){
+      case "close": {
+        button = document.createElement("button");
+        button.setAttribute("type", "button");
+        button.setAttribute("name", "close-frame-button");
+        button.classList.add("frame-header-button", "red-hover");
+        button.innerText = "X";
+        RegisterMouseAndTouchEvent(button, function(e){
+          e.preventDefault();
+          if(e.type == "mouseup" && e.button != 0) {return;}
+          HideFrame(e.target.closest(".frame"));
+        });
+        break;
+      }
+      case "fullscreen":{
+        button = document.createElement("button");
+        button.setAttribute("type", "button");
+        button.setAttribute("name", "fullscreen-frame-button");
+        button.classList.add("frame-header-button", "cyan-hover", "icon-button");
+        button.innerHTML = "<i class=\"fa-solid fa-xs fa-plus\"></i>";
+        RegisterMouseAndTouchEvent(button, function(e){
+          e.preventDefault();
+          if(e.type == "mouseup" && e.button != 0) {return;}
+          let frame = e.target.closest(".frame");
+          ToggleFrameFullscreen(frame);
+          UpdateFrameZOrder(frame);
+        });
+        break;
+      }
+    }
+    return button;
+  }
+
+  return clone;
+}
+function AddBodyToFrame(frame, body, bodyIsString, override = false){
+  const frameBody = frame.querySelector(".frame-body");
+  if(bodyIsString){
+    frameBody.classList.add("frame-text");
+    frameBody.insertAdjacentHTML("beforeend", CustomTagReplacer(body));
+  } else {
+    if(override){
+      frameBody.innerHTML = body;
+    } else {
+      frameBody.appendChild(body);
+    }
+  }
+}
+function OpenBlogFrame(blog){
+  const titleHTML = document.createElement("h3");
+  titleHTML.insertAdjacentHTML("beforeend", CustomTagReplacer(blog.title));
+  const id = "blog_" + titleHTML.innerText.replaceAll(" ", "-");
+  if(document.getElementById(id)){
+    let frame = document.getElementById(id);
+    UpdateFrameZOrder(frame);
+    ShowFrame(frame);
+    return;
+  }
+
+  let frame = CreateFrame(`Blog Viewer - <i>${titleHTML.innerText}</i>`, "", 
+  {frameType: "fixed fullscreen", buttons: "close fullscreen", position: {top: "50%", left: "50%"}});
+  frame.id = id;
+
+  let wrapper = document.createElement("div");
+  wrapper.classList.add("blog-wrapper");
+
+  if(blog.data !== ""){
+    const dataObj = ParseBlogTags(blog.data);
+    if(dataObj.hasOwnProperty("text") && dataObj.text === "preformatted") {wrapper.classList.add("preformatted");}
+
+    let imagePath = dataObj.hasOwnProperty("large-img") ? dataObj["large-img"] : (dataObj.hasOwnProperty("img") ? dataObj["img"] : "");
+    if(imagePath !== ""){
+      const template = document.querySelector("template");
+      const clone = template.content.querySelector(".card-wrapper").querySelector(".card-img").cloneNode(true);
+      clone.classList.remove("card-img");
+      clone.classList.add("blog-img");
+      clone.src = imagePath;
+      clone.removeAttribute("loading");
+      wrapper.appendChild(clone);
+    }
+  }
+  
+  wrapper.appendChild(titleHTML);
+  wrapper.insertAdjacentHTML("beforeend", CustomTagReplacer(blog.body));
+  AddBodyToFrame(frame, wrapper, false);
+
+  document.body.appendChild(frame);
+}
+
+/////////////////////////
+// Card functions //////
+function FoldProjectCardsInContainer(container){
+  let projects = container.getElementsByClassName("card-wrapper");
+  if (projects && projects.length > 0){
+    for (let i = 0; i < projects.length; i++){
+      if(!projects[i].querySelector(".two-step-button")) {continue;}
+      let subBody = projects[i].querySelector(".subBody");
+      let targetBody = subBody ? subBody : projects[i].querySelector(".body");
+      
+      if (targetBody != null) {
+        if (!targetBody.classList.contains("folded")) {    
+          const btn = projects[i].querySelector(".two-step-button");
+          if(btn){
+            btn.innerHTML = btn.getAttribute("data-prime");
+          }
+          targetBody.classList.add("folded");
+          targetBody.ariaHidden = true; 
+        }
+      }
+    }
+  }
+}
+function CreateProjectCard(imagePath, title, body, subBody = "", category = "", removeButton = false){
+  const template = document.querySelector("template");
+  const clone = template.content.querySelector(".card-wrapper").cloneNode(true);
+
+  clone.querySelector(".flex").classList.add("reverse");
+  clone.style.setProperty("--border-color", "slateblue");
+  clone.querySelector(".card-heading").style.setProperty("--underline-color", "lightskyblue");
+
+  if(imagePath.toLowerCase() === "none"){
+    clone.querySelector(".flex").removeChild(clone.querySelector(".card-img"));
+  } else {
+    clone.querySelector(".card-img").src = imagePath;
+    clone.querySelector(".card-img").classList.add("right")
+  }
+
+  //fill card with text and add to grid
+  clone.querySelector(".card-heading").insertAdjacentHTML("beforeend", CustomTagReplacer(title));
+  clone.querySelector(".body").insertAdjacentHTML("beforeend", CustomTagReplacer(body));
+
+  if(subBody !== ""){
+    let sub = document.createElement("div");
+    sub.classList.add("subBody", "folded");
+    sub.ariaHidden = "true";
+    sub.insertAdjacentHTML("beforeend", CustomTagReplacer(subBody));
+    clone.appendChild(sub);
+  }
+  else{
+    clone.querySelector(".body").ariaHidden = true;
+    clone.querySelector(".body").classList.add("folded");
+  }
+
+  if (category !== ""){ clone.setAttribute('data-category', category); }
+
+  if (removeButton){
+    clone.removeChild(clone.querySelector(".two-step-button"));
+    if(imagePath.toLowerCase() !== "none"){
+      clone.querySelector(".card-img").classList.add("btn-ignore");
+    }
+    clone.querySelector(".body")?.classList.remove("folded");
+    clone.querySelector(".subbody")?.classList.remove("folded");
+  } else { 
+    const btn = clone.querySelector(".two-step-button");
+    btn.classList.remove("right");
+    btn.innerHTML = btn.dataset.prime;
+    RegisterMouseAndTouchEvent(btn, function(e){
+      e.preventDefault();
+      if (e.type == "mouseup" && e.button != 0) 
+      { return; }
+      let subBody = clone.querySelector(".subBody");
+      let targetBody = subBody ? subBody : clone.querySelector(".body");
+      if(e.currentTarget.innerHTML.toString() === e.currentTarget.getAttribute("data-alt")){
+        e.currentTarget.innerHTML = e.currentTarget.getAttribute("data-prime");
+        if(targetBody){ 
+          targetBody.classList.add("folded");
+          targetBody.ariaHidden = true; 
+        }
+      } else {
+        e.currentTarget.innerHTML = e.currentTarget.getAttribute("data-alt");
+        clone.scrollIntoView();
+        if(targetBody){ 
+          targetBody.classList.remove("folded");
+          targetBody.ariaHidden = false; 
+        }
+      }
+    });
+  }
+  return clone;
+}
+function CreateBlogCard(blogData){
+  const template = document.querySelector("template");
+  const clone = template.content.querySelector(".card-wrapper").cloneNode(true);
+
+  const btn = clone.querySelector(".two-step-button");
+  btn.innerHTML = "<i class=\"fa-solid fa-up-right-from-square\"></i>";
+  btn.removeAttribute("data-alt");
+  btn.removeAttribute("data-prime");
+  RegisterMouseAndTouchEvent(btn, function(e){
+    e.preventDefault();
+    if(e.type == "mouseup" && e.button != 0) {return;}
+    OpenBlogFrame(blogData);
+  });
+
+  clone.style.setProperty("--border-color", "deepskyblue");
+  clone.querySelector(".card-heading").style.setProperty("--underline-color", "mediumpurple");
+  clone.querySelector(".card-heading").insertAdjacentHTML("beforeend", CustomTagReplacer(blogData.title));
+
+  if(blogData.desc !== "") {
+    clone.querySelector(".body").insertAdjacentHTML("beforeend", CustomTagReplacer(blogData.desc));
+  }
+
+  if(blogData.data !== ""){
+    const dataObj = ParseBlogTags(blogData.data);
+  
+    if(dataObj.hasOwnProperty("img") && dataObj.img.toLowerCase() !== "none"){
+      clone.querySelector(".card-img").src = dataObj.img;
+    } else {
+      clone.querySelector(".flex").removeChild(clone.querySelector(".card-img"));
+    }
+  
+    if(dataObj.hasOwnProperty("tags") && dataObj.tags !== ""){
+      clone.querySelector(".body").insertAdjacentHTML("beforeend", 
+      `<br><br><i>${dataObj.tags}<br>${dataObj.date}</i>`);
+    }
+  }
+  
+  return clone;
+}
+function ParseBlogTags(text){
+  const dataObj = {};
+  if(!text) {return dataObj;}
+  text.replaceAll(/[{}\n]|\r\n/g, "").split(";").forEach(element => {
+    let tag = element.substring(0, element.indexOf(":")).trim();
+    dataObj[tag] = element.substring(element.indexOf(":") + 1).trim();
+  });
+  return dataObj;
+}
 
 //////////////////////////////////////////
 //Moveable elements//////////////////////
@@ -565,97 +823,59 @@ function DragElement(elmnt, ...handles) {
   }
 }
 
-
 ////////////////////////////////
 //tools ///////////////////////
-//////////////////////////////
-function MultiLineStringToHTML(elmnt, text) {
-  let textArray = text.split(/<br>|\r\n|\n/g);
-  if (textArray.length == 1) {
-    AddStringHTMLToElement(elmnt, textArray[0]);
+
+//searches through a string. replaces custom tags with html form as a string <Unity> becomes <i class="fa-brands fa-unity"></i>
+// non specified tags are ignored
+// tags between <$> are put in as text. replace all '<' and '>' symbols with '&lt;' and '&gt;' until </$>
+function CustomTagReplacer(text){
+  text = text.replaceAll(/\r\n|\n/g, "<br>");
+  var mapObj = {
+    "<unity>": '<i class="fa-brands fa-unity"></i>',
+    "<itch>":  '<i class="fa-brands fa-itch-io"></i>',
+    "<github>":'<i class="fa-brands fa-github"></i>'
+  };
+
+  var reg = new RegExp(Object.keys(mapObj).join("|"),"gi");
+  text = text.replace(reg, function(matched){
+    return mapObj[matched];
+  });
+
+  //keep specific html
+  while(text.includes("<$>")){
+    let start = text.indexOf("<$>");
+    let end = text.indexOf("</$>", start);
+    if(end == -1) {break;}
+
+    let sub = text.substring(start, end + 4);
+    sub = sub.replace(/<\$>|<\/\$>/g, "");
+    let result = sub.replace(/<|>/g, function(matched){
+      if(matched === "<") {return "&lt;";}
+      else if(matched === ">") {return "&gt;";}
+    });
+    
+    text = text.replace(text.substring(start, end + 4), result);
   }
-  else {
-    for (let index = 0; index < textArray.length; index++) {
-      if (index > 0) {
-        elmnt.appendChild(document.createElement("br"));
-      }
-      AddStringHTMLToElement(elmnt, textArray[index]);
-    }
-  }
-}
 
-//create and add nodes directly as strings to inner html
-function AddStringHTMLToElement(elmnt, text) {
-  const tags = ["https://", "<unity>", "<itch>", "<github>"];
-  let html = "";
-
-  while (text.length > 0) {
-    let tagIndex = text.indexOf("<");
-    let linkIndex = text.indexOf(tags[0]);
-
-    if (tagIndex === -1 && linkIndex === -1) {
-      html += text;
-      break;
-    }
-
-    if (tagIndex > -1 && (tagIndex < linkIndex || linkIndex === -1)) {
-      let tagEndIndex = text.indexOf(">", tagIndex) + 1;
-      let substring = text.substring(tagIndex, tagEndIndex);
-      let validTag = false;
-
-      for (let i = 1; i < tags.length; i++) {
-        if (substring.indexOf(tags[i]) === 0) {
-          validTag = true;
-          if (tagIndex != 0) {
-            html += text.substring(0, tagIndex);
-          }
-
-          let tag = document.createElement("i");
-          tag.classList.add("fa-brands");
-          switch (i) {
-            case 1: {
-              tag.classList.add("fa-unity");
-              break;
-            }
-            case 2: {
-              tag.classList.add("fa-itch-io");
-              break;
-            }
-            case 3: {
-              tag.classList.add("fa-github");
-              break;
-            }
-          }
-          html += tag.outerHTML;
-          text = text.replace(text.substring(0, tagEndIndex), '');
-          break;
-        }
-      }
-      if (validTag === false) {
-        html += text.substring(0, tagEndIndex);
-        text = text.replace(text.substring(0, tagEndIndex), '');
-      }
-    }
-    else if (linkIndex > -1 && (linkIndex < tagIndex || tagIndex === -1)) {
+  let index = 0;
+  while(text.indexOf("https://", index) !== -1){
+    let linkIndex = text.indexOf("https://", index);
+    if(text.substring(linkIndex - 6, linkIndex) === "href=\"" || text.substring(linkIndex - 5, linkIndex) === "src=\""){
+      index = text.indexOf(">", linkIndex) + 1;//ignore
+    } else {
       let endIndex = text.indexOf(" ", linkIndex);
-      if (endIndex == -1)
-        endIndex = text.length;
+      if(endIndex > text.indexOf("<br>", linkIndex) || endIndex === -1) {endIndex = text.indexOf("<br>", linkIndex);}
 
-      if (text[endIndex - 1] === '.')
-        endIndex--;
+      if (endIndex === -1) {endIndex = text.length;}
+      if (text[endIndex - 1] === '.') {endIndex--;}
 
-      html += text.substring(0, linkIndex);
-      let link = document.createElement("a");
-      link.href = text.substring(linkIndex, endIndex);
-      link.innerHTML = link.href;
-      html += link.outerHTML;
-      text = text.replace(text.substring(0, endIndex), '');
-    }
-    else {
-      console.log(`undefined: linkIndex=${linkIndex} tagIndex=${tagIndex} text='${text}'`);
+      let link = text.substring(linkIndex, endIndex);
+      text = text.slice(0, linkIndex) + `<a href=\"${link}\">${link}</a>` + text.slice(linkIndex + link.length);
+      index += (link.length * 2) + 15;
     }
   }
-  elmnt.insertAdjacentHTML("beforeend", html);
+  return text;
 }
 
 function RegisterSpecificMouseAndTouchEvent(elmnt, mouseEvent, touchEvent, fnc) {
@@ -671,9 +891,7 @@ function RegisterMouseAndTouchEvent(elmnt, fnc) {
   }
 }
 
-
-
-//---assign ripple effect on click
+//ripple effect
 RegisterSpecificMouseAndTouchEvent(document.getElementById("background"), "mousedown", "touchstart", createRipple);
 function createRipple(event) {
     event.preventDefault();
@@ -704,91 +922,4 @@ function createRipple(event) {
 
     //---this will place the wave bellow all elements
     element.insertBefore(circle, element.firstChild);
-}
-
-
-function FoldProjectCardsInContainer(container){
-  let projects = container.getElementsByClassName("card-wrapper");
-  if (projects && projects.length > 0){
-    for (let i = 0; i < projects.length; i++){
-      let subBody = projects[i].querySelector(".subBody");
-      let targetBody = subBody ? subBody : projects[i].querySelector(".body");
-      
-      if (targetBody != null) {
-        if (!targetBody.classList.contains("folded")) {    
-          const btn = projects[i].querySelector(".two-step-button");
-          btn.innerHTML = btn.getAttribute("data-prime");
-
-          targetBody.classList.add("folded");
-          targetBody.ariaHidden = true; 
-        }
-      }
-    }
-  }
-}
-function CreateProjectCard(imagePath, title, body, subBody = "", category = "", removeButton = false){
-  const template = document.querySelector("template");
-  const clone = template.content.querySelector(".card-wrapper").cloneNode(true);
-
-  clone.querySelector(".flex").classList.add("reverse");
-  clone.style.setProperty("--border-color", "slateblue");
-  clone.querySelector(".card-heading").style.setProperty("--underline-color", "lightskyblue");
-
-  if(imagePath.toLowerCase() === "none"){
-    clone.querySelector(".flex").removeChild(clone.querySelector(".card-img"));
-  } else {
-    clone.querySelector(".card-img").src = imagePath;
-    clone.querySelector(".card-img").classList.add("right")
-  }
-
-  //fill card with text and add to grid
-  AddStringHTMLToElement(clone.querySelector(".card-heading"), title);
-  MultiLineStringToHTML(clone.querySelector(".body"), body);
-
-  if(subBody !== ""){
-    let sub = document.createElement("div");
-    sub.classList.add("subBody", "folded");
-    sub.ariaHidden = "true";
-    MultiLineStringToHTML(sub, subBody);
-    clone.appendChild(sub);
-  }
-  else{
-    clone.querySelector(".body").ariaHidden = true;
-    clone.querySelector(".body").classList.add("folded");
-  }
-
-  if (category !== ""){ clone.setAttribute('data-category', category); }
-
-  if (removeButton){
-    clone.removeChild(clone.querySelector(".two-step-button"));
-    if(imagePath.toLowerCase() !== "none"){
-      clone.querySelector(".card-img").classList.add("btn-ignore");
-    }
-  } else { 
-    const btn = clone.querySelector(".two-step-button");
-    btn.classList.remove("right");
-    btn.innerHTML = btn.dataset.prime;
-    RegisterMouseAndTouchEvent(btn, function(e){
-      e.preventDefault();
-      if (e.type == "mouseup" && e.button != 0) 
-      { return; }
-      let subBody = clone.querySelector(".subBody");
-      let targetBody = subBody ? subBody : clone.querySelector(".body");
-      if(e.currentTarget.innerHTML.toString() === e.currentTarget.getAttribute("data-alt")){
-        e.currentTarget.innerHTML = e.currentTarget.getAttribute("data-prime");
-        if(targetBody){ 
-          targetBody.classList.add("folded");
-          targetBody.ariaHidden = true; 
-        }
-      } else {
-        e.currentTarget.innerHTML = e.currentTarget.getAttribute("data-alt");
-        clone.scrollIntoView();
-        if(targetBody){ 
-          targetBody.classList.remove("folded");
-          targetBody.ariaHidden = false; 
-        }
-      }
-    });
-  }
-  return clone;
 }

@@ -1,0 +1,81 @@
+.blog-browser-body > h3{
+    z-index: 1;
+    display: block;
+    margin: 20px auto 20px auto;
+    width: 12ch;
+    position: relative;
+    text-decoration: none;
+    font-size:xx-large;
+    text-align: center;
+    font-style: italic;
+}
+
+.blog-browser-body > h3::after {
+    content: '';
+    z-index: -1;
+    position: absolute;
+    left: 0;
+    bottom: .07em;
+    height: .1em;
+    width: 100%;
+    background: 
+     linear-gradient(to right, rgba(255,0,0,1) 0%, rgba(255,154,0,1) 10%, rgba(208,222,33,1) 20%, rgba(79,220,74,1) 30%, rgba(63,218,216,1) 40%, rgba(47,201,226,1) 50%, rgba(28,127,238,1) 60%, rgba(95,21,242,1) 70%, rgba(186,12,248,1) 80%, rgba(251,7,217,1) 90%, rgba(255,0,0,1) 100%) 
+     0 0/200% 100%;
+    animation: a 5s linear infinite both;
+}
+@keyframes a {
+    to {background-position:-200% 0}
+}
+
+.preformatted {
+    font-family: monospace;
+    white-space: pre-wrap;
+}
+
+
+.blog-wrapper{
+    max-width: 1000px;
+    padding: 0 10px 10px 10px;
+    margin: auto;
+}
+
+.blog-img{
+    display: block;
+    max-width: calc(100% - 20px);
+    width:  fit-content;
+    max-height: 350px;
+    height: auto;
+
+    margin: auto;
+    padding: 10px;
+    padding-bottom: 25px;
+}
+
+.blog-wrapper > h3{
+    
+    font-size:xx-large;
+    text-align: center;
+}
+
+.blog-wrapper code{
+    background-color: rgba(255, 255, 255, 0.15);
+}
+.blog-wrapper codeblock{
+    display: block;
+    overflow: auto;
+    margin: 5px;
+    padding: 5px 10px 5px 10px;
+    font-family: monospace;
+    white-space: pre;
+    background-color: rgba(255, 255, 255, 0.2);
+    border: solid black 1px;
+    border-image: linear-gradient(135deg, cyan, magenta) 1;
+}
+
+.blog-wrapper a:link, 
+.blog-wrapper a:visited{
+  color:lightskyblue;
+}
+.blog-wrapper a:hover{
+  color:deepskyblue;
+}
