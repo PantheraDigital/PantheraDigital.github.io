@@ -52,9 +52,12 @@
 }
 
 .blog-wrapper > h3{
-    
     font-size:xx-large;
     text-align: center;
+}
+
+.blog-wrapper.preformatted b{
+    color:skyblue;
 }
 
 .blog-wrapper code{
