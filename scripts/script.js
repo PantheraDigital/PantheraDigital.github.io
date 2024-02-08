@@ -83,9 +83,6 @@ try {
   if(urlParams.has("about")){
     OpenWindow("about-window");
   }
-  if(urlParams.has("links")){
-    OpenWindow("links-window");
-  }
   if(urlParams.has("blog")){
     OpenWindow("blog-browser-window");
     LoadBlogsToDOM();
@@ -93,7 +90,6 @@ try {
 })();
 (function(){
   //register menu button events//
-  RegisterMouseAndTouchEvent(document.getElementById("link-button"), function(event){ OpenWindow("links-window", event); });
   RegisterMouseAndTouchEvent(document.getElementById("projects-button"), function(event){ OpenWindow("projects-window", event, FoldProjectCardsInContainer); LoadProjectsToDOM(); });
   RegisterMouseAndTouchEvent(document.getElementById("about-button"), function(event){ OpenWindow("about-window", event); });
   RegisterMouseAndTouchEvent(document.getElementById("blogs-button"), function(event){ OpenWindow("blog-browser-window", event); LoadBlogsToDOM(); });
@@ -118,6 +114,29 @@ try {
           qrOverlayButton.style.zIndex = 1001;
           qrOverlay.style.display = "block";
       }
+  });
+  //About Window Setup///////////
+  if(window.matchMedia("(pointer:coarse)").matches){document.getElementById("about-window").querySelector(".tab-body-wrapper").classList.add("right-align");}
+  let btns = document.getElementById("about-window").querySelector(".tab-list").children;
+  let active = "";
+  Array.from(btns).forEach(button => {
+    let group = button.id.split("_")[1];
+    document.getElementById(`about-tab-body_${group}`).style.display = "none";
+
+    if(active === ""){
+      active = group;
+      button.classList.add("selected");
+      document.getElementById(`about-tab-body_${active}`).style.display = "block";
+    }
+
+    RegisterMouseAndTouchEvent(button, function(){
+      document.getElementById(`about-tab-button_${active}`).classList.remove("selected");
+      document.getElementById(`about-tab-body_${active}`).style.display = "none";
+
+      active = group;
+      document.getElementById(`about-tab-button_${active}`).classList.add("selected");
+      document.getElementById(`about-tab-body_${active}`).style.display = "block";
+    });
   });
 })();
 
@@ -215,7 +234,7 @@ function LoadBlogsToDOM(){
           }
         }
       }
-      blogDataArray.push(blog);
+      if(!blog.data.includes("DNR")){blogDataArray.push(blog);}
     }
     return blogDataArray;
   };
@@ -245,8 +264,8 @@ function LoadProjectsToDOM(){
     dataObj.categoryArray.forEach(cat => {
       const template = document.querySelector("template");
       const clone = template.content.querySelector(".category-dropdown").cloneNode(true);
+      
       let item = document.createElement("li");
-
       clone.querySelector(".title").textContent = cat;
       item.appendChild(clone);
       item.id = "category_" + cat;
@@ -607,7 +626,7 @@ function CreateProjectCard(imagePath, title, body, subBody = "", category = "", 
 
   //fill card with text and add to grid
   clone.querySelector(".card-heading").insertAdjacentHTML("beforeend", title);
-  clone.querySelector(".body").insertAdjacentHTML("beforeend", body);
+  clone.querySelector(".card-body").insertAdjacentHTML("beforeend", body);
 
   if(subBody !== ""){
     let sub = document.createElement("div");
@@ -617,8 +636,8 @@ function CreateProjectCard(imagePath, title, body, subBody = "", category = "", 
     clone.appendChild(sub);
   }
   else{
-    clone.querySelector(".body").ariaHidden = true;
-    clone.querySelector(".body").classList.add("folded");
+    clone.querySelector(".card-body").ariaHidden = true;
+    clone.querySelector(".card-body").classList.add("folded");
   }
 
   if (category !== ""){ clone.setAttribute('data-category', category); }
@@ -628,7 +647,9 @@ function CreateProjectCard(imagePath, title, body, subBody = "", category = "", 
     if(imagePath.toLowerCase() !== "none"){
       clone.querySelector(".card-img").classList.add("btn-ignore");
     }
-    clone.querySelector(".body")?.classList.remove("folded");
+    clone.querySelector(".card-body")?.setAttribute('aria-hidden', 'false');
+    clone.querySelector(".card-body")?.classList.remove("folded");
+    clone.querySelector(".subbody")?.setAttribute('aria-hidden', 'false');
     clone.querySelector(".subbody")?.classList.remove("folded");
   } else { 
     const btn = clone.querySelector(".two-step-button");
@@ -639,7 +660,7 @@ function CreateProjectCard(imagePath, title, body, subBody = "", category = "", 
       if (e.type == "mouseup" && e.button != 0) 
       { return; }
       let subBody = clone.querySelector(".subBody");
-      let targetBody = subBody ? subBody : clone.querySelector(".body");
+      let targetBody = subBody ? subBody : clone.querySelector(".card-body");
       if(e.currentTarget.innerHTML.toString() === e.currentTarget.getAttribute("data-alt")){
         e.currentTarget.innerHTML = e.currentTarget.getAttribute("data-prime");
         if(targetBody){ 
@@ -677,7 +698,7 @@ function CreateBlogCard(blogData){
   clone.querySelector(".card-heading").insertAdjacentHTML("beforeend", blogData.title);
 
   if(blogData.desc !== "") {
-    clone.querySelector(".body").insertAdjacentHTML("beforeend", blogData.desc);
+    clone.querySelector(".card-body").insertAdjacentHTML("beforeend", blogData.desc);
   }
 
   if(blogData.data !== ""){
@@ -690,7 +711,7 @@ function CreateBlogCard(blogData){
     }
   
     if(dataObj.hasOwnProperty("tags") && dataObj.tags !== ""){
-      clone.querySelector(".body").insertAdjacentHTML("beforeend", 
+      clone.querySelector(".card-body").insertAdjacentHTML("beforeend", 
       `<br><br><i>${dataObj.tags}<br>${dataObj.date}</i>`);
     }
   }
