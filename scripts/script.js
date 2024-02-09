@@ -70,6 +70,9 @@ try {
 
   let blogList = document.createElement("ul");
   blogList.classList.add("project-grid");
+  blogList.style.borderTop = "solid grey 1px";
+  blogList.style.paddingTop = "20px";
+  blogList.innerHTML = '<div class="lds-ring"><div></div><div></div><div></div><div></div></div>';
   frame.querySelector(".frame-body").appendChild(blogList);
   
   if(window.matchMedia("(pointer: coarse)").matches) {SetFrameFullscreen(frame, true);}
@@ -101,7 +104,8 @@ try {
   let qrOverlay = document.getElementById("qr-overlay");
   let qrOverlayButton = document.getElementById("qr-button");
   RegisterMouseAndTouchEvent(qrOverlayButton, function(e){
-      e.preventDefault();
+    e.preventDefault();
+    if(e.type == "mouseup" && e.button != 0) {return;}
       if(qrOverlayButton.style.backgroundImage == "none"){
           qrOverlayButton.style.backgroundImage = "url('./Pics/QR.png')";
           qrOverlayButton.style.color = "rgba(255, 255, 255, 0)";
@@ -129,7 +133,9 @@ try {
       document.getElementById(`about-tab-body_${active}`).style.display = "block";
     }
 
-    RegisterMouseAndTouchEvent(button, function(){
+    RegisterMouseAndTouchEvent(button, function(e){
+      e.preventDefault();
+      if(e.type == "mouseup" && e.button != 0) {return;}
       document.getElementById(`about-tab-button_${active}`).classList.remove("selected");
       document.getElementById(`about-tab-body_${active}`).style.display = "none";
 
@@ -149,15 +155,17 @@ async function ParseDoc(docID, textParser, errorCall){
 }
 
 function LoadBlogsToDOM(){
-  if(document.getElementById("blog-browser-window").querySelector(".project-grid").childElementCount > 0){return;}
+  if(document.getElementById("blog-browser-window").querySelector(".project-grid").querySelector(".card-wrapper")){return;}
   const blogText = localStorage.getItem("blogs");
   const time = localStorage.getItem("blogtime");
   if(blogText && time && Date.now() < time){
+    RemoveLoadingElement(document.getElementById("blog-browser-window").querySelector(".project-grid"));
     AddBlogsToDOM(ParseDocBlogs(blogText));
   }
   else{
     ParseDoc(blogDocID, 
       function(text){
+        RemoveLoadingElement(document.getElementById("blog-browser-window").querySelector(".project-grid"));
         text = text.substring(text.indexOf("<blogs>"), text.length);
         AddBlogsToDOM(ParseDocBlogs(text));
         localStorage.setItem("blogs", text);
@@ -240,15 +248,17 @@ function LoadBlogsToDOM(){
   };
 }
 function LoadProjectsToDOM(){
-  if(document.getElementById("projects-window").querySelector(".project-grid").childElementCount > 0){return;}
+  if(document.getElementById("projects-window").querySelector(".project-grid").querySelector(".card-wrapper")){return;}
   const projectText = localStorage.getItem("projects");
   const time = localStorage.getItem("projecttime");
   if(projectText && time && Date.now() < time){//no api call if data is stored and current
+    RemoveLoadingElement(document.getElementById("projects-window").querySelector(".project-grid"));
     AddProjectsToDOM(ParseDocProjects(projectText));
   }
   else{//call api to get text and parse
     ParseDoc(projectDocID, 
       function(text) {
+        RemoveLoadingElement(document.getElementById("projects-window").querySelector(".project-grid"));
         text = text.substring(text.indexOf("<projects>"), text.length);
         AddProjectsToDOM(ParseDocProjects(text));
         localStorage.setItem("projects", text);
@@ -836,6 +846,9 @@ function DragElement(elmnt, ...handles) {
 ////////////////////////////////
 //tools ///////////////////////
 
+function RemoveLoadingElement(element){
+  element.querySelector(".lds-ring").remove();
+}
 //searches through a string. replaces custom tags with html form as a string <Unity> becomes <i class="fa-brands fa-unity"></i>
 // non specified tags are ignored
 // tags between <$> are put in as text. replace all '<' and '>' symbols with '&lt;' and '&gt;' until </$>
