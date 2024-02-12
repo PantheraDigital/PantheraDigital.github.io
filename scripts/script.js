@@ -169,7 +169,7 @@ function LoadBlogsToDOM(){
         text = text.substring(text.indexOf("<blogs>"), text.length);
         AddBlogsToDOM(ParseDocBlogs(text));
         localStorage.setItem("blogs", text);
-        localStorage.setItem("blogtime", Date.now() + (60000 * 60 * 48));
+        localStorage.setItem("blogtime", Date.now() + (60000 * 60 * 24));
       },
       function(e){
         console.log(e.toString());
@@ -262,7 +262,7 @@ function LoadProjectsToDOM(){
         text = text.substring(text.indexOf("<projects>"), text.length);
         AddProjectsToDOM(ParseDocProjects(text));
         localStorage.setItem("projects", text);
-        localStorage.setItem("projecttime", Date.now() + (60000 * 60 * 48));
+        localStorage.setItem("projecttime", Date.now() + (60000 * 60 * 24));
       },
       function(e) {
         let card = CreateProjectCard("none", "Error", e.toString());
@@ -865,6 +865,8 @@ function CustomTagReplacer(text){
     return mapObj[matched];
   });
 
+  text = text.replaceAll("<codeblock><br>", "<codeblock>");
+
   //keep specific html
   while(text.includes("<$>")){
     let start = text.indexOf("<$>");
@@ -880,6 +882,25 @@ function CustomTagReplacer(text){
     
     text = text.replace(text.substring(start, end + 4), result);
   }
+
+  const headerColors = ["rgb(201, 237, 222)", "rgb(201, 226, 237)", "rgb(201, 201, 237)", "rgb(237, 201, 192)"];
+  let hColorIndex = 0;
+  if(text.charAt(0) === "-"){
+    let end = text.indexOf("<br>");
+    let sub = text.substring(0, end);
+    let num = sub.search(/[^-]/);
+    text = text.replace(sub, `<h${3 + num} style='color:${headerColors[hColorIndex++]}'>${sub.substring(num)}</h${3 + num}>`);
+  }
+  while(text.includes("<br>-")){
+    let start = text.indexOf("<br>-");
+    let end = text.indexOf("<br>", start + 5);
+    let sub = text.substring(start + 4, end);
+    let num = sub.search(/[^-]/);
+
+    text = text.replace(sub, `<h${3 + num} style='color:${headerColors[hColorIndex++]}'>${sub.substring(num)}</h${3 + num}>`);
+    if(hColorIndex >= headerColors.length) {hColorIndex = 0;}
+  }
+  
 
   let index = 0;
   while(text.indexOf("https://", index) !== -1){
