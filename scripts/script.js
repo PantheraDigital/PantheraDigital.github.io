@@ -107,7 +107,7 @@ try {
     e.preventDefault();
     if(e.type == "mouseup" && e.button != 0) {return;}
       if(qrOverlayButton.style.backgroundImage == "none"){
-          qrOverlayButton.style.backgroundImage = "url('./Pics/QR.png')";
+          qrOverlayButton.style.backgroundImage = "url('./Pics/QR.webp')";
           qrOverlayButton.style.color = "rgba(255, 255, 255, 0)";
           qrOverlayButton.style.zIndex = 0;
           qrOverlay.style.display = "none";
@@ -207,6 +207,7 @@ function LoadBlogsToDOM(){
         if(textArray[index] === "</>") { 
           index++;
           blog.body = CustomTagReplacer(blogText);
+          blog.body = BlogSubheadingFormatter(blog.body);
           break;
         }
         else if(textArray[index] === "<//>"){ 
@@ -424,16 +425,16 @@ function SetFrameFullscreen(frame, fullscreen){
     if (frame.classList.contains("moveable")) {
       frame.classList.remove("moveable");
     }
-    btn.children[0].classList.remove("fa-plus");
-    btn.children[0].classList.add("fa-minus");
+    btn?.children[0].classList.remove("expand");
+    btn?.children[0].classList.add("shrink");
   }
   else if(fullscreen == false && frame.classList.contains("fullscreen")){
     frame.classList.remove("fullscreen");
     if (!frame.classList.contains("moveable")) {
       frame.classList.add("moveable");
     }
-    btn.children[0].classList.add("fa-plus");
-    btn.children[0].classList.remove("fa-minus");
+    btn?.children[0].classList.add("expand");
+    btn?.children[0].classList.remove("shrink");
   }
 }
 
@@ -502,14 +503,18 @@ function CreateFrame(title, body = "", options = {}){
 
   if(options.hasOwnProperty("buttons")){
     let buttonNames = options.buttons.split(" ");
-    buttonNames.forEach(name => {
-      let btn = CreateButton(name);
-      if(btn) { clone.querySelector(".frame-header-button-container").appendChild(btn); }
-    });
-
-    if(options.hasOwnProperty("frameType") && options.frameType.includes("fullscreen") && options.buttons.includes("fullscreen")){
-      SetFrameFullscreen(clone, true);
+    let buttons = clone.querySelector(".frame-header-button-container").children;
+    for (var i = 0; i < buttons.length; i++) {
+      if(buttonNames.includes(buttons[i].getAttribute("name").split("-")[0])){
+        InitButton(buttons[i]);
+      }else{
+        buttons[i].remove();
+      }
     }
+  }
+
+  if(options.hasOwnProperty("frameType") && options.frameType.includes("fullscreen")){
+    SetFrameFullscreen(clone, true);
   }
 
   if(body !== ""){
@@ -525,15 +530,10 @@ function CreateFrame(title, body = "", options = {}){
     UpdateFrameZOrder(clone); 
   });
 
-  function CreateButton(name){
-    let button = null;
+  function InitButton(button){
+    let name = button.getAttribute("name").split("-")[0];
     switch(name){
       case "close": {
-        button = document.createElement("button");
-        button.setAttribute("type", "button");
-        button.setAttribute("name", "close-frame-button");
-        button.classList.add("frame-header-button", "red-hover");
-        button.innerText = "X";
         RegisterMouseAndTouchEvent(button, function(e){
           e.preventDefault();
           if(e.type == "mouseup" && e.button != 0) {return;}
@@ -543,11 +543,6 @@ function CreateFrame(title, body = "", options = {}){
         break;
       }
       case "fullscreen":{
-        button = document.createElement("button");
-        button.setAttribute("type", "button");
-        button.setAttribute("name", "fullscreen-frame-button");
-        button.classList.add("frame-header-button", "cyan-hover", "icon-button");
-        button.innerHTML = "<i class=\"fa-solid fa-xs fa-plus\"></i>";
         RegisterMouseAndTouchEvent(button, function(e){
           e.preventDefault();
           if(e.type == "mouseup" && e.button != 0) {return;}
@@ -558,7 +553,6 @@ function CreateFrame(title, body = "", options = {}){
         break;
       }
     }
-    return button;
   }
 
   return clone;
@@ -568,7 +562,7 @@ function OpenBlogFrame(blog){
   titleHTML.insertAdjacentHTML("beforeend", blog.title);
   const id = "blog_" + titleHTML.innerText.replaceAll(" ", "-");
   let frame = CreateFrame(`Blog Viewer - <i>${titleHTML.innerText}</i>`, "", 
-  {frameType: "fixed fullscreen", buttons: "close fullscreen", position: {top: "50%", left: "50%"}, extra: "closeButtonRemoves"});
+  {frameType: "fixed fullscreen", buttons: "fullscreen close", position: {top: "50%", left: "50%"}, extra: "closeButtonRemoves"});
   frame.id = id;
 
   let wrapper = document.createElement("div");
@@ -694,7 +688,7 @@ function CreateBlogCard(blogData){
   const clone = template.content.querySelector(".card-wrapper").cloneNode(true);
 
   const btn = clone.querySelector(".two-step-button");
-  btn.innerHTML = "<i class=\"fa-solid fa-up-right-from-square\"></i>";
+  btn.innerHTML = "<span class=\"icon open-box-arrow\"></span>";
   btn.removeAttribute("data-alt");
   btn.removeAttribute("data-prime");
   RegisterMouseAndTouchEvent(btn, function(e){
@@ -849,77 +843,121 @@ function DragElement(elmnt, ...handles) {
 function RemoveLoadingElement(element){
   element.querySelector(".lds-ring").remove();
 }
-//searches through a string. replaces custom tags with html form as a string <Unity> becomes <i class="fa-brands fa-unity"></i>
-// non specified tags are ignored
-// tags between <$> are put in as text. replace all '<' and '>' symbols with '&lt;' and '&gt;' until </$>
+//searches through a string. replaces custom tags with html form
 function CustomTagReplacer(text){
-  text = text.replaceAll(/\r\n|\n/g, "<br>");
-  var mapObj = {
-    "<unity>": '<i class="fa-brands fa-unity"></i>',
-    "<itch>":  '<i class="fa-brands fa-itch-io"></i>',
-    "<github>":'<i class="fa-brands fa-github"></i>'
+  const tagObj = {//tags of type "closed" are passed the full tag <tag>...</tag> into value func/ type of single replaces <tag>
+    unity: function(text){ return '<span class="icon unity"></span>'},
+    github:function(text){ return '<span class="icon github"></span>'},
+    itch:  function(text){ return '<span class="icon itch-io"></span>'},
+    codepen:  function(text){ return '<span class="icon codepen"></span>'},
+    $:     function(text){
+            return text.replace(/^<\$>(.*)<\/\$>$/g, "$1").replace(/<|>/g,
+              function(matched){
+                if(matched === "<") {return "&lt;";}
+                else if(matched === ">") {return "&gt;";}
+              });
+            },
+    link:  function(text){
+              let inner = text.match(/<.*? (\S+?)>(.*?)<\/.*?>/);
+              if(inner && inner[1]){
+                if(inner[2]){ return `<a href="${inner[1]}">${inner[2]}</a>`; }
+                else{ return `<a href="${inner[1]}">${inner[1]}</a>`; }
+              }
+              return text;
+            }
   };
 
-  var reg = new RegExp(Object.keys(mapObj).join("|"),"gi");
-  text = text.replace(reg, function(matched){
-    return mapObj[matched];
-  });
+  let result = recurs(text);
+  result = result.replaceAll(/\r\n|\n/g, "<br>").replaceAll("<codeblock><br>", "<codeblock>");//clean up
+  return result;
 
-  text = text.replaceAll("<codeblock><br>", "<codeblock>");
-
-  //keep specific html
-  while(text.includes("<$>")){
-    let start = text.indexOf("<$>");
-    let end = text.indexOf("</$>", start);
-    if(end == -1) {break;}
-
-    let sub = text.substring(start, end + 4);
-    sub = sub.replace(/<\$>|<\/\$>/g, "");
-    let result = sub.replace(/<|>/g, function(matched){
-      if(matched === "<") {return "&lt;";}
-      else if(matched === ">") {return "&gt;";}
-    });
-    
-    text = text.replace(text.substring(start, end + 4), result);
+  //turn <tag> or <tag data=things> to tag
+  function getRawTag(tag){
+    let raw = tag.replace(/^<\/?(.*?)>$/, '$1');
+    if(raw.includes(" ")) { raw = raw.split(" ")[0]; }
+    if(raw && raw !== " ") { return raw; }
+    else return undefined;
   }
-
-  const headerColors = ["rgb(201, 237, 222)", "rgb(201, 226, 237)", "rgb(201, 201, 237)", "rgb(237, 201, 192)"];
-  let hColorIndex = 0;
-  if(text.charAt(0) === "-"){
-    let end = text.indexOf("<br>");
-    let sub = text.substring(0, end);
-    let num = sub.search(/[^-]/);
-    text = text.replace(sub, `<h${3 + num} style='color:${headerColors[hColorIndex++]}'>${sub.substring(num)}</h${3 + num}>`);
-  }
-  while(text.includes("<br>-")){
-    let start = text.indexOf("<br>-");
-    let end = text.indexOf("<br>", start + 5);
-    let sub = text.substring(start + 4, end);
-    let num = sub.search(/[^-]/);
-
-    text = text.replace(sub, `<h${3 + num} style='color:${headerColors[hColorIndex++]}'>${sub.substring(num)}</h${3 + num}>`);
-    if(hColorIndex >= headerColors.length) {hColorIndex = 0;}
-  }
-  
-
-  let index = 0;
-  while(text.indexOf("https://", index) !== -1){
-    let linkIndex = text.indexOf("https://", index);
-    if(text.substring(linkIndex - 6, linkIndex) === "href=\"" || text.substring(linkIndex - 5, linkIndex) === "src=\""){
-      index = text.indexOf(">", linkIndex) + 1;//ignore
-    } else {
-      let endIndex = text.indexOf(" ", linkIndex);
-      if(endIndex > text.indexOf("<br>", linkIndex) || endIndex === -1) {endIndex = text.indexOf("<br>", linkIndex);}
-
-      if (endIndex === -1) {endIndex = text.length;}
-      if (text[endIndex - 1] === '.') {endIndex--;}
-
-      let link = text.substring(linkIndex, endIndex);
-      text = text.slice(0, linkIndex) + `<a href=\"${link}\">${link}</a>` + text.slice(linkIndex + link.length);
-      index += (link.length * 2) + 15;
+  function getLeadTagIndex(tagArray, startIndex){//start index is the index of the tag to find pair for
+    if(startIndex < 0 || startIndex >= tagArray.length){return -1;}
+    if(tagArray.length === 1){return -1;}
+    else if(tagArray[startIndex][0].charAt(1) !== "/"){return -1;}//is not an end tag and therfore has no lead tag or is the lead tag
+    else{
+      const rawTag = getRawTag(tagArray[startIndex][0]);
+      let nestedCount = 0;
+      for (let i = startIndex - 1; i >= 0; i--) {
+        if(getRawTag(tagArray[i][0]) === rawTag){//match
+          if(tagArray[i][0] === `</${rawTag}>`){//found nested
+            nestedCount++;
+          }else{
+            if(nestedCount > 0){//exit nest
+              nestedCount--;
+            }else{//true match found
+              return i;
+            }
+          }
+        }
+      }
+      return -1;//no match found
     }
   }
-  return text;
+  function tagToHTMLString(tag, fullTag){//tag = <tag>/ fulltag = <tag>text</tag> or just <tag>
+    let rawTag = getRawTag(tag);
+    if(tagObj.hasOwnProperty(rawTag)){ return tagObj[rawTag](fullTag); }
+    else{ return fullTag; }
+  }
+  function recurs(htmlString){
+    let result = htmlString;
+    const tagsInString = Array.from(htmlString.matchAll(/<.*?>|\&\lt\;.*?\&\gt\;/g));
+
+    if(!tagsInString){return htmlString;}
+
+    for (let i = tagsInString.length - 1; i >= 0; ) {
+      if(tagsInString[i] === ""){continue;}
+
+      let tagsReplaced = 0;
+      const leadTagIndex = tagsInString.length > 1 ? getLeadTagIndex(tagsInString, i) : -1;
+      const fullTag = leadTagIndex === -1 ? tagsInString[i][0] : result.substring(tagsInString[leadTagIndex].index, tagsInString[i].index + tagsInString[i][0].length);
+      let spliceHeadEnd = leadTagIndex;
+      let spliceContnent = "";//the content to replace fulltag in main string
+
+      if(leadTagIndex !== -1 && i - leadTagIndex > 1){//contains other tags
+        let recursionResult = recurs(fullTag.substring(tagsInString[leadTagIndex][0].length, fullTag.length - tagsInString[i][0].length));//call recursion on string in tag
+        
+        spliceContnent = tagToHTMLString(tagsInString[i][0], tagsInString[leadTagIndex][0] + recursionResult + tagsInString[i][0]);
+        tagsReplaced = i - leadTagIndex + 1;
+      }else{//single tag or has no tags within
+        spliceHeadEnd = leadTagIndex !== -1 ? leadTagIndex : i;
+        spliceContnent = tagToHTMLString(tagsInString[i][0], fullTag);
+        tagsReplaced = leadTagIndex !== -1 ? 2 : 1;
+      }
+
+      result = result.slice(0, tagsInString[spliceHeadEnd].index) + spliceContnent + result.slice(tagsInString[i].index + tagsInString[i][0].length);
+      i -= tagsReplaced;
+    }
+    return result; 
+  }
+}
+function BlogSubheadingFormatter(blogText){
+  let result = blogText;
+  const headerColors = ["rgb(201, 237, 222)", "rgb(201, 226, 237)", "rgb(201, 201, 237)", "rgb(237, 201, 192)"];
+  let hColorIndex = 0;
+  if(result.charAt(0) === "-"){
+    let end = result.indexOf("<br>");
+    let sub = result.substring(0, end);
+    let num = sub.search(/[^-]/);
+    result = result.replace(sub, `<h${3 + num} style='color:${headerColors[hColorIndex++]}'>${sub.substring(num)}</h${3 + num}>`);
+  }
+  while(result.includes("<br>-")){
+    let start = result.indexOf("<br>-");
+    let end = result.indexOf("<br>", start + 5);
+    let sub = result.substring(start + 4, end);
+    let num = sub.search(/[^-]/);
+
+    result = result.replace(sub, `<h${3 + num} style='color:${headerColors[hColorIndex++]}'>${sub.substring(num)}</h${3 + num}>`);
+    if(hColorIndex >= headerColors.length) {hColorIndex = 0;}
+  }
+  return result;
 }
 
 function RegisterSpecificMouseAndTouchEvent(elmnt, mouseEvent, touchEvent, fnc) {

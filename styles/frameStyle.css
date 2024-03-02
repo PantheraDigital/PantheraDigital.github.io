@@ -35,9 +35,6 @@
     transition-property: outline, box-shadow;
     transition-duration: 0.4s;
 }
-.frame:hover{
-    outline-color: deepskyblue;
-}
 
 .frame.fixed{
     position: fixed !important;
@@ -151,7 +148,7 @@
 }
 
 .frame .frame-header .frame-header-button-container{
-    display:  flex;
+    display:  inline-flex;
     position: absolute;
 
     flex-direction: row-reverse;
@@ -162,18 +159,10 @@
 }
 
 .frame .frame-header .frame-header-button{
-    --font-size: calc(var(--button-size) - 4px);/*subtract border * 2*/
-
     box-sizing: border-box;
     width:  var(--button-size);
     height: var(--button-size);
     padding: 0 0 0 0;
-
-    color: rgb(233, 233, 233);
-    text-shadow: 0 0 3px white;
-
-    font-size:   calc(var(--font-size) - 4px);
-    line-height: var(--font-size);
 
     background-color: rgb(60, 60, 60);
     border: outset rgb(43, 43, 43) 2px;
@@ -182,17 +171,11 @@
 .frame .frame-header .frame-header-button:active{
     border-style: inset;
 }
-.frame .frame-header .frame-header-button.red-hover:hover{
-    color: red;
-    text-shadow: 0 0 4px red;
+.frame .frame-header .frame-header-button.color-hover:hover{
+    --glow-color:red;
+    box-shadow:0 0 4px 1px var(--glow-color, red);
     background-color: rgb(43, 43, 43);
 }
-.frame .frame-header .frame-header-button.cyan-hover:hover{
-    color: cyan;
-    text-shadow: 0 0 4px cyan;
-    background-color: rgb(43, 43, 43);
-}
-
 
 @media screen and (max-width: 520px){
     .frame{

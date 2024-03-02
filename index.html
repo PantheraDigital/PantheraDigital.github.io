@@ -12,14 +12,14 @@
         <meta property="og:type" content="website">
         <meta property="og:title" content="Panthera's Card">
         <meta property="og:description" content="See Panthera's projects and links.">
-        <meta property="og:image" content="https://pantheradigital.github.io/ProjectPics/PageScreenshot.png">
+        <meta property="og:image" content="https://pantheradigital.github.io/ProjectPics/PageScreenshot.webp">
         <meta property="og:image:alt" content="An image preview of the website depicting the name Panthera above three buttons labled about, projects, and links. Next to this is a circle with pink at the top gradually becoming blue before the bottom allong with the image of four scratch marks over the circle.">
         <meta property="og:url" content="https://pantheradigital.github.io/">
 
         <meta name="twitter:card" content="summary_large_image">
         <meta name="twitter:title" content="Panthera's Card">
         <meta name="twitter:description" content="See Panthera's projects and links.">
-        <meta name="twitter:image" content="https://pantheradigital.github.io/ProjectPics/PageScreenshot.png">
+        <meta name="twitter:image" content="https://pantheradigital.github.io/ProjectPics/PageScreenshot.webp">
         <meta name="twitter:creator" content="@Poisonx_3">
 
         <link rel="stylesheet" href="styles/mainStyle.css" />
@@ -30,30 +30,32 @@
 
         <link rel="stylesheet" href="Logo/style.css" />
 
-        <script src="https://kit.fontawesome.com/879ec05024.js" crossorigin="anonymous"></script>
     </head>
 <body>
     <template>
     <article class="frame">
         <div class="frame-header">
             <h2 class="frame-header-title"><!--header text--></h2>
-            <div class="frame-header-button-container"><!--header buttons--></div>
+            <div class="frame-header-button-container"><!--header buttons-->
+                <button type="button" name="close-frame-button" class="frame-header-button color-hover" style="--glow-color:red;"><span class="icon fill x glow-on-hover" style="--mask-size: 0.8em;"></span></button>
+                <button type="button" name="fullscreen-frame-button" class="frame-header-button color-hover" style="--glow-color:orange;"><span class="icon fill expand glow-on-hover" style="--mask-size: 0.8em; --glow-color:orange;"></span></button>
+            </div>
         </div>
         <div class="frame-body"><!--body--></div>
     </article>
 
     <div class="category-dropdown">
         <div class="header">
-            <a class="toggle" data-prime="&lt;i class=&quot;fa-solid fa-minus&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;" data-alt="&lt;i class=&quot;fa-solid fa-angles-down&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;"></a>
+            <a class="toggle" data-prime='&lt;span class=&quot;icon down-angles&quot; aria-hidden=&quot;true&quot;&gt;&lt;/span&gt;' data-alt='&lt;span class=&quot;icon up-angles &quot; aria-hidden=&quot;true&quot;&gt;&lt;/span&gt;'></a>
             <h3 class="title"><!--title--></h3>
         </div>
         <div class="body"><!--body--><ul class="project-list"></ul></div>
     </div>
 
     <div class="card-wrapper"><!--Project Card-->
-        <button class="two-step-button right" data-prime="&lt;i class=&quot;fa-solid fa-angles-down&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;" data-alt="&lt;i class=&quot;fa-solid fa-minus&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;"></button>
+        <button class="two-step-button right" data-prime='&lt;span class=&quot;icon down-angles&quot; aria-hidden=&quot;true&quot;&gt;&lt;/span&gt;' data-alt='&lt;span class=&quot;icon up-angles&quot; aria-hidden=&quot;true&quot;&gt;&lt;/span&gt;'></button>
         <div class="flex">
-            <img class="card-img" src="" alt="" onerror="this.onerror=null; this.src='./Pics/PageScreenshot.png'" loading="lazy">
+            <img class="card-img" src="" alt="" onerror="this.onerror=null; this.src='./Pics/PageScreenshot.webp'" loading="lazy">
             <div class="card-text-wrapper">
                 <h4 class="card-heading"></h4><!--title-->
                 <p class="card-body"></p><!--body-->
@@ -80,7 +82,7 @@
 
     <div id="main-block">
         <div id="logo">
-            <img src="Logo/LogoImg.png" alt="Four parallel lines styled as scratch marks from a tiger. Within the marks is a blue, purple, and pink gradient with white dots to appear like space." class="logo-img logo-img-shadow">
+            <img src="Logo/LogoImg.webp" alt="Four parallel lines styled as scratch marks from a tiger. Within the marks is a blue, purple, and pink gradient with white dots to appear like space." class="logo-img logo-img-shadow">
             <span class="logo-shape-wrapper">
                 <div class="logo-shape-animation logo-shape"></div>    
             </span>
@@ -97,8 +99,8 @@
         <div class="frame-header">
             <h2 class="frame-header-title">/About<!--header text--></h2>
             <div class="frame-header-button-container">
-                <button type="button" name="close-frame-button" class="frame-header-button red-hover">X</button>
-                <button type="button" name="fullscreen-frame-button" class="frame-header-button cyan-hover icon-button"><i class="fa-solid fa-xs fa-plus" aria-hidden="true"></i></button>
+                <button type="button" name="close-frame-button" class="frame-header-button color-hover" style="--glow-color:red;"><span class="icon fill x glow-on-hover" style="--mask-size: 0.8em;"></span></button>
+                <button type="button" name="fullscreen-frame-button" class="frame-header-button color-hover" style="--glow-color:orange;"><span class="icon fill expand glow-on-hover" style="--mask-size: 0.8em; --glow-color:orange;"></span></button>
                 <!--header buttons-->
             </div>
         </div>
@@ -135,11 +137,11 @@
                     <div id="about-tab-body_links" class="tab-body">
                         <span class="content-wrapper" style="padding: 1ch;">
                             <p>
-                                <i class="fa-regular fa-envelope"></i> <a href="mailto:pantheradigitalonline@gmail.com">pantheradigitalonline@gmail.com</a><br><br>
-                                <i class="fa-brands fa-codepen"></i> <a href="https://codepen.io/PantheraDigital" target="_blank">CodePen.io</a><br>
-                                <i class="fa-brands fa-github"></i> <a href="https://github.com/PantheraDigital?tab=repositories" target="_blank">Github</a><br>
-                                <i class="fa-brands fa-itch-io"></i> <a href="https://pantheraonline.itch.io/" target="_blank">Itch.io</a><br>
-                                <i class="fa-brands fa-unity"></i> <a href="https://assetstore.unity.com/publishers/57131" target="_blank">Unity Asset Store</a>
+                                <i class="icon envelope"></i> <a href="mailto:pantheradigitalonline@gmail.com">pantheradigitalonline@gmail.com</a><br><br>
+                                <i class="icon codepen"></i> <a href="https://codepen.io/PantheraDigital" target="_blank">CodePen.io</a><br>
+                                <i class="icon github"></i> <a href="https://github.com/PantheraDigital?tab=repositories" target="_blank">Github</a><br>
+                                <i class="icon itch-io"></i> <a href="https://pantheraonline.itch.io/" target="_blank">Itch.io</a><br>
+                                <i class="icon unity"></i> <a href="https://assetstore.unity.com/publishers/57131" target="_blank">Unity Asset Store</a>
                             </p>
                         </span>
                     </div>
@@ -180,8 +182,8 @@
         <div class="frame-header">
             <h2 class="frame-header-title">/Projects</h2><!--header text-->
             <div class="frame-header-button-container">
-                <button type="button" name="close-frame-button" class="frame-header-button red-hover">X</button>
-                <button type="button" name="fullscreen-frame-button" class="frame-header-button cyan-hover icon-button"><i class="fa-solid fa-xs fa-plus"></i></button>
+                <button type="button" name="close-frame-button" class="frame-header-button color-hover" style="--glow-color:red;"><span class="icon fill x glow-on-hover" style="--mask-size: 0.8em;"></span></button>
+                <button type="button" name="fullscreen-frame-button" class="frame-header-button color-hover" style="--glow-color:orange;"><span class="icon fill expand glow-on-hover" style="--mask-size: 0.8em; --glow-color:orange;"></span></button>
             </div><!--header buttons-->
         </div>
         <div class="frame-body">
@@ -192,11 +194,11 @@
     </article>
 
     <div id="qr-overlay">
-        <img src="./Pics/QR.png" alt="A QR code that shares the link to this website">
+        <img src="./Pics/QR.webp" alt="A QR code that shares the link to this website">
         <p>PageLink</p>
     </div>
     <button id="qr-button" type="button">
-        <i class="fa-solid fa-x"></i>
+        <span class="icon fill x" style="--mask-size: 0.8em; --color: black;"></span>
     </button>
 
     <script src="scripts/script.js"></script>
