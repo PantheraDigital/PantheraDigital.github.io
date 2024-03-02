@@ -847,18 +847,18 @@ function RemoveLoadingElement(element){
 function CustomTagReplacer(text){
   const tagObj = {//tags of type "closed" are passed the full tag <tag>...</tag> into value func/ type of single replaces <tag>
     unity: function(text){ return '<span class="icon unity"></span>'},
-    github:function(text){ return '<span class="icon github"></span>'},
-    itch:  function(text){ return '<span class="icon itch-io"></span>'},
-    codepen:  function(text){ return '<span class="icon codepen"></span>'},
-    $:     function(text){
+    github: function(text){ return '<span class="icon github"></span>'},
+    "itch-io": function(text){ return '<span class="icon itch-io"></span>'},
+    codepen: function(text){ return '<span class="icon codepen"></span>'},
+    $:    function(text){
             return text.replace(/^<\$>(.*)<\/\$>$/g, "$1").replace(/<|>/g,
               function(matched){
                 if(matched === "<") {return "&lt;";}
                 else if(matched === ">") {return "&gt;";}
               });
             },
-    link:  function(text){
-              let inner = text.match(/<.*? (\S+?)>(.*?)<\/.*?>/);
+    link: function(text){
+              let inner = text.match(/^<link (\S+?)>(.*?)<\/link>$/);
               if(inner && inner[1]){
                 if(inner[2]){ return `<a href="${inner[1]}">${inner[2]}</a>`; }
                 else{ return `<a href="${inner[1]}">${inner[1]}</a>`; }
@@ -923,7 +923,6 @@ function CustomTagReplacer(text){
 
       if(leadTagIndex !== -1 && i - leadTagIndex > 1){//contains other tags
         let recursionResult = recurs(fullTag.substring(tagsInString[leadTagIndex][0].length, fullTag.length - tagsInString[i][0].length));//call recursion on string in tag
-        
         spliceContnent = tagToHTMLString(tagsInString[i][0], tagsInString[leadTagIndex][0] + recursionResult + tagsInString[i][0]);
         tagsReplaced = i - leadTagIndex + 1;
       }else{//single tag or has no tags within
