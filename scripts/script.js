@@ -245,7 +245,7 @@ function LoadBlogsToDOM(){
       }
       if(!blog.data.includes("DNR")){blogDataArray.push(blog);}
     }
-    return blogDataArray;
+    return blogDataArray.reverse();
   };
 }
 function LoadProjectsToDOM(){

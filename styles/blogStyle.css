@@ -51,30 +51,39 @@
     padding-bottom: 25px;
 }
 
-.blog-wrapper > h3{
+.blog-wrapper > h3{/*blog title*/
     font-size:xx-large;
     text-align: center;
 }
 
 .blog-wrapper > h4, .blog-wrapper > h5,
 .blog-wrapper > h6, .blog-wrapper > h7{
-    margin: 21px 0 0 0;
+    margin: 0;
     padding-top: 21px;
-    border-top: solid silver 1px;
     font-weight: bold;
     font-style: italic;
 }
-.blog-wrapper > h4{
+.blog-wrapper > h4{/*blog main sections*/
+    margin: 21px 0 0 0;
+    border-top: solid silver 1px;
     font-size:x-large;
 }
 .blog-wrapper > h5{
     font-size:larger;
+    text-decoration: underline;
 }
 .blog-wrapper > h6{
     font-size:large;
+    text-decoration: underline;
 }
 .blog-wrapper > h7{
     font-size:medium;
+    text-decoration: underline;
+}
+.blog-wrapper > h5::before, .blog-wrapper > h6::before, .blog-wrapper > h7::before{
+    content: "    ";
+    white-space: pre;
+    font-size:x-large;
 }
 
 .blog-wrapper.preformatted b{
