@@ -29,7 +29,11 @@ body p{
 .project-details img{
   width: 250px;
 }
-
+@media only screen and (max-width: 500px) {
+  .text-list{
+    padding-left: 20px;
+  }
+}
 
 /*
  *      Auto Scroll
