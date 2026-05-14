@@ -1,217 +1,280 @@
 <!DOCTYPE html>
-<html lang="en" prefix="og: https://ogp.me/ns#">
-    <head>
-        <title>Panthera's Portal</title>
-        <meta charset="utf-8">
-        <meta name="author" content="Panthera">
-        <meta name="description" content="Veiw Panthera's projects, experience, and contact info."><!--description used in search result of page-->
-        <meta name="viewport" content="width=device-width, initial-scale=1.0"><!--describes how the layout and content adapts to the mobile viewport-->
-        <meta name="application-name" content="Panthera's Card"><!--name used for the "Add to Home Screen" function in their web browser -->
-        <meta name="keywords" content="HTML, CSS, JavaScript, Panthera, pantheradigital"><!--keywords for search engines-->
-        
-        <meta property="og:type" content="website">
-        <meta property="og:title" content="Panthera's Card">
-        <meta property="og:description" content="See Panthera's projects and links.">
-        <meta property="og:image" content="https://pantheradigital.github.io/ProjectPics/PageScreenshot.webp">
-        <meta property="og:image:alt" content="An image preview of the website depicting the name Panthera above three buttons labled about, projects, and links. Next to this is a circle with pink at the top gradually becoming blue before the bottom allong with the image of four scratch marks over the circle.">
-        <meta property="og:url" content="https://pantheradigital.github.io/">
+<html lang="en">
 
-        <meta name="twitter:card" content="summary_large_image">
-        <meta name="twitter:title" content="Panthera's Card">
-        <meta name="twitter:description" content="See Panthera's projects and links.">
-        <meta name="twitter:image" content="https://pantheradigital.github.io/ProjectPics/PageScreenshot.webp">
-        <meta name="twitter:creator" content="@Poisonx_3">
+<head>
+    <title>Panthera</title>
+    <meta charset="utf-8">
+    <meta name="author" content="Panthera">
+    <meta name="description" content="Resume website for Panthera. View their projects, posts and contact info here."><!--description used in search result of page-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"><!--describes how the layout and content adapts to the mobile viewport-->
 
-        <link rel="stylesheet" href="styles/mainStyle.css" />
-        <link rel="stylesheet" href="styles/frameStyle.css" />
-        <link rel="stylesheet" href="styles/categoryDropdown.css" />
-        <link rel="stylesheet" href="styles/cardStyle.css" />
-        <link rel="stylesheet" href="styles/blogStyle.css" />
-
-        <link rel="stylesheet" href="Logo/style.css" />
-
-    </head>
-<body>
-    <template>
-    <article class="frame">
-        <div class="frame-header">
-            <h2 class="frame-header-title"><!--header text--></h2>
-            <div class="frame-header-button-container"><!--header buttons-->
-                <button type="button" name="close-frame-button" class="frame-header-button color-hover" style="--glow-color:red;"><span class="icon fill x glow-on-hover" style="--mask-size: 0.8em;"></span></button>
-                <button type="button" name="fullscreen-frame-button" class="frame-header-button color-hover" style="--glow-color:orange;"><span class="icon fill expand glow-on-hover" style="--mask-size: 0.8em; --glow-color:orange;"></span></button>
-            </div>
-        </div>
-        <div class="frame-body"><!--body--></div>
-    </article>
-
-    <div class="category-dropdown">
-        <div class="header">
-            <a class="toggle" data-prime='&lt;span class=&quot;icon down-angles&quot; aria-hidden=&quot;true&quot;&gt;&lt;/span&gt;' data-alt='&lt;span class=&quot;icon up-angles &quot; aria-hidden=&quot;true&quot;&gt;&lt;/span&gt;'></a>
-            <h3 class="title"><!--title--></h3>
-        </div>
-        <div class="body"><!--body--><ul class="project-list"></ul></div>
-    </div>
-
-    <div class="card-wrapper"><!--Project Card-->
-        <button class="two-step-button right" data-prime='&lt;span class=&quot;icon down-angles&quot; aria-hidden=&quot;true&quot;&gt;&lt;/span&gt;' data-alt='&lt;span class=&quot;icon up-angles&quot; aria-hidden=&quot;true&quot;&gt;&lt;/span&gt;'></button>
-        <div class="flex">
-            <img class="card-img" src="" alt="" onerror="this.onerror=null; this.src='./Pics/PageScreenshot.webp'" loading="lazy">
-            <div class="card-text-wrapper">
-                <h4 class="card-heading"></h4><!--title-->
-                <p class="card-body"></p><!--body-->
-            </div>
-        </div>
-    </div>
-
-    </template>
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Panthera">
+    <meta property="og:description" content="Resume website for Panthera. View their projects, posts and contact info here.">
+    <meta property="og:image" content="https://pantheradigital.github.io/project-imgs/PantheraDigital_PageScreenshot.webp">
+    <meta property="og:image:alt" content="An image preview of the website depicting the name Panthera above three buttons labled about, projects, and links. Next to this is a circle with pink at the top gradually becoming blue before the bottom allong with the image of four scratch marks over the circle.">
+    <meta property="og:url" content="https://pantheradigital.github.io/">
     
-    <span id="background" aria-hidden="true">
-        <svg width='100%' height='100%' xmlns="http://www.w3.org/2000/svg" style="position: absolute;">
-            <defs>
-                <pattern id="myPattern" patternUnits='userSpaceOnUse' width='69.141' height='40' patternTransform='scale(2) rotate(0)'>
-                    <mask id="myMask">
-                        <path fill="white" stroke-width='1' stroke='black'
-                            d='M69.212 40H46.118L34.57 20 46.118 0h23.094l11.547 20zM57.665 60H34.57L23.023 40 34.57 20h23.095l11.547 20zm0-40H34.57L23.023 0 34.57-20h23.095L69.212 0zM34.57 60H11.476L-.07 40l11.547-20h23.095l11.547 20zm0-40H11.476L-.07 0l11.547-20h23.095L46.118 0zM23.023 40H-.07l-11.547-20L-.07 0h23.094L34.57 20z'/>
-                    </mask>
-                    <rect x="0" y="0" width="100%" height="100%" mask="url(#myMask)" />
-                </pattern>
-            </defs>
-            <rect x="0" y="0" width="100%" height="100%" fill="url(#myPattern)" />
-        </svg>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="logo/style.css" />
+</head>
+
+<body>
+    <span class="crt3"
+    style="position: absolute; width: 100%; height: 200%; top: 0; isolation: isolate; overflow: hidden;">
+        <span
+        style="position: absolute; width: 100%; height: 50%; top: 0;"
+        class="gradient-bg">
+        </span>
+        <span 
+        class="gradient-bg-lower"
+        style="position: absolute; width: 100%; height: 50%; top: 50%;">
+        </span>
+        <div class="noise" style="position: absolute; inset: 0;"></div>
+        <div 
+        class="cloud" 
+        style="position: absolute; width: 90%; height: 275px; top: 25%; left: 5%;">
+        </div>
+    </span>
+    <span style="pointer-events: none; position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+        <span class="logo-wrapper" style="opacity: 0.8;">
+            <img class="logo-img" src="logo/logo.webp" alt="Panthera's logo depicting a tiger scull over a neon sunset." loading="lazy">
+            <span class="logo-shape-wrapper">
+                <div class="logo-shape"></div>
+            </span>
+        </span>
     </span>
 
-    <div id="main-block">
-        <div id="logo">
-            <img src="Logo/LogoImg.webp" alt="Four parallel lines styled as scratch marks from a tiger. Within the marks is a blue, purple, and pink gradient with white dots to appear like space." class="logo-img logo-img-shadow">
-            <span class="logo-shape-wrapper">
-                <div class="logo-shape-animation logo-shape"></div>    
-            </span>
-        </div>
-        <span id="name">Panthera</span>
-        <div class="nav-button-dock">
-            <button type="button" id="about-button" class="nav-button">About</button>
-            <button type="button" id="projects-button" class="nav-button">Projects</button>
-            <button type="button" id="blogs-button" class="nav-button">Blogs</button>
-        </div>
+    <div style="width: 100%; height: 200%;">
+        <div style="width: 100%; height: 85vh;"></div>
+        <nav style="z-index: 1; position: sticky; top: 0; text-align: center; padding-top: 5vh;">
+            <a href="#main"><button type="button" class="button" onclick="slideListNavTo('projects')">Projects</button></a>
+            <a href="#main"><button type="button" class="button" onclick="slideListNavTo('posts')">Posts</button></a>
+            <a href="#main"><button type="button" class="button" onclick="slideListNavTo('about')">About</button></a>
+        </nav>
     </div>
 
-    <article id="about-window" class="frame fixed" style="display: none;">
-        <div class="frame-header">
-            <h2 class="frame-header-title">/About<!--header text--></h2>
-            <div class="frame-header-button-container">
-                <button type="button" name="close-frame-button" class="frame-header-button color-hover" style="--glow-color:red;"><span class="icon fill x glow-on-hover" style="--mask-size: 0.8em;"></span></button>
-                <button type="button" name="fullscreen-frame-button" class="frame-header-button color-hover" style="--glow-color:orange;"><span class="icon fill expand glow-on-hover" style="--mask-size: 0.8em; --glow-color:orange;"></span></button>
-                <!--header buttons-->
-            </div>
-        </div>
-        <div class="frame-body"><!--body-->
-            <span class="tab-body-wrapper">
-                <span class="tab-list">
-                    <button class="tab" id="about-tab-button_background">Background</button>
-                    <button class="tab" id="about-tab-button_links">Links</button>
-                    <button class="tab" id="about-tab-button_cert">Certifications</button>
-                </span>
-                <div class="tab-body-list">
-                    <div id="about-tab-body_background" class="tab-body">
-                        <span class="content-wrapper" style="padding: 1ch;">
-                            <h3>From playing games to making games.</h3>
-                            <p>
-                                My passion for creation and games has led me to become a programmer. 
-                                Programming provides challenges I enjoy overcoming and a way for me to create new things. 
-                                I use this to drive myself and learn new programming languages and new ways to make things, building on previous 
-                                knowledge I have obtained over the years, looking for my next project.<br><br>
-                
-                                I first started down this road in high school (2015) I entered a game design class where I used Unreal Engine&#39s blueprint system to 
-                                discover a new hobby and creative outlet, making game prototypes. This led me to become a programmer, despite the fact that actual code intimidated me at the time.<br><br>
-                
-                                After high school I went to the Academy of Art University to learn video game programming (2017-2019) where I learned C++ and programming principles such as object oriented programming and algorithms. 
-                                In my spare time I still used Unreal Engine for fun.<br><br>
-                
-                                I transferred to Southern New Hampshire University (2020-present), when Covid hit, where I am now earning my Computer Science degree and learning Java, Python, and C++. 
-                                During my transfer I also switched to using Unity and C# to create game project ideas I have had as I found the engine created lighter weight game files more suited to my needs.<br><br>
-                
-                                I have also recently (2023) picked up HTML, CSS, and JavaScript to begin learning web development which has allowed me to create this page myself allong with other web projects found in my github repos.<br><br>
-                            </p>
-                        </span>
-                    </div>
-                    <div id="about-tab-body_links" class="tab-body">
-                        <span class="content-wrapper" style="padding: 1ch;">
-                            <p>
-                                <i class="icon envelope"></i> <a href="mailto:pantheradigitalonline@gmail.com">pantheradigitalonline@gmail.com</a><br><br>
-                                <i class="icon codepen"></i> <a href="https://codepen.io/PantheraDigital" target="_blank">CodePen.io</a><br>
-                                <i class="icon github"></i> <a href="https://github.com/PantheraDigital?tab=repositories" target="_blank">Github</a><br>
-                                <i class="icon itch-io"></i> <a href="https://pantheraonline.itch.io/" target="_blank">Itch.io</a><br>
-                                <i class="icon unity"></i> <a href="https://assetstore.unity.com/publishers/57131" target="_blank">Unity Asset Store</a>
-                            </p>
-                        </span>
-                    </div>
-                    <div id="about-tab-body_cert" class="tab-body">
-                    <span class="content-wrapper project-grid">
-                        <ul style="list-style-type: none; padding: 0;">
-                            <li>
-                                <div class="card-wrapper" style="--border-color: black;"><!--Project Card-->
-                                    <div class="flex reverse">
-                                        <img class="card-img right btn-ignore" src="/Pics/PythonCertificate.webp" alt="" onerror="this.onerror=null; this.src='./Pics/PageScreenshot.webp'" loading="lazy">
-                                        <div class="card-text-wrapper">
-                                            <h4 class="card-heading" style="--underline-color: rgb(233, 128, 0);">PCEP - Entry-Level Python Programming</h4><!--title-->
-                                            <p class="card-body">Certification earned through Python Institute <a href="https://pythoninstitute.org/pcep">https://pythoninstitute.org/pcep</a> <br></p><!--body-->
-                                        </div>
-                                    </div>
-                                </div>
-                            </li>
-                            <li>
-                                <div class="card-wrapper" style="--border-color: black;"><!--Project Card-->
-                                    <div class="flex reverse">
-                                        <img class="card-img right btn-ignore" src="https://i.imgur.com/AKLRDi9.png?1 " alt="" onerror="this.onerror=null; this.src='./Pics/PageScreenshot.webp'" loading="lazy">
-                                        <div class="card-text-wrapper">
-                                            <h4 class="card-heading" style="--underline-color: rgb(233, 128, 0);">Foundational C# w/ Microsoft Certification</h4><!--title-->
-                                            <p class="card-body">Certification earned through FreeCodeCamp <a href="https://www.freecodecamp.org/learn/foundational-c-sharp-with-microsoft/">https://www.freecodecamp.org/learn/foundational-c-sharp-with-microsoft/</a>  as well as Microsoft <a href="https://learn.microsoft.com/en-us/training/paths/get-started-c-sharp-part-1/">https://learn.microsoft.com/en-us/training/paths/get-started-c-sharp-part-1/</a> <br></p><!--body-->
-                                        </div>
-                                    </div>
-                                </div>
-                            </li>
-                            <li>
-                                <div class="card-wrapper" style="--border-color: black;"><!--Project Card-->
-                                    <div class="flex reverse">
-                                        <img class="card-img right btn-ignore" src="https://i.imgur.com/UGiGsrA.png?1 " alt="" onerror="this.onerror=null; this.src='./Pics/PageScreenshot.webp'" loading="lazy">
-                                        <div class="card-text-wrapper">
-                                            <h4 class="card-heading" style="--underline-color: rgb(233, 128, 0);">JavaScript Algorithms and Data Structures Certification</h4><!--title-->
-                                            <p class="card-body">Certification earned through FreeCodeCamp <a href="https://www.freecodecamp.org/learn/javascript-algorithms-and-data-structures/">https://www.freecodecamp.org/learn/javascript-algorithms-and-data-structures/</a> <br></p><!--body-->
-                                        </div>
-                                    </div>
-                                </div>
-                            </li>
-                        </ul>
-                    </span>
-                    </div>
+    <main id="main" style="position: relative; top: -100%; width: 100%; height: 100%; overflow: hidden;">        
+        <div id="slide-list" style="position: absolute; bottom: 10%; top: 10%; left: 0; right: 0; white-space: nowrap;">
+
+            <span id="projects"
+            style="display:inline-flex; justify-content: center; position: absolute; width: 100%; height: 100%; left: 0px;">
+                <div class="main-block" style="flex: 1 1 100%; position: relative; inset: 0; padding: 10px; margin: 0 10%; height: 100%;">
+                    <section class="main-content">
+                        <h2>Projects</h2>
+                        <div style="margin-left: 5px;">
+                            <details class="project-details">
+                                <summary>
+                                    My Forever Changing Website
+                                </summary>
+                                <img src="project-imgs/PantheraDigital_PageScreenshot.webp" alt="Screenshot of old version of this webpage." loading="lazy">
+                                <p>
+                                    I started this webpage as a way to learn web development and as a way to better show what I've worked on. Since then it has gone through many iterations. From a template I found, to a WordPress page, to what it is now. 
+                                </p>
+                                <p>
+                                    I originally ditched the template for WordPress for it features, but the lack of customization and generic feel it gave my webpage made me leave to make it all myself. The biggest challenge since then has been keeping this webpage pure frontend so that it can be hosted on GitHub Pages, but still allow for adding things like my projects and posts. One work around I use to use was using Google Drive as a database, then using their API to pull Docs, parse and format them to be styled for the webpage, then add them to the DOM. I've ditched that for now and will be looking for a new hosting platform so I can use a server.
+                                </p>
+                            </details>
+                            <details class="project-details">
+                                <summary>
+                                    Fullstack Website - Class Final Project
+                                </summary>
+                                <img src="project-imgs/PantheraDigital_FullstackClientMainPage.webp" alt="Screenshot of the landing page for a generic trip booking website." loading="lazy"><br>
+                                <a href="https://github.com/PantheraDigital/SNHURepo/tree/CS-465-Fullstack_Development_1">https://github.com/PantheraDigital/SNHURepo/tree/CS-465-Fullstack_Development_1</a>
+                                <p>
+                                    In this project I took a website template from HTML and CSS to the MEAN stack (MongoDB, Express.js, Angular.js, Node.js). In addition I used Handlebars, Postman, and DBeaver during development.
+                                </p>
+                                <p>
+                                    Other than taking the site to a client/server format, I also added an admin portal that allowed for registered users to login and make changes to the database, changing what was shown on the website.
+                                </p>
+                            </details>
+                            <details class="project-details">
+                                <summary>
+                                    Cloud QA Website - Class Final Project
+                                </summary>
+                                <img src="project-imgs/PantheraDigital_AWSStack.webp" alt="Diagram of cloud website services. Client connects to AWS, which connects to S3, which connects to API Gateway, which connects to Lambda, which connects to Dynamo DB." loading="lazy"><br>
+                                <a href="https://github.com/PantheraDigital/SNHURepo/tree/CS-470-Full_Stack_Development_2">https://github.com/PantheraDigital/SNHURepo/tree/CS-470-Full_Stack_Development_2</a>
+                                <p>
+                                    In this project I took a website template that was using the MEAN stack, containerized it with Docker, then brought it to the cloud with AWS. The website is a QA site that allows users to post, edit, and remove questions and answers. The website is fully cloud based using AWS to allow the website to be significantly more scalable. 
+                                </p>
+                            </details>
+                            <details class="project-details">
+                                <summary>
+                                    Modular Character Controller - Godot
+                                </summary>
+                                <img src="project-imgs/PantheraDigital_ModularCharacterController.webp" alt="Icon for Godot Engine (a blue robot head), with an antenna." loading="lazy"><br>
+                                <a href="https://github.com/PantheraDigital/Modular-Character-Controller-for-Godot">https://github.com/PantheraDigital/Modular-Character-Controller-for-Godot</a>
+                                <p>
+                                    With my move to Godot I needed a new character controller. This time I focused on improving on where typical finite state machines fail, and that is its flexibility. I didn't want rigid states so I built a version of a state machine where the states are composed from action components, separating the responsibility of specific actions from the state to the components. This allows states to be much more flexible and encourages reusable code. 
+                                </p>
+                                <p>
+                                    You can find a demo playable in browser here: <a href="https://pantheradigital.itch.io/godot-modular-character-controller">https://pantheradigital.itch.io/godot-modular-character-controller</a>
+                                </p>
+                            </details>
+                            <details class="project-details">
+                                <summary>
+                                    Character Step - Godot
+                                </summary>
+                                <img src="project-imgs/PantheraDigital_GodotCharacterStep.webp" alt="Screenshot of the github page for the Character Step project." loading="lazy"><br>
+                                <a href="https://github.com/PantheraDigital/GodotCharacterStep">https://github.com/PantheraDigital/GodotCharacterStep</a>
+                                <p>
+                                    Code for moving objects across jagged surfaces. Performs collision detection and position manipulation to allow objects to "step" up and down from obstacles.
+                                </p>
+                            </details>
+                            <details class="project-details">
+                                <summary>
+                                    Tabletop Character Sheet Editor
+                                </summary>
+                                <img src="project-imgs/PantheraDigital_CharaterStatSheet.webp" alt="Screenshot of the character sheet webpage, showing a form like layout with many text and number boxes." loading="lazy"><br>
+                                <a href="https://pantheradigital.github.io/CharacterSheet/">https://pantheradigital.github.io/CharacterSheet/</a>
+                                <p>
+                                    Character sheet editor for D&D. Handles stat calculations for easier maintenance, organized spell and trait tracking with drag and drop elements, and quick spell adding from a spell database.
+                                </p>
+                            </details>
+                            <details class="project-details">
+                                <summary>
+                                    Enhanced Melee Trace - Unreal Engine
+                                </summary>
+                                <img src="project-imgs/PantheraDigital_MeleeHitTrace.webp" alt="Screenshot of Fab marketplace showing the listing for the Melee Hit Trace pack." loading="lazy"><br>
+                                <a href="https://www.fab.com/listings/b3556c78-463b-4610-a81c-1bcb8916e202">https://www.fab.com/listings/b3556c78-463b-4610-a81c-1bcb8916e202</a>
+                                <p>
+                                    In this project I tackled a common problem in game development, collision detection for fast moving objects. The heart of the problem is that computers can only update programs so fast. Each update positions game objects and runs calculations. When an object has a velocity that covers more distance than the game can keep up with every physics update, that object will effectively teleport. This creates the possibility for missed collision, like a car traveling through a wall. To prevent this extra collision checks need to be made in the missed space so that physics can be corrected.
+                                </p>
+                                <p>
+                                    I also wrote a paper about the issue: <a href="https://docs.google.com/document/d/1iHzTuZEroXdUIEyYPclzIXDA4Sg2yUvRwt1GIFtNd9I/edit?usp=sharing">Google Doc</a>
+                                </p>
+                            </details>
+                            <details class="project-details">
+                                <summary>
+                                    EntityController2D - Unity
+                                </summary>
+                                <img src="project-imgs/PantheraDigital_EntityController.webp" alt="Screenshot of a video game character jumping between different green platforms." loading="lazy"><br>
+                                <a href="https://www.fab.com/listings/51702f7a-38f1-4718-938a-6c02227dae01">https://www.fab.com/listings/51702f7a-38f1-4718-938a-6c02227dae01</a>
+                                <p>
+                                    This was my first real attempt at a character controller, documentation, and a product for others. It's a pack that includes a state machine based character script, input handling, input remapping, and 2d physics handling for walking across various sloped grounds.
+                                </p>
+                                <p>
+                                    Originally this was just for me so that I could make some games, but I found it useful and believed it could help others, so I released it. I also updated it as I went on to make a few games using it.
+                                </p>
+                                <p>
+                                    You can also see the documentation webpage I made for it here: <a href="https://pantheradigital.github.io/EntityControllerByPanthera/">https://pantheradigital.github.io/EntityControllerByPanthera/</a><br>
+                                    And a demo playable in browser here: <a href="https://pantheradigital.itch.io/entity-controller-demo">https://pantheradigital.itch.io/entity-controller-demo</a>
+                                </p>
+                            </details>
+                        </div>
+                    </section>
                 </div>
             </span>
-        </div>
-    </article>
+            
+            <span id="posts"
+            style="display: inline-flex; justify-content: center; position: absolute; width: 100%; height: 100%; left: 0px;">
+                <div class="main-block" style="flex: 1 1 100%; position: relative; inset: 0; padding: 10px; margin: 0 10%;">
+                    <section class="main-content">
+                        <h2>Posts</h2>
+                        <div style="position: absolute; inset: 0; text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                            <span class="auto-scroll-container" data-scroll-step="-1" data-scroll-update="50" style="display: inline-block; width: 100%;">
+                                <span class="auto-scroll-content" style="color:orange; text-shadow: black 1px 1px; display: inline-block; height: 2rem; line-height: 2rem; vertical-align: middle; font-family: 'Lucida Console', monospace;">
+                                    <span>//////////////</span><span 
+                                    style="display: inline-block; width: 3ch;"></span><span>IN DEVELOPMENT</span><span 
+                                    style="display: inline-block; width: 3ch;"></span><span>//////////////</span><span 
+                                    style="display: inline-block; width: 3ch;"></span><span>IN DEVELOPMENT</span><span 
+                                    style="display: inline-block; width: 3ch;"></span><span>//////////////</span><span 
+                                    style="display: inline-block; width: 3ch;"></span><span>IN DEVELOPMENT</span><span 
+                                    style="display: inline-block; width: 3ch;"></span><span>//////////////</span><span 
+                                    style="display: inline-block; width: 3ch;"></span><span>IN DEVELOPMENT</span><span 
+                                    style="display: inline-block; width: 3ch;"></span><span>//////////////</span><span 
+                                    style="display: inline-block; width: 3ch;"></span><span>IN DEVELOPMENT</span><span 
+                                    style="display: inline-block; width: 3ch;"></span></span>
+                            </span>
+                        </div>
+                    </section>
+                </div>
+            </span>
+        
+            <span id="about"
+            style="display: inline-flex; justify-content: center; position: absolute; width: 100%; height: 100%; left: 0px;">
+                <div class="main-block" style="flex: 1 1 100%; position: relative; inset: 0; padding: 10px; margin: 0 10%;">
+                    <section class="main-content" style="display: flex; flex-direction: column;">
+                        <h2>About</h2>
+                        <div style="flex: 1 1 100%; display: flex; flex-flow: row wrap; ">
+                            <div style="width: 100%; height: 70%; min-height: fit-content; box-sizing: border-box; padding: 5px; white-space: normal; word-break:normal;">
+                                <p style="margin-top: 0;">
+                                    Programming is full of problems to solve and challenges to beat, that's why I do it.
+                                    <br><br>
+                                    Quick facts about me:
+                                    <ul>
+                                        <li>
+                                            I started programming in 2016.
+                                        </li>
+                                        <li>
+                                            I like to collect certifications when I can.
+                                        </li>
+                                        <li>
+                                            I enjoy exploring different domains of programming to learn.
+                                        </li>
+                                        <li>
+                                            I use Linux.
+                                        </li>
+                                    </ul>
+                                </p>
+                                <p>
+                                    Video games got me into programming and now game development is my biggest hobby. It provides a creative outlet and source of learning. My focus has become developing character related systems (systems for any object that may be controlled by a player or ai during gameplay). Characters are just complex user interfaces to virtual worlds, and getting something complex to work is fun.
+                                </p>
+                            </div>
+                            <div style="width: 50%; height: 30%; box-sizing: border-box; padding: 5px;
+                                border: none; border-top: 2px solid grey; border-left: 2px solid black;
+                                border-image: linear-gradient(to bottom left, grey, transparent 50%) 1;">
+                                <h2 style="font-size: medium; margin-top: 0; margin-left: 0;">contact</h2>
+                                <a href="mailto:pantheradigitalonline@gmail.com">pantheradigitalonline@gmail.com</a>
+                                <ul>
+                                    <li><a href="https://github.com/PantheraDigital" target="_blank">GitHub</a></li>
+                                    <li><a href="https://codepen.io/PantheraDigital" target="_blank">CodePen.io</a></li>
+                                    <li><a href="https://pantheradigital.itch.io/" target="_blank">Itch.io</a></li>
+                                    <li><a href="https://www.fab.com/sellers/PantheraDigital" target="_blank">Fab</a></li>
+                                </ul>
+                            </div>
+                            <div style="width: 50%; height: 30%; box-sizing: border-box; padding: 5px;
+                                border: none; border-top: 2px solid grey; border-left: 2px solid black;
+                                border-image: linear-gradient(to bottom right, grey, transparent 50%) 1;
+                                display: flex; flex-direction: column;">
+                                <h2 style="font-size: medium; margin-top: 0; margin-left: 0;">certs</h2>
+                                <div style="flex: 1 1 100%;">
+                                    <ul style="display: flex; gap: 15px; overflow-x: auto; scroll-snap-type: x mandatory; padding: 0; margin: 0;">
+                                        <li style="list-style-type: none; flex: 1 1 100%; scroll-snap-align: center; text-align: center;">
+                                            <img style="height: 130px;" src="certs/PI.webp" alt="Python Institute Certification for proficiency in the Python programming language. Exam Code PCEP 30 02." loading="lazy">
+                                        </li>
+                                        <li style="list-style-type: none; flex: 1 1 100%; scroll-snap-align: center; text-align: center;">
+                                            <img style="height: 130px;" src="certs/JSaDS.webp" alt="Free Code Camp Certification for JavaScript algorithms and data structures." loading="lazy">
+                                        </li>
+                                        <li style="list-style-type: none; flex: 1 1 100%; scroll-snap-align: center; text-align: center;">
+                                            <img style="height: 130px;" src="certs/CS.webp" alt="Free Code Camp Certification for foundational C-Sharp with Microsoft." loading="lazy">
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </span>
+        
+        </div>    
+    </main>
 
-    <article id="projects-window" class="frame fixed" style="display: none;">
-        <div class="frame-header">
-            <h2 class="frame-header-title">/Projects</h2><!--header text-->
-            <div class="frame-header-button-container">
-                <button type="button" name="close-frame-button" class="frame-header-button color-hover" style="--glow-color:red;"><span class="icon fill x glow-on-hover" style="--mask-size: 0.8em;"></span></button>
-                <button type="button" name="fullscreen-frame-button" class="frame-header-button color-hover" style="--glow-color:orange;"><span class="icon fill expand glow-on-hover" style="--mask-size: 0.8em; --glow-color:orange;"></span></button>
-            </div><!--header buttons-->
-        </div>
-        <div class="frame-body">
-            <ul class="project-grid">
-                <div class="lds-ring"><div></div><div></div><div></div><div></div></div>
-            </ul>
-        </div><!--body-->
-    </article>
 
-    <div id="qr-overlay">
-        <img src="./Pics/QR.webp" alt="A QR code that shares the link to this website">
-        <p>PageLink</p>
-    </div>
-    <button id="qr-button" type="button">
-        <span class="icon fill x" style="--mask-size: 0.8em; --color: black;"></span>
-    </button>
+    <svg id="filters">
+        <filter id='noiseFilter'>
+            <feTurbulence id="turbulence" 
+            type='fractalNoise' baseFrequency='0.004' numOctaves='5' seed="1" />
+        </filter>
 
-    <script src="scripts/script.js"></script>
+
+        <filter id="cloud-filter">
+            <feTurbulence type="fractalNoise" baseFrequency=".01" numOctaves="4" seed=""/>
+            <feDisplacementMap in="SourceGraphic" scale="130" />
+        </filter>
+    </svg>
+
+    <script src="script.js"></script>
 </body>
+
 </html>
