@@ -15,7 +15,7 @@ body {
 }
 body a{
   white-space: normal;
-  word-break: break-word;
+  overflow-wrap: break-word;
 }
 body p{
   white-space: normal;
@@ -49,6 +49,12 @@ body p{
  */
 .main-block{
   max-width: 1000px;
+  flex: 1 1 100%; 
+  position: relative; 
+  inset: 0; 
+  padding: 10px; 
+  margin: 0 10%; 
+  overflow: auto;
 }
 .main-block::before {
     --solid-x: 350px;
@@ -69,8 +75,13 @@ body p{
       var(--solid-x) var(--global-border-width), 100% 0,
       calc(100% - var(--global-border-width)) calc(100% - var(--solid-y)), calc(100% - var(--global-border-width)) calc(100% - var(--global-border-width)),
       calc(100% - var(--solid-x)) calc(100% - var(--global-border-width)), 0 100%, 100% 100%, 100% 0);
-
 }
+@media only screen and (max-width: 500px) {
+  .main-block {
+    margin: 0 20px;
+  }
+}
+
 .main-content{
     background-color: #e3e4ece7; 
     box-shadow: #e3e4ece7 0 0 3px 3px; 
