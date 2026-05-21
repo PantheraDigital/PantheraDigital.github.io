@@ -87,8 +87,8 @@ body p{
 }
 
 .main-content{
-    background-color: #e3e4ece7; 
-    box-shadow: #e3e4ece7 0 0 3px 3px; 
+    background-color: rgb(227, 228, 236); 
+    box-shadow: rgb(227, 228, 236) 0 0 3px 3px; 
     width: 100%; 
     height: 100%; 
     overflow: auto; 
@@ -104,52 +104,27 @@ body p{
   border-image: linear-gradient(90deg, grey, transparent 90%) 1;
 } 
 
-@keyframes slide-left-in {
-  from { 
-    transform: translateX(-100%) scaleY(0);
-  }
-  to { 
-    transform: translateX(0) scaleY(1); 
-  }
-}
-.animate-slide-left-in {
-  animation: slide-left-in 0.5s both ease-out;
-}
 
-@keyframes slide-left-out {
-  from { 
-    transform: translateX(0) scaleY(1);
-  }
-  to { 
-    transform: translateX(-100%) scaleY(0); 
-  }
+.slide-element{
+  display: inline-block;
+  position: absolute; 
+  left: 0px;
+  width: 100%; 
+  height: 100%; 
+  transform: translateX(0) scaleY(1);
+  visibility: visible;
+  pointer-events: auto;
+  transition: transform 0.5s ease-out, visibility 0.5s;
 }
-.animate-slide-left-out {
-  animation: slide-left-out 0.5s both ease-out; 
+.slide-left{
+  transform: translateX(-100%) scaleY(0);
+  visibility: hidden;
+  pointer-events: none;
 }
-
-@keyframes slide-right-in {
-  from { 
-    transform: translateX(100%) scaleY(0);
-  }
-  to { 
-    transform: translateX(0) scaleY(1); 
-  }
-}
-.animate-slide-right-in {
-  animation: slide-right-in 0.5s both ease-out;
-}
-
-@keyframes slide-right-out {
-  from { 
-    transform: translateX(0) scaleY(1);
-  }
-  to { 
-    transform: translateX(100%) scaleY(0); 
-  }
-}
-.animate-slide-right-out {
-  animation: slide-right-out 0.5s both ease-out;
+.slide-right{
+  transform: translateX(100%) scaleY(0);
+  visibility: hidden;
+  pointer-events: none;
 }
 
 
@@ -161,26 +136,87 @@ body p{
 }
 
 
+.display-toggle{
+  appearance: none;
+  width: 0;
+  height: 0;
+}
+.display-toggle-lable{
+  position:absolute; 
+  right: 15px; 
+  top: 15px; 
+  height: 50px; 
+  width: 50px;
+  border-radius: 50%;
+  background-color: rgb(239, 239, 239);
+  border: 1px solid grey;
+}
+.display-toggle-lable:hover{
+  background-color: lightgrey;
+}
+.display-toggle-lable:has(.display-toggle:checked){
+  background-color: yellow;
+}
+
+
 .noise{
-  filter: url("#noiseFilter");
+  filter: url("#noiseFilter") contrast(2);
   mix-blend-mode:soft-light;
 }
 
 
-.gradient-bg{
+
+.arch-bg{
+  --color-fade: 0.9;
   background:
     radial-gradient(140% 110% at 60% 80%, 
       transparent 49%, 
-      rgba(255, 255, 255, 0.6) 49.7%, transparent 49.8%, 
-      rgba(255, 255, 255, 0.9) 50.5%, transparent 50.9%,
-      rgba(255, 255, 255, 0.4) 51.5%, transparent 53.9%,
-      rgba(255, 255, 255, 0.7) 54.5%, transparent 55.4%,
-      transparent 56%),
-    radial-gradient(80% 10% at 5% 0%, moccasin, transparent 100%),
-    linear-gradient(in hsl 180deg, pink 60%, plum 95%, lavender 120%);
+      rgba(255, 255, 255, calc(var(--color-fade) - 0.3)) 49.7%, transparent 49.8%, 
+      rgba(255, 255, 255, var(--color-fade)) 50.5%, transparent 50.9%,
+      rgba(255, 255, 255, calc(var(--color-fade) - 0.5)) 51.5%, transparent 53.9%,
+      rgba(255, 255, 255, calc(var(--color-fade) - 0.2)) 54.5%, transparent 55.4%,
+      transparent 56%);
+}
+.gradient-bg{
+  background: linear-gradient(15deg, 
+  #f3e78b 0%, pink 16.66%, lavenderblush 49.98%, lavender 66.64%, cornflowerblue 99.96%);
 }
 .gradient-bg-lower{
-  background:linear-gradient(in hsl 180deg, plum -5%, lavender 20%);
+  background: linear-gradient(165deg, 
+  #f3e78b 0%, pink 16.66%, lavenderblush 49.98%, lavender 66.64%, cornflowerblue 99.96%);
+}
+.gradient-bg-lower::before{
+  content: " ";
+  position: absolute;
+  width: 250%;
+  height: 250%;
+  left: -75%;
+  top: -75%;
+  transform: perspective(1000px) rotateX(80deg) translateZ(-150px) translateY(-10%);
+  background:
+  repeating-linear-gradient(90deg, 
+  transparent 0px, rgba(255, 0, 255, 0.5) 2px, rgba(0, 255, 255, 0.75) 3px, transparent 5px, transparent 50px),
+  repeating-linear-gradient(180deg, 
+  transparent 0px, rgba(255, 0, 255, 0.5) 2px, rgba(0, 255, 255, 0.75) 3px, transparent 5px, transparent 50px),
+  linear-gradient(transparent, lavender);
+}
+
+#bg-layer:has(.display-toggle:checked) .gradient-bg{
+  background: linear-gradient(transparent), 
+  radial-gradient(70% 30% at 50% 40%, purple 0%, transparent 80%), 
+  radial-gradient(80% 50% at 50% 40%, midnightblue 20%, black);
+}
+#bg-layer:has(.display-toggle:checked) .gradient-bg-lower{
+  background: linear-gradient(black, midnightblue 40%);
+}
+#bg-layer:has(.display-toggle:checked) .gradient-bg-lower::before{
+  background: 
+  linear-gradient(midnightblue 0%, transparent 50%), 
+  repeating-linear-gradient(90deg, 
+  transparent 0px, rgba(0, 255, 255, 0.5) 2px, rgba(255, 0, 255, 0.75) 3px, transparent 5px, transparent 50px),
+  repeating-linear-gradient(180deg, 
+  transparent 0px, rgba(0, 255, 255, 0.5) 2px, rgba(255, 0, 255, 0.75) 3px, transparent 5px, transparent 50px),
+  linear-gradient(transparent 60%, navy);
 }
 
 
@@ -192,23 +228,34 @@ body p{
     display: block;
     position: absolute;
     height: 0;
+    width: 0;
   }
 }
 
 
-.cloud::after{
+.main-cloud {
+  position: absolute;
+  top: 29%;
+  left: 5%;
+  width: 90%;
+  height: 200px;
+}
+.cloud::before{
   content: " ";
   position: absolute;
   width: 100%;
   height: 100%;
   top: -400px;
   left: -400px;
-  border-radius: 50%;
+  border-radius: 40%;
   filter: url(#cloud-filter);
-  box-shadow: 
-    380px 500px 60px -100px rgba(0, 0, 0, 0.05),
-    400px 425px 60px -20px rgba(255, 240, 245, 0.863),
-    420px 400px 90px 0px rgba(25, 25, 112, 0.185);
+  box-shadow:
+    400px 440px 30px -90px rgba(0, 0, 0, 0.08),
+    400px 420px 40px -50px rgba(66, 105, 146, 0.1),
+    400px 410px 30px -15px rgba(215, 215, 215, 0.2),
+    400px 400px 15px -0px rgba(255, 255, 255, 0.9),
+    400px 400px 25px 5px lavenderblush,
+    400px 400px 40px 10px rgba(0, 0, 0, 0.1);
 }
 
 
@@ -218,23 +265,6 @@ body p{
   --crt-blue: rgb(40, 129, 206);
 }
 
-.crt3{
-  filter: saturate(150%);
-}
-.crt3::before{
-  content: " ";
-  position: absolute;
-  inset: 0;
-  z-index: 2;
-  pointer-events: none;
-  mix-blend-mode: overlay;
-  background: 
-  repeating-linear-gradient(0deg,
-    var(--crt-red) 0px,
-    var(--crt-green) 2px,
-    var(--crt-blue) 4px,
-  rgba(0, 0, 0, 0.25) 6px);
-}
 .crt3::after{
   content: " ";
   position: absolute;
@@ -244,10 +274,13 @@ body p{
   mix-blend-mode: overlay;
   background: 
   repeating-linear-gradient(-90deg,
+    var(--crt-red) 0px,
     var(--crt-red) 1px,
+    var(--crt-green) 1px,
     var(--crt-green) 2px,
+    var(--crt-blue) 2px,
     var(--crt-blue) 3px,
-  rgba(0, 0, 0, 0.25) 4px);
+    rgba(0, 0, 0, 0.25) 3px,
+    rgba(0, 0, 0, 0.25) 4px);
 }
-
 

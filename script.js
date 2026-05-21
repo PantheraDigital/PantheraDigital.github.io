@@ -43,60 +43,40 @@ for(const scroll of scrolls){
 /*
   slide list
 */
-const slideList = document.getElementById("slide-list");
-function formatSlideList(element){
-	element.dataset.activeId = element.children[0].id;
-	for (let i = 0; i < element.children.length; i++){
-		if (i == 0){continue}
-		element.children[i].classList.add("animate-slide-right-out");
+let slides = document.getElementById("slide-list").children;
+let activeSlideIndex = 0;
+
+for (let i = 0; i < slides.length; i++) {
+	if (i != activeSlideIndex) {
+		slides[i].classList.add("slide-right");
 	}
 }
-formatSlideList(slideList);
 
-
-function slideListNavTo(childID){
-	if (childID == slideList.dataset.activeId){
+function navigateToSlide(index) {
+	if (index == activeSlideIndex || index > slides.length) {
 		return;
 	}
 
-	let children = Array.from(slideList.children);
-	let active = children.findIndex((element) => element.id == slideList.dataset.activeId);
-	let target = children.findIndex((element) => element.id == childID);
-	const activeElement = slideList.children[active];
-	const targetElement = slideList.children[target];
+	let active = slides[activeSlideIndex];
+	let newActive = slides[index];
 
-	if (target - active > 0){
-		// pos direction, going right
-		// transition active out, then target in
-
-		if (activeElement.classList.contains("animate-slide-right-in")){
-			activeElement.classList.replace("animate-slide-right-in", "animate-slide-left-out");
-		}else{
-			activeElement.classList.add("animate-slide-left-out");
+	if (index > activeSlideIndex) {
+		active.classList.add("slide-left");
+		if (Math.abs(index - activeSlideIndex) > 1) {
+			for (let i = activeSlideIndex + 1; i < index; i++) {
+				slides[i].classList.replace("slide-right", "slide-left");
+			}
 		}
-
-		if (targetElement.classList.contains("animate-slide-left-out")){
-			targetElement.classList.replace("animate-slide-left-out", "animate-slide-right-in");
-		}else{
-			targetElement.classList.replace("animate-slide-right-out", "animate-slide-right-in");
-		}
-
-	}else{
-		// neg direction, going left
-		// transition active out, then target in
-
-		if (activeElement.classList.contains("animate-slide-left-in")){
-			activeElement.classList.replace("animate-slide-left-in", "animate-slide-right-out");
-		}else{
-			activeElement.classList.replace("animate-slide-right-in", "animate-slide-right-out");
-		}
-
-		if (targetElement.classList.contains("animate-slide-right-out")){
-			targetElement.classList.replace("animate-slide-right-out", "animate-slide-left-in");
-		}else{
-			targetElement.classList.replace("animate-slide-left-out", "animate-slide-left-in");
+	} else {
+		active.classList.add("slide-right");
+		if (Math.abs(index - activeSlideIndex) > 1) {
+			for (let i = activeSlideIndex - 1; i > index; i--) {
+				slides[i].classList.replace("slide-left", "slide-right");
+			}
 		}
 	}
 
-	slideList.dataset.activeId = targetElement.id;
+	newActive.classList.remove("slide-left");
+	newActive.classList.remove("slide-right");
+	activeSlideIndex = index;
 }

@@ -20,24 +20,31 @@
 </head>
 
 <body>
-    <span class="crt3"
-    style="position: absolute; width: 100%; height: 200%; top: 0; isolation: isolate; overflow: hidden;">
-        <span
-        style="position: absolute; width: 100%; height: 50%; top: 0;"
-        class="gradient-bg">
+    <span id="bg-layer">
+        <span class="crt3"
+        style="position: absolute; width: 100%; height: 200%; top: 0; isolation: isolate; overflow: hidden;">
+            <span
+            style="position: absolute; width: 100%; height: 50%; top: 0;"
+            class="gradient-bg">
+            </span>
+            <span
+            style="position: absolute; width: 100%; height: 50%; top: 0;"
+            class="arch-bg">
+            </span>
+            <span 
+            class="gradient-bg-lower"
+            style="position: absolute; width: 100%; height: 50%; top: 50%;">
+            </span>
+            <div class="noise" style="position: absolute; inset: 0;"></div>
+            <div class="cloud main-cloud"></div>
         </span>
-        <span 
-        class="gradient-bg-lower"
-        style="position: absolute; width: 100%; height: 50%; top: 50%;">
-        </span>
-        <div class="noise" style="position: absolute; inset: 0;"></div>
-        <div 
-        class="cloud" 
-        style="position: absolute; width: 90%; height: 275px; top: 25%; left: 5%;">
-        </div>
+        <label class="display-toggle-lable" for="display-mode-toggle">
+            <input type="checkbox" id="display-mode-toggle" class="display-toggle"
+            style="position: absolute; height: 50px; width: 50px; margin: 0;" />
+        </label>
     </span>
     <span style="pointer-events: none; position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; align-items: center;">
-        <span class="logo-wrapper" style="opacity: 0.8;">
+        <span class="logo-wrapper" >
             <img class="logo-img" src="logo/logo.webp" alt="Panthera's logo depicting a tiger scull over a neon sunset." loading="lazy">
             <span class="logo-shape-wrapper">
                 <div class="logo-shape"></div>
@@ -48,9 +55,9 @@
     <div style="width: 100%; height: 200%;">
         <div style="width: 100%; height: 85vh; height: 85dvh;"></div>
         <nav style="z-index: 1; position: sticky; top: 0; text-align: center; padding-top: 5vh;">
-            <a href="#main"><button type="button" class="button" onclick="slideListNavTo('projects')">Projects</button></a>
-            <a href="#main"><button type="button" class="button" onclick="slideListNavTo('posts')">Posts</button></a>
-            <a href="#main"><button type="button" class="button" onclick="slideListNavTo('about')">About</button></a>
+            <a href="#main"><button type="button" class="button" onclick="navigateToSlide(0)">Projects</button></a>
+            <a href="#main"><button type="button" class="button" onclick="navigateToSlide(1)">Posts</button></a>
+            <a href="#main"><button type="button" class="button" onclick="navigateToSlide(2)">About</button></a>
         </nav>
     </div>
 
@@ -58,6 +65,7 @@
         <div id="slide-list" style="position: absolute; bottom: 10%; top: 10%; left: 0; right: 0; white-space: nowrap;">
 
             <span id="projects"
+            class="slide-element"
             style="display:inline-flex; justify-content: center; position: absolute; width: 100%; height: 100%; left: 0px;">
                 <div class="main-block">
                     <section class="main-content">
@@ -167,6 +175,7 @@
             </span>
             
             <span id="posts"
+            class="slide-element"
             style="display: inline-flex; justify-content: center; position: absolute; width: 100%; height: 100%; left: 0px;">
                 <div class="main-block">
                     <section class="main-content">
@@ -192,6 +201,7 @@
             </span>
         
             <span id="about"
+            class="slide-element"
             style="display: inline-flex; justify-content: center; position: absolute; width: 100%; height: 100%; left: 0px;">
                 <div class="main-block">
                     <section class="main-content" style="display: flex; flex-direction: column;">
@@ -262,12 +272,12 @@
     <svg id="filters">
         <filter id='noiseFilter'>
             <feTurbulence id="turbulence" 
-            type='fractalNoise' baseFrequency='0.004' numOctaves='5' seed="1" />
+            type='fractalNoise' baseFrequency='0.0025' numOctaves='4' seed="1" />
         </filter>
 
         <filter id="cloud-filter">
-            <feTurbulence type="fractalNoise" baseFrequency=".01" numOctaves="4" />
-            <feDisplacementMap in="SourceGraphic" scale="130" />
+            <feTurbulence type="fractalNoise" baseFrequency=".0165" numOctaves="4" seed="13" />
+            <feDisplacementMap in="SourceGraphic" scale="120" />
         </filter>
     </svg>
 
