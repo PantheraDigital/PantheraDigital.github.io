@@ -26,9 +26,21 @@ body p{
 .project-details{
   margin: 16px 0;
 }
+.project-details:hover summary{
+  background: linear-gradient(90deg, rgba(0, 0, 0, 0.1), transparent 80%);
+}
 .project-details img{
   width: 250px;
 }
+.project-details p:first-child{
+  margin-top: 0;
+}
+.project-body{
+  background-color: rgba(0, 0, 0, 0.0);
+  border-bottom: solid black 1px;
+}
+
+
 @media only screen and (max-width: 500px) {
   .text-list{
     padding-left: 20px;
@@ -61,8 +73,8 @@ body p{
   overflow: auto;
 }
 .main-block::before {
-    --solid-x: 350px;
-    --solid-y: 350px;
+    --solid-x: 150px;
+    --solid-y: 150px;
     --border-style: solid;
     --highlight-color: grey;
     --global-border-gap: 5px;
