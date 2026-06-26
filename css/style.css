@@ -25,6 +25,9 @@ body p{
 
 .project-details{
   margin: 16px 0;
+  white-space: normal; 
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 .project-details:hover summary{
   background: linear-gradient(90deg, rgba(0, 0, 0, 0.1), transparent 80%);
@@ -70,7 +73,7 @@ body p{
   inset: 0; 
   padding: 10px; 
   margin: 0 10%; 
-  overflow: auto;
+  overflow: hidden;
 }
 .main-block::before {
     --solid-x: 150px;
@@ -103,9 +106,12 @@ body p{
     box-shadow: rgb(227, 228, 236) 0 0 3px 3px; 
     width: 100%; 
     height: 100%; 
-    overflow: auto; 
+    overflow-x: hidden;
+    overflow-y: auto; 
     position: relative; 
     top: 0;
+    display: flex; 
+    flex-direction: column;
 }
 
 .main-content h2, .main-content h3{
