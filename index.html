@@ -28,8 +28,19 @@
             <div class="project-body">
                 <img src="" alt="" loading="lazy"><br>
                 <a href=""></a>
+                <p name="tags">tags: </p>
             </div>
         </details>
+    </template>
+    <template id="tag-selector-template">
+        <div style="text-align: right; padding: 13px 5px; border-top: 2px solid grey; border-image: linear-gradient(270deg, grey, transparent 90%) 1;">
+            <fieldset style="border: none; min-width: 100%; min-inline-size: 100%; box-sizing: border-box;">
+                <legend><b>sort</b></legend>
+                <span style="display: inline-block; width: 100%; overflow-x: auto;">
+                    <label for="projectNone"><input type="radio" id="projectNone" name="project-sort" value="None" /><span>None</span></label>
+                </span>
+            </fieldset>
+        </div>
     </template>
 
     <span id="bg-layer">
@@ -81,8 +92,8 @@
             style="display:inline-flex; justify-content: center; position: absolute; width: 100%; height: 100%; left: 0px;">
                 <div class="main-block">
                     <section class="main-content">
-                        <h2>Projects</h2>
-                        <div id="project-container" style="margin-left: 5px;">
+                        <h2 style="margin-bottom: 0;">Projects</h2>
+                        <div id="projects-container" style="margin-left: 5px; flex-grow: 1;">
                         </div>
                         <div id="project-loading" style="position: absolute; inset: 0; text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center;">
                             <span class="auto-scroll-container" data-scroll-step="-1" data-scroll-update="50" style="display: inline-block; width: 100%;">
@@ -109,8 +120,8 @@
             style="display: inline-flex; justify-content: center; position: absolute; width: 100%; height: 100%; left: 0px;">
                 <div class="main-block">
                     <section class="main-content">
-                        <h2>Posts</h2>
-                        <div id="post-container" style="margin-left: 5px;"></div>
+                        <h2 style="margin-bottom: 0;">Posts</h2>
+                        <div id="posts-container" style="margin-left: 5px; flex-grow: 1;"></div>
                         <div id="post-loading" style="position: absolute; inset: 0; text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center;">
                             <span class="auto-scroll-container" data-scroll-step="-1" data-scroll-update="50" style="display: inline-block; width: 100%;">
                                 <span class="auto-scroll-content" style="color:orange; text-shadow: black 1px 1px; display: inline-block; height: 2rem; line-height: 2rem; vertical-align: middle; font-family: 'Lucida Console', monospace;">

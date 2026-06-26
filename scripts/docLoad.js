@@ -1,4 +1,5 @@
 // <script src="https://cdn.jsdelivr.net/npm/markdown-it@14.1.0/dist/markdown-it.min.js"></script>
+let globalTags = {};
 
 async function loadGithubData(){ // github data
     let owner = "PantheraDigital";
@@ -14,8 +15,8 @@ async function loadGithubData(){ // github data
     ).then(
         (text) => {
             const result = githubTextToJSON(text);
-            projectJSONToDOM(result.Projects, document.querySelector('#project-container'));
-            projectJSONToDOM(result.Posts, document.querySelector('#post-container'));
+            JSONToDOM(result.Projects, document.querySelector('#projects-container'), "projects");
+            JSONToDOM(result.Posts, document.querySelector('#posts-container'), "posts");
         }
     ).catch(
         (error) => {
@@ -32,7 +33,7 @@ async function loadLocalData() { // local data
         }
     ).then(
         (json) => {
-            projectJSONToDOM(json, document.querySelector('#project-container'));
+            JSONToDOM(json, document.querySelector('#projects-container'), "projects");
         }
     ).catch(
         (error) => {
@@ -46,6 +47,7 @@ async function loadPage() {
     document.getElementById("project-loading").remove();
     await loadGithubData();
     document.getElementById("post-loading").remove();
+    addSortBars();
 };
 loadPage();
 
@@ -64,7 +66,7 @@ function githubTextToJSON(text){
             }
         } else if (line.startsWith("##")){ // title of new entry
             line = line.substring(2).trim();
-            if (line.startsWith("[")){
+            if (line.startsWith("[")){ // title is link
                 entry = line.substring(1, line.indexOf("]"));
                 result[section][entry] = {};
                 result[section][entry].link = line.substring(line.indexOf("(") + 1, line.length - 1);
@@ -80,6 +82,10 @@ function githubTextToJSON(text){
         } else if (line.startsWith("!")) { // img
             result[section][entry].imgDescription = line.substring(2, line.indexOf("]"));
             result[section][entry].imgSrc = line.substring(line.indexOf("(") + 1, line.length - 1);
+        } else if (line.startsWith("[tags:")){ // tags
+            let tags = line.substring(6, line.indexOf("]")).split(",");
+            tags = tags.map(s => s.trim());
+            result[section][entry].tags = tags;
         } else { // description
             if (result[section][entry].description){
                 result[section][entry].description += "\n" + line;
@@ -94,8 +100,11 @@ function githubTextToJSON(text){
 
 // parse JSON to DOM elements
 // {"entry 1 title": {}, "entry 2 title": {}}
-function projectJSONToDOM(json, domElement){
+function JSONToDOM(json, domElement, tagGroup){
     const projectTemplate = document.querySelector('#project-template');
+    const entries = domElement.querySelectorAll(".project-details");
+    let elementIndex = entries.length;
+    
     for (const key in json){
         const clone = document.importNode(projectTemplate.content, true);
 
@@ -109,18 +118,28 @@ function projectJSONToDOM(json, domElement){
             clone.querySelector('img').remove();
             clone.querySelector('br').remove();
         }
+
+        if (Object.hasOwn(json[key], "tags")){
+            json[key].tags = json[key].tags.filter(Boolean);
+            let newSet = (Object.hasOwn(globalTags, tagGroup)) ? [...globalTags[tagGroup], ...json[key].tags] : json[key].tags;
+            globalTags[tagGroup] = new Set(newSet);
+            clone.querySelector('[name="tags"]').insertAdjacentText("beforeend", json[key].tags.join(", "));
+            clone.querySelector('details').setAttribute("data-tags", json[key].tags.toString());
+        } else {
+            clone.querySelector('[name="tags"]').remove();
+        }
         
         // each '\n' in description signifies a new 'p' element
         if (Object.hasOwn(json[key], "description")){
+            const tagElement = clone.querySelector('[name="tags"]');
             const detailsElement = clone.querySelector('details').querySelector('.project-body');
             const desc = json[key].description.trim().split("\n");
             for (const line of desc){
-                if (line !== ""){
-                    //const lineHTML = document.createElement("p");
-                    //lineHTML.textContent = line;
-                    detailsElement.appendChild(MDToHTML(line));
+                let toAdd = (line !== "") ? MDToHTML(line) : document.createElement("br");
+                if (tagElement){
+                    detailsElement.insertBefore(toAdd, tagElement);
                 } else {
-                    detailsElement.appendChild(document.createElement("br"));
+                    detailsElement.appendChild(toAdd);
                 }
             }
         }
@@ -133,7 +152,9 @@ function projectJSONToDOM(json, domElement){
             clone.querySelector('a').remove();
         }
 
+        clone.querySelector('details').setAttribute("data-original-index", elementIndex);
         domElement.appendChild(clone);
+        elementIndex += 1;
     }
 }
 
@@ -191,4 +212,81 @@ function MDToHTML(mdText){
     }
 
     return result;
+}
+
+function addSortBars(){
+    const tagSelectorTemplate = document.querySelector('#tag-selector-template');
+    for (const tagGroup in globalTags){
+        const page = document.getElementById(tagGroup);
+        const pageContent = (page) ? page.querySelector('section.main-content') : null;
+        if (!pageContent) { continue; }
+
+        const tagSelector = document.importNode(tagSelectorTemplate.content, true);
+        const label = tagSelector.querySelector("label");
+        const labelContainer = tagSelector.querySelector("span");
+        const container = page.querySelector("#" + tagGroup.toLowerCase() + "-container");
+        
+        const input = label.querySelector("input");
+        label.setAttribute("for", tagGroup + "None");
+        input.setAttribute("id", tagGroup + "None");
+        input.setAttribute("name", tagGroup + "-sort");
+        input.setAttribute("value", "None");
+        input.setAttribute("checked", "");
+        input.addEventListener("change", ()=>{
+                sortPageEntries(container, sortEntriesByIndex);
+            });
+        
+        for (const tag of globalTags[tagGroup]){
+            const labelClone = document.importNode(label, true);
+            const input = labelClone.querySelector("input");
+
+            labelClone.querySelector("span").textContent = tag + " ";
+
+            labelClone.setAttribute("for", tagGroup + tag);
+            input.setAttribute("id", tagGroup + tag);
+            input.setAttribute("name", tagGroup + "-sort");
+            input.setAttribute("value", tag);
+            input.removeAttribute("checked");
+
+            input.addEventListener("change", ()=>{
+                sortPageEntries(container, (a,b)=>{return sortEntriesByTag(a,b,tag);});
+            });
+
+            labelContainer.appendChild(labelClone);
+        }
+
+        pageContent.appendChild(tagSelector);
+    }
+}
+
+function sortPageEntries(page, sortFunc){
+    const entries = Array.from(page.querySelectorAll(".project-details"));
+    entries.sort(sortFunc);
+    for (const entry of entries){
+        page.insertAdjacentElement("beforeend", entry);
+    }
+}
+function sortEntriesByTag(a, b, tag){
+    const aTags = a.getAttribute("data-tags");
+    const bTags = b.getAttribute("data-tags");
+    if (!aTags) { return 1; }
+    if (!bTags) { return -1; }
+
+    const aHasTag = aTags.includes(tag);
+    const bHasTag = bTags.includes(tag);
+
+    if ((aHasTag && bHasTag) || (!aHasTag && !bHasTag)){
+        return sortEntriesByIndex(a,b);
+    } else if (aHasTag && !bHasTag){
+        return -1;
+    } else if (!aHasTag && bHasTag) {
+        return 1;
+    } else {
+        return 0;
+    }
+}
+function sortEntriesByIndex(a,b){
+    const aOIndex = parseInt(a.getAttribute("data-original-index"));
+    const bOIndex = parseInt(b.getAttribute("data-original-index"));
+    return aOIndex - bOIndex;
 }
