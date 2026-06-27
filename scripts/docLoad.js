@@ -153,6 +153,7 @@ function JSONToDOM(json, domElement, tagGroup){
         }
 
         clone.querySelector('details').setAttribute("data-original-index", elementIndex);
+        clone.querySelector('details').setAttribute("name", tagGroup + "-details");
         domElement.appendChild(clone);
         elementIndex += 1;
     }
