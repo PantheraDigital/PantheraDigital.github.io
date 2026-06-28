@@ -59,7 +59,7 @@ body p{
 }
 
 .auto-scroll-container .auto-scroll-content {
-    position: relative
+    position: relative;
 }
 
 
@@ -79,7 +79,7 @@ body p{
     --solid-x: 150px;
     --solid-y: 150px;
     --border-style: solid;
-    --highlight-color: grey;
+    --highlight-color: rgb(128, 128, 128);
     --global-border-gap: 5px;
     --global-border-width: 3px;
     /*#9ba2b8;*/
@@ -139,7 +139,7 @@ body p{
 .slide-element{
   display: inline-block;
   position: absolute; 
-  left: 0px;
+  left: 0;
   width: 100%; 
   height: 100%; 
   transform: translateX(0) scaleY(1);
@@ -164,6 +164,26 @@ body p{
   font-family: monospace;
   width: 10ch;
   padding: 2px;
+}
+.nav-button{
+  display: inline-block;
+  box-sizing: border-box;
+  font-size: 1rem;
+  font-family: monospace;
+  width: 10ch;
+  padding: 2px;
+  background-color: rgb(227, 228, 236);
+  border: 1px outset rgb(128, 128, 128);
+  border-radius: 3px;
+  color: rgb(0, 0, 0);
+  padding: 3px;
+  text-decoration: none;
+}
+.nav-button:hover{
+  background-color: rgb(217, 218, 226);
+}
+.nav-button:active{
+  background-color: rgb(247, 248, 246);
 }
 
 
@@ -226,16 +246,16 @@ body p{
   transform: perspective(1000px) rotateX(80deg) translateZ(-150px) translateY(-10%);
   background:
   repeating-linear-gradient(90deg, 
-  transparent 0px, rgba(255, 0, 255, 0.5) 2px, rgba(0, 255, 255, 0.75) 3px, transparent 5px, transparent 50px),
+  transparent 0, rgba(255, 0, 255, 0.5) 2px, rgba(0, 255, 255, 0.75) 3px, transparent 5px, transparent 50px),
   repeating-linear-gradient(180deg, 
-  transparent 0px, rgba(255, 0, 255, 0.5) 2px, rgba(0, 255, 255, 0.75) 3px, transparent 5px, transparent 50px),
+  transparent 0, rgba(255, 0, 255, 0.5) 2px, rgba(0, 255, 255, 0.75) 3px, transparent 5px, transparent 50px),
   linear-gradient(transparent, lavender);
 }
 
 #bg-layer:has(.display-toggle:checked) .gradient-bg{
   background: linear-gradient(transparent), 
   radial-gradient(70% 30% at 50% 40%, purple 0%, transparent 80%), 
-  radial-gradient(80% 50% at 50% 40%, midnightblue 20%, black);
+  radial-gradient(80% 50% at 50% 40%, midnightblue 20%, black 100%);
 }
 #bg-layer:has(.display-toggle:checked) .gradient-bg-lower{
   background: linear-gradient(black, midnightblue 40%);
@@ -244,9 +264,9 @@ body p{
   background: 
   linear-gradient(midnightblue 0%, transparent 50%), 
   repeating-linear-gradient(90deg, 
-  transparent 0px, rgba(0, 255, 255, 0.5) 2px, rgba(255, 0, 255, 0.75) 3px, transparent 5px, transparent 50px),
+  transparent 0, rgba(0, 255, 255, 0.5) 2px, rgba(255, 0, 255, 0.75) 3px, transparent 5px, transparent 50px),
   repeating-linear-gradient(180deg, 
-  transparent 0px, rgba(0, 255, 255, 0.5) 2px, rgba(255, 0, 255, 0.75) 3px, transparent 5px, transparent 50px),
+  transparent 0, rgba(0, 255, 255, 0.5) 2px, rgba(255, 0, 255, 0.75) 3px, transparent 5px, transparent 50px),
   linear-gradient(transparent 60%, navy);
 }
 

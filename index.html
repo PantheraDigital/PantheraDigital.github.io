@@ -27,7 +27,7 @@
             </summary>
             <div class="project-body">
                 <img src="" alt="" loading="lazy"><br>
-                <a href=""></a>
+                <a href="" aria-label="Project Link"></a>
                 <p name="tags">tags: </p>
             </div>
         </details>
@@ -35,7 +35,7 @@
     <template id="tag-selector-template">
         <div style="text-align: right; margin: 0 5px; padding: 13px 0; border-top: 2px solid grey; border-image: linear-gradient(270deg, grey, transparent 90%) 1;">
             <fieldset style="border: none; min-width: 100%; min-inline-size: 100%; box-sizing: border-box;">
-                <legend><b>sort</b></legend>
+                <legend style="display: inline-block; width: 100%;"><b>sort</b></legend>
                 <span style="display: inline-block; width: 100%; overflow-x: auto; padding-bottom: 10px;">
                     <label for="projectNone"><input type="radio" id="projectNone" name="project-sort" value="None" /><span>None</span></label>
                 </span>
@@ -58,8 +58,8 @@
             class="gradient-bg-lower"
             style="position: absolute; width: 100%; height: 50%; top: 50%;">
             </span>
-            <div class="noise" style="position: absolute; inset: 0;"></div>
-            <div class="cloud main-cloud"></div>
+            <span class="noise" style="position: absolute; inset: 0;"></span>
+            <span class="cloud main-cloud"></span>
         </span>
         <label class="display-toggle-lable" for="display-mode-toggle">
             <input type="checkbox" id="display-mode-toggle" class="display-toggle"
@@ -70,7 +70,7 @@
         <span class="logo-wrapper" >
             <img class="logo-img" src="logo/logo.webp" alt="Panthera's logo depicting a tiger scull over a neon sunset." loading="lazy">
             <span class="logo-shape-wrapper">
-                <div class="logo-shape"></div>
+                <span class="logo-shape"></span>
             </span>
         </span>
     </span>
@@ -78,16 +78,16 @@
     <div style="width: 100%; height: 200%;">
         <div style="width: 100%; height: 85vh; height: 85dvh;"></div>
         <nav style="z-index: 1; position: sticky; top: 0; text-align: center; padding-top: 4vh;">
-            <a href="#main"><button type="button" class="button" onclick="navigateToSlide(0)">Projects</button></a>
-            <a href="#main"><button type="button" class="button" onclick="navigateToSlide(1)">Posts</button></a>
-            <a href="#main"><button type="button" class="button" onclick="navigateToSlide(2)">About</button></a>
+            <a href="#main" class="nav-button" onclick="navigateToSlide(0)">Projects</a>
+            <a href="#main" class="nav-button" onclick="navigateToSlide(1)">Posts</a>
+            <a href="#main" class="nav-button" onclick="navigateToSlide(2)">About</a>
         </nav>
     </div>
 
     <main id="main" style="position: relative; top: -100%; width: 100%; height: 100%; overflow: hidden;">        
         <div id="slide-list" class="slide-list">
 
-            <span id="projects"
+            <div id="projects"
             class="slide-element"
             style="display:inline-flex; justify-content: center; position: absolute; width: 100%; height: 100%; left: 0px;">
                 <div class="main-block">
@@ -113,9 +113,9 @@
                         </div>
                     </section>
                 </div>
-            </span>
+            </div>
             
-            <span id="posts"
+            <div id="posts"
             class="slide-element"
             style="display: inline-flex; justify-content: center; position: absolute; width: 100%; height: 100%; left: 0px;">
                 <div class="main-block">
@@ -140,9 +140,9 @@
                         </div>
                     </section>
                 </div>
-            </span>
+            </div>
         
-            <span id="about"
+            <div id="about"
             class="slide-element"
             style="display: inline-flex; justify-content: center; position: absolute; width: 100%; height: 100%; left: 0px;">
                 <div class="main-block">
@@ -205,7 +205,7 @@
                         </div>
                     </section>
                 </div>
-            </span>
+            </div>
         
         </div>    
     </main>
@@ -213,13 +213,13 @@
 
     <svg id="filters">
         <filter id='noiseFilter'>
-            <feTurbulence id="turbulence" 
+            <feturbulence id="turbulence" 
             type='fractalNoise' baseFrequency='0.0025' numOctaves='4' seed="1" />
         </filter>
 
         <filter id="cloud-filter">
-            <feTurbulence type="fractalNoise" baseFrequency=".0165" numOctaves="4" seed="13" />
-            <feDisplacementMap in="SourceGraphic" scale="120" />
+            <feturbulence type="fractalNoise" baseFrequency=".0165" numOctaves="4" seed="13" />
+            <fedisplacementmap in="SourceGraphic" scale="120" />
         </filter>
     </svg>
 

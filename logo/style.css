@@ -27,6 +27,7 @@
 }
 
 .logo-shape{
+    display: inline-block;
     box-sizing: border-box;
     height: var(--logo-size);
     width: var(--logo-size);
