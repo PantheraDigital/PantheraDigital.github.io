@@ -25,27 +25,9 @@ async function loadGithubData(){ // github data
     );
 }
 
-async function loadLocalData() { // local data
-    await fetch('projectText.json').then(
-        (response) => {
-            if (!response.ok) throw new Error(`Response status: ${response.status}`);
-            return response.json();
-        }
-    ).then(
-        (json) => {
-            JSONToDOM(json, document.querySelector('#projects-container'), "projects");
-        }
-    ).catch(
-        (error) => {
-            console.error("Failed to load local data:", error.message);
-        }
-    );
-}
-
 async function loadPage() {
-    await loadLocalData();
-    document.getElementById("project-loading").remove();
     await loadGithubData();
+    document.getElementById("project-loading").remove();
     document.getElementById("post-loading").remove();
     addSortBars();
 };
